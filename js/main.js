@@ -20,10 +20,70 @@ box.addEventListener('touchmove', e => setPos(e.touches[0].clientX));
 // City/service filter
 function filterCards(){
   const city = document.getElementById('citySearch').value.trim().toLowerCase();
+  const service = document.getElementById('serviceSearch').value.trim().toLowerCase();
   document.querySelectorAll('.card').forEach(card => {
-    const match = !city || card.dataset.city.includes(city);
-    card.style.display = match ? 'flex' : 'none';
+    const cityMatch = !city || card.dataset.city.includes(city);
+    const serviceMatch = service === 'alle ydelser' || (card.dataset.services || '').includes(service);
+    card.style.display = (cityMatch && serviceMatch) ? 'flex' : 'none';
   });
+}
+
+// Lead modal (customer -> shop request)
+const leadModal = document.getElementById('leadModal');
+
+function openLeadModal(shopName){
+  document.getElementById('modalShopName').textContent = 'Få tilbud fra ' + shopName;
+  document.getElementById('modalButikField').value = shopName;
+  document.querySelector('#leadModal form').reset();
+  document.getElementById('modalButikField').value = shopName;
+  const submitBtn = document.querySelector('#leadModal button[type="submit"]');
+  submitBtn.disabled = false;
+  submitBtn.textContent = 'Send forespørgsel';
+  const err = document.querySelector('#leadModal .lead-error');
+  if (err) err.remove();
+  document.getElementById('modalFormWrap').style.display = 'block';
+  document.getElementById('modalSuccess').style.display = 'none';
+  leadModal.classList.add('open');
+}
+
+function closeLeadModal(){
+  leadModal.classList.remove('open');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeLeadModal();
+});
+
+function handleCustomerLeadSubmit(e){
+  e.preventDefault();
+  const form = e.target;
+  const submitBtn = form.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Sender...';
+
+  const body = new URLSearchParams(new FormData(form)).toString();
+
+  fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body
+  })
+    .then(res => {
+      if (!res.ok) throw new Error('Netlify svarede med status ' + res.status);
+      document.getElementById('modalFormWrap').style.display = 'none';
+      document.getElementById('modalSuccess').style.display = 'block';
+    })
+    .catch(() => {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send forespørgsel';
+      let err = form.querySelector('.lead-error');
+      if (!err) {
+        err = document.createElement('p');
+        err.className = 'lead-error';
+        form.appendChild(err);
+      }
+      err.textContent = 'Der gik noget galt. Prøv igen om lidt.';
+    });
 }
 
 // Lead form -> Netlify Forms (AJAX submit, no page reload)

@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bilpleje.dk — Find den rette bilpleje-butik</title>
+<meta name="description" content="Find og sammenlign bilpleje-butikker i hele Danmark — keramisk coating, polering, folie og indvendig rens. Gratis for kunder, book direkte.">
+<meta property="og:title" content="Bilpleje.dk — Find den rette bilpleje-butik">
+<meta property="og:description" content="Søg blandt keramisk coating, polering, folie og indvendig rens — sammenlign lokale bilpleje-butikker og book direkte.">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
@@ -83,7 +87,7 @@
       <button onclick="filterCards()">Søg</button>
     </div>
     <div class="results" id="resultsGrid">
-      <div class="card premium" data-city="aarhus">
+      <div class="card premium" data-city="aarhus" data-services="keramisk coating,polering">
         <div>
           <div class="card-name">Glansen Detailing</div>
           <div class="card-meta">Aarhus C · Keramisk coating, polering</div>
@@ -91,19 +95,21 @@
             <span class="pill verified">Verificeret</span>
             <span class="pill">4.9 ★ (112)</span>
           </div>
+          <button class="card-cta" onclick="openLeadModal('Glansen Detailing')">Få tilbud</button>
         </div>
         <div class="badge-premium">TOP</div>
       </div>
-      <div class="card" data-city="aarhus">
+      <div class="card" data-city="aarhus" data-services="indvendig rens,polering">
         <div>
           <div class="card-name">AutoShine Aarhus</div>
           <div class="card-meta">Aarhus N · Indvendig rens, polering</div>
           <div class="card-tags">
             <span class="pill">4.6 ★ (54)</span>
           </div>
+          <button class="card-cta" onclick="openLeadModal('AutoShine Aarhus')">Få tilbud</button>
         </div>
       </div>
-      <div class="card premium" data-city="københavn">
+      <div class="card premium" data-city="københavn" data-services="folie,keramisk coating">
         <div>
           <div class="card-name">Nordisk Bilpleje</div>
           <div class="card-meta">København S · Folie, coating</div>
@@ -111,16 +117,18 @@
             <span class="pill verified">Verificeret</span>
             <span class="pill">5.0 ★ (89)</span>
           </div>
+          <button class="card-cta" onclick="openLeadModal('Nordisk Bilpleje')">Få tilbud</button>
         </div>
         <div class="badge-premium">TOP</div>
       </div>
-      <div class="card" data-city="odense">
+      <div class="card" data-city="odense" data-services="polering,indvendig rens">
         <div>
           <div class="card-name">Fyns Bil & Pleje</div>
           <div class="card-meta">Odense · Polering, indvendig rens</div>
           <div class="card-tags">
             <span class="pill">4.4 ★ (31)</span>
           </div>
+          <button class="card-cta" onclick="openLeadModal('Fyns Bil & Pleje')">Få tilbud</button>
         </div>
       </div>
     </div>
@@ -174,6 +182,29 @@
 <footer>
   bilpleje.dk — prototype
 </footer>
+
+<div class="modal-overlay" id="leadModal" onclick="if(event.target===this) closeLeadModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeLeadModal()" aria-label="Luk">&times;</button>
+    <h3 id="modalShopName">Få tilbud</h3>
+    <div id="modalFormWrap">
+      <form class="lead-form" name="kunde-lead" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="handleCustomerLeadSubmit(event)">
+        <input type="hidden" name="form-name" value="kunde-lead">
+        <input type="hidden" name="butik" id="modalButikField">
+        <p class="hidden-field"><label>Udfyld ikke dette felt hvis du er menneske: <input name="bot-field"></label></p>
+        <label class="mono" for="custName">Navn</label>
+        <input type="text" name="navn" id="custName" required>
+        <label class="mono" for="custContact">Telefon eller mail</label>
+        <input type="text" name="kontakt" id="custContact" required>
+        <label class="mono" for="custMsg">Hvad skal der ordnes?</label>
+        <input type="text" name="besked" id="custMsg" placeholder="Fx keramisk coating på min bil">
+        <button type="submit" class="btn-primary" style="width:100%; margin-top:6px;">Send forespørgsel</button>
+        <p class="lead-note">Vi videresender din forespørgsel direkte til butikken.</p>
+      </form>
+    </div>
+    <div class="modal-success" id="modalSuccess" style="display:none;">Tak! Butikken kontakter dig snarest.</div>
+  </div>
+</div>
 
 <script src="js/main.js"></script>
 
