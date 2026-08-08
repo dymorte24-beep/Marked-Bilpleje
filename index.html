@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bilpleje.dk — Find den rette bilpleje-butik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo">bilpleje<span>.dk</span></div>
+    <div class="nav-links">
+      <a href="#search">Find en butik</a>
+      <a href="#shops">For butikker</a>
+    </div>
+    <a href="#shops" class="nav-cta">Bliv listet</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="hero-eyebrow">Bilpleje-guide for hele Danmark</div>
+      <h1>Find den <em>bilpleje-butik</em> der matcher dine behov</h1>
+      <p>Søg blandt keramisk coating, polering, folie og indvendig rens — sammenlign lokale butikker og book direkte. Gratis for kunder.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="document.getElementById('search').scrollIntoView({behavior:'smooth'})">Find en butik</button>
+        <a href="#shops"><button class="btn-ghost">Jeg driver en bilpleje-butik</button></a>
+      </div>
+    </div>
+    <div>
+      <div class="slider-box" id="sliderBox">
+        <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+          <rect width="400" height="300" fill="#0D1420"/>
+          <ellipse cx="200" cy="230" rx="170" ry="14" fill="#05070C"/>
+          <path d="M40 200 Q60 130 130 120 L270 120 Q340 130 360 200 L360 220 Q360 235 340 235 L60 235 Q40 235 40 220 Z" fill="#3A4252"/>
+          <path d="M120 122 L155 90 L245 90 L280 122 Z" fill="#4B5568"/>
+          <circle cx="105" cy="222" r="26" fill="#111722"/>
+          <circle cx="105" cy="222" r="12" fill="#5B6577"/>
+          <circle cx="295" cy="222" r="26" fill="#111722"/>
+          <circle cx="295" cy="222" r="12" fill="#5B6577"/>
+        </svg>
+        <div class="layer-shine">
+          <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+            <rect width="400" height="300" fill="#0D1420"/>
+            <ellipse cx="200" cy="230" rx="170" ry="14" fill="#05070C"/>
+            <path d="M40 200 Q60 130 130 120 L270 120 Q340 130 360 200 L360 220 Q360 235 340 235 L60 235 Q40 235 40 220 Z" fill="#C9401F"/>
+            <path d="M40 200 Q60 130 130 120 L200 120 L200 235 L60 235 Q40 235 40 220 Z" fill="#E3501F" opacity="0.0"/>
+            <path d="M60 150 Q120 132 200 130 L200 150 Q120 152 65 168 Z" fill="#FFB238" opacity="0.55"/>
+            <path d="M120 122 L155 90 L245 90 L280 122 Z" fill="#2A3040" opacity="0.9"/>
+            <path d="M120 122 L155 90 L245 90 L280 122 Z" fill="#6EC8E8" opacity="0.35"/>
+            <circle cx="105" cy="222" r="26" fill="#0B0E14"/>
+            <circle cx="105" cy="222" r="12" fill="#7A869B"/>
+            <circle cx="295" cy="222" r="26" fill="#0B0E14"/>
+            <circle cx="295" cy="222" r="12" fill="#7A869B"/>
+          </svg>
+        </div>
+        <div class="tag-before mono">MAT</div>
+        <div class="tag-after mono">EFTER COATING</div>
+        <div class="handle" id="handle"></div>
+      </div>
+      <div class="hero-caption">Træk for at se forskellen — sådan finder kunder det, de leder efter</div>
+    </div>
+  </div>
+</header>
+
+<section class="search" id="search">
+  <div class="wrap">
+    <div class="search-box">
+      <input type="text" placeholder="By eller postnummer, fx Aarhus" id="citySearch">
+      <select id="serviceSearch">
+        <option>Alle ydelser</option>
+        <option>Keramisk coating</option>
+        <option>Polering</option>
+        <option>Folie</option>
+        <option>Indvendig rens</option>
+      </select>
+      <button onclick="filterCards()">Søg</button>
+    </div>
+    <div class="results" id="resultsGrid">
+      <div class="card premium" data-city="aarhus">
+        <div>
+          <div class="card-name">Glansen Detailing</div>
+          <div class="card-meta">Aarhus C · Keramisk coating, polering</div>
+          <div class="card-tags">
+            <span class="pill verified">Verificeret</span>
+            <span class="pill">4.9 ★ (112)</span>
+          </div>
+        </div>
+        <div class="badge-premium">TOP</div>
+      </div>
+      <div class="card" data-city="aarhus">
+        <div>
+          <div class="card-name">AutoShine Aarhus</div>
+          <div class="card-meta">Aarhus N · Indvendig rens, polering</div>
+          <div class="card-tags">
+            <span class="pill">4.6 ★ (54)</span>
+          </div>
+        </div>
+      </div>
+      <div class="card premium" data-city="københavn">
+        <div>
+          <div class="card-name">Nordisk Bilpleje</div>
+          <div class="card-meta">København S · Folie, coating</div>
+          <div class="card-tags">
+            <span class="pill verified">Verificeret</span>
+            <span class="pill">5.0 ★ (89)</span>
+          </div>
+        </div>
+        <div class="badge-premium">TOP</div>
+      </div>
+      <div class="card" data-city="odense">
+        <div>
+          <div class="card-name">Fyns Bil & Pleje</div>
+          <div class="card-meta">Odense · Polering, indvendig rens</div>
+          <div class="card-tags">
+            <span class="pill">4.4 ★ (31)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how">
+  <div class="wrap">
+    <h2>Sådan virker det</h2>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="how-num mono">01</div>
+        <h3>Søg din by</h3>
+        <p>Indtast by eller postnummer og vælg hvilken ydelse du mangler.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num mono">02</div>
+        <h3>Sammenlign butikker</h3>
+        <p>Se anmeldelser, priser og hvad hver butik er specialiseret i.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num mono">03</div>
+        <h3>Book direkte</h3>
+        <p>Kontakt butikken direkte — ingen mellemled, ingen gebyrer for dig.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="shops" id="shops">
+  <div class="wrap">
+    <div class="shops-inner">
+      <div>
+        <h2 style="text-align:left;">For bilpleje-butikker</h2>
+        <p class="sub" style="text-align:left; margin:0 0 0;">Bliv en af de butikker kunder ser først, når de søger i dit område. Skriv din mail, så sender vi dig detaljerne og aftaler opstart direkte.</p>
+      </div>
+      <form class="lead-form" name="butik-lead" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="handleLeadSubmit(event)">
+        <input type="hidden" name="form-name" value="butik-lead">
+        <p class="hidden-field"><label>Udfyld ikke dette felt hvis du er menneske: <input name="bot-field"></label></p>
+        <label class="mono" for="shopEmail">Din mail</label>
+        <input type="email" name="email" id="shopEmail" placeholder="navn@butik.dk" required>
+        <label class="mono" for="shopCity">By</label>
+        <input type="text" name="city" id="shopCity" placeholder="Fx Aarhus" required>
+        <button type="submit" class="btn-primary" style="width:100%; margin-top:6px;">Send og hør mere</button>
+        <p class="lead-note">Vi svarer direkte på din mail — ingen binding, ingen kortoplysninger.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  bilpleje.dk — prototype
+</footer>
+
+<script src="js/main.js"></script>
+
+</body>
+</html>
