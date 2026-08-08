@@ -319,7 +319,6 @@ footer{
   background:none; border:none; color:var(--chrome);
   font-size:22px; line-height:1; cursor:pointer;
 }
-.modal-success{color:var(--white); text-align:center; padding:20px 0;}
 
 @media (max-width: 760px){
   .hero-grid, .how-grid, .plans, .results, .shops-inner{grid-template-columns:1fr;}

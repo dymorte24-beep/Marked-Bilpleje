@@ -187,7 +187,6 @@
   <div class="modal-box">
     <button class="modal-close" onclick="closeLeadModal()" aria-label="Luk">&times;</button>
     <h3 id="modalShopName">Få tilbud</h3>
-    <div id="modalFormWrap">
       <form class="lead-form" name="kunde-lead" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="handleCustomerLeadSubmit(event)">
         <input type="hidden" name="form-name" value="kunde-lead">
         <input type="hidden" name="butik" id="modalButikField">
@@ -201,8 +200,6 @@
         <button type="submit" class="btn-primary" style="width:100%; margin-top:6px;">Send forespørgsel</button>
         <p class="lead-note">Vi videresender din forespørgsel direkte til butikken. Læs vores <a href="privatlivspolitik.html" style="color:inherit; text-decoration:underline;">privatlivspolitik</a>.</p>
       </form>
-    </div>
-    <div class="modal-success" id="modalSuccess" style="display:none;">Tak! Butikken kontakter dig snarest.</div>
   </div>
 </div>
 

@@ -41,8 +41,6 @@ function openLeadModal(shopName){
   submitBtn.textContent = 'Send forespørgsel';
   const err = document.querySelector('#leadModal .lead-error');
   if (err) err.remove();
-  document.getElementById('modalFormWrap').style.display = 'block';
-  document.getElementById('modalSuccess').style.display = 'none';
   leadModal.classList.add('open');
 }
 
@@ -70,8 +68,7 @@ function handleCustomerLeadSubmit(e){
   })
     .then(res => {
       if (!res.ok) throw new Error('Netlify svarede med status ' + res.status);
-      document.getElementById('modalFormWrap').style.display = 'none';
-      document.getElementById('modalSuccess').style.display = 'block';
+      window.location.href = 'tak.html?type=kunde';
     })
     .catch(() => {
       submitBtn.disabled = false;
@@ -103,7 +100,7 @@ function handleLeadSubmit(e){
   })
     .then(res => {
       if (!res.ok) throw new Error('Netlify svarede med status ' + res.status);
-      form.innerHTML = '<p style="color:#fff; font-weight:500; text-align:center; padding:20px 0;">Tak! Vi skriver til dig snarest.</p>';
+      window.location.href = 'tak.html?type=butik';
     })
     .catch(() => {
       submitBtn.disabled = false;

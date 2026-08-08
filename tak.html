@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tak — Bilpleje.dk</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+.thanks{padding:100px 0; text-align:center;}
+.thanks .check{
+  width:64px; height:64px; border-radius:50%; background:var(--teal-bg);
+  color:var(--teal); font-size:32px; line-height:64px; margin:0 auto 24px;
+}
+.thanks h1{font-size:28px; margin-bottom:12px;}
+.thanks p{color:#5A6270; font-size:16px; max-width:440px; margin:0 auto 28px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="index.html" class="logo">bilpleje<span>.dk</span></a>
+    <div class="nav-links">
+      <a href="index.html#search">Find en butik</a>
+      <a href="index.html#shops">For butikker</a>
+    </div>
+    <a href="index.html#shops" class="nav-cta">Bliv listet</a>
+  </div>
+</nav>
+
+<section class="thanks">
+  <div class="wrap">
+    <div class="check">✓</div>
+    <h1 id="thanksHeading">Tak for din henvendelse!</h1>
+    <p id="thanksText">Vi har modtaget din forespørgsel og vender tilbage hurtigst muligt.</p>
+    <a href="index.html"><button class="btn-primary">Tilbage til forsiden</button></a>
+  </div>
+</section>
+
+<footer>
+  <a href="privatlivspolitik.html">Privatlivspolitik</a> · bilpleje.dk — prototype
+</footer>
+
+<script>
+  const params = new URLSearchParams(location.search);
+  if (params.get('type') === 'butik') {
+    document.getElementById('thanksHeading').textContent = 'Tak — vi skriver til dig!';
+    document.getElementById('thanksText').textContent = 'Vi har modtaget din tilmelding og sender dig detaljerne om opstart på mail.';
+  }
+</script>
+
+</body>
+</html>
