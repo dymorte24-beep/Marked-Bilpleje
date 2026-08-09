@@ -120,9 +120,14 @@ header.hero{
   cursor:ew-resize;
   background:#0D1420;
 }
-.slider-box svg{position:absolute; top:0; left:0; width:100%; height:100%;}
-.layer-dull{position:absolute; inset:0;}
-.layer-shine{position:absolute; inset:0; clip-path:inset(0 50% 0 0);}
+.layer-dull, .layer-shine{
+  position:absolute; inset:0;
+  background-image:url('../hero-car-photo.jpg');
+  background-size:cover;
+  background-position:center;
+}
+.layer-dull{filter:grayscale(75%) brightness(0.7) contrast(0.9);}
+.layer-shine{clip-path:inset(0 50% 0 0);}
 .handle{
   position:absolute; top:0; bottom:0; left:50%;
   width:3px; background:var(--gold);
@@ -143,13 +148,6 @@ header.hero{
   transform:translate(-50%,-55%);
   color:var(--navy); font-weight:700; font-size:16px; z-index:2;
 }
-.slider-tag{
-  position:absolute; padding:5px 10px; border-radius:5px;
-  font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:500;
-  top:14px; letter-spacing:0.04em;
-}
-.tag-before{left:14px; background:rgba(20,24,31,0.6); color:var(--chrome);}
-.tag-after{right:14px; background:var(--gold); color:var(--navy);}
 .hero-caption{
   text-align:center; color:var(--chrome); font-size:12px; margin-top:10px;
 }
