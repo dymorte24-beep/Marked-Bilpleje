@@ -1,3 +1,30 @@
+// Butikker — tilføj en ny butik ved at tilføje et objekt til denne liste
+const shops = [
+  { name: "Glansen Detailing", city: "Aarhus C", cityKey: "aarhus", services: ["Keramisk coating", "Polering"], rating: 4.9, reviews: 112, verified: true, premium: true },
+  { name: "AutoShine Aarhus", city: "Aarhus N", cityKey: "aarhus", services: ["Indvendig rens", "Polering"], rating: 4.6, reviews: 54, verified: false, premium: false },
+  { name: "Nordisk Bilpleje", city: "København S", cityKey: "københavn", services: ["Folie", "Keramisk coating"], rating: 5.0, reviews: 89, verified: true, premium: true },
+  { name: "Fyns Bil & Pleje", city: "Odense", cityKey: "odense", services: ["Polering", "Indvendig rens"], rating: 4.4, reviews: 31, verified: false, premium: false }
+];
+
+function renderShops(){
+  const grid = document.getElementById('resultsGrid');
+  grid.innerHTML = shops.map(shop => `
+    <div class="card${shop.premium ? ' premium' : ''}" data-city="${shop.cityKey}" data-services="${shop.services.join(',').toLowerCase()}">
+      <div>
+        <div class="card-name">${shop.name}</div>
+        <div class="card-meta">${shop.city} · ${shop.services.join(', ')}</div>
+        <div class="card-tags">
+          ${shop.verified ? '<span class="pill verified">Verificeret</span>' : ''}
+          <span class="pill">${shop.rating.toFixed(1)} ★ (${shop.reviews})</span>
+        </div>
+        <button class="card-cta" onclick="openLeadModal('${shop.name.replace(/'/g, "\\'")}')">Få tilbud</button>
+      </div>
+      ${shop.premium ? '<div class="badge-premium">TOP</div>' : ''}
+    </div>
+  `).join('');
+}
+renderShops();
+
 // Before/after slider
 const box = document.getElementById('sliderBox');
 const shine = document.querySelector('.layer-shine');

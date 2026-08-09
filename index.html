@@ -94,52 +94,7 @@
       </select>
       <button onclick="filterCards()">Søg</button>
     </div>
-    <div class="results" id="resultsGrid">
-      <div class="card premium" data-city="aarhus" data-services="keramisk coating,polering">
-        <div>
-          <div class="card-name">Glansen Detailing</div>
-          <div class="card-meta">Aarhus C · Keramisk coating, polering</div>
-          <div class="card-tags">
-            <span class="pill verified">Verificeret</span>
-            <span class="pill">4.9 ★ (112)</span>
-          </div>
-          <button class="card-cta" onclick="openLeadModal('Glansen Detailing')">Få tilbud</button>
-        </div>
-        <div class="badge-premium">TOP</div>
-      </div>
-      <div class="card" data-city="aarhus" data-services="indvendig rens,polering">
-        <div>
-          <div class="card-name">AutoShine Aarhus</div>
-          <div class="card-meta">Aarhus N · Indvendig rens, polering</div>
-          <div class="card-tags">
-            <span class="pill">4.6 ★ (54)</span>
-          </div>
-          <button class="card-cta" onclick="openLeadModal('AutoShine Aarhus')">Få tilbud</button>
-        </div>
-      </div>
-      <div class="card premium" data-city="københavn" data-services="folie,keramisk coating">
-        <div>
-          <div class="card-name">Nordisk Bilpleje</div>
-          <div class="card-meta">København S · Folie, coating</div>
-          <div class="card-tags">
-            <span class="pill verified">Verificeret</span>
-            <span class="pill">5.0 ★ (89)</span>
-          </div>
-          <button class="card-cta" onclick="openLeadModal('Nordisk Bilpleje')">Få tilbud</button>
-        </div>
-        <div class="badge-premium">TOP</div>
-      </div>
-      <div class="card" data-city="odense" data-services="polering,indvendig rens">
-        <div>
-          <div class="card-name">Fyns Bil & Pleje</div>
-          <div class="card-meta">Odense · Polering, indvendig rens</div>
-          <div class="card-tags">
-            <span class="pill">4.4 ★ (31)</span>
-          </div>
-          <button class="card-cta" onclick="openLeadModal('Fyns Bil & Pleje')">Få tilbud</button>
-        </div>
-      </div>
-    </div>
+    <div class="results" id="resultsGrid"></div>
   </div>
 </section>
 
@@ -170,8 +125,9 @@
   <div class="wrap">
     <div class="shops-inner">
       <div>
+        <span class="pill verified" style="margin-bottom:12px; display:inline-block;">Gratis i opstartsfasen</span>
         <h2 style="text-align:left;">For bilpleje-butikker</h2>
-        <p class="sub" style="text-align:left; margin:0 0 0;">Bliv en af de butikker kunder ser først, når de søger i dit område. Skriv din mail, så sender vi dig detaljerne og aftaler opstart direkte.</p>
+        <p class="sub" style="text-align:left; margin:0 0 0;">Vi lancerer med et begrænset antal gratis pladser til de første butikker — ingen binding, ingen kortoplysninger. Skriv din mail, så aftaler vi opstart direkte.</p>
       </div>
       <form class="lead-form" name="butik-lead" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="handleLeadSubmit(event)">
         <input type="hidden" name="form-name" value="butik-lead">
