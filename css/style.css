@@ -202,6 +202,7 @@ section.search{
   background:var(--fog); color:#4B5563;
 }
 .pill.verified{background:var(--teal-bg); color:var(--teal); font-weight:600;}
+.pill.discount{background:var(--gold); color:var(--navy); font-weight:600;}
 .badge-premium{
   font-family:'JetBrains Mono', monospace;
   font-size:10px; letter-spacing:0.06em;

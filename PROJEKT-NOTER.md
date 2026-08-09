@@ -19,10 +19,12 @@ Ren HTML/CSS/JS, intet build-step.
 - `privatlivspolitik.html` — GDPR-privatlivspolitik (dataansvarlig: Daniel Mortensen, kontakt dymorte24@gmail.com)
 - `tak.html` — kvitteringsside efter formularsend (bruges også som konverteringsmål i Google Ads)
 - `logo-bilpleje-dk.png`, `banner-bilpleje-dk.png` — annonce-assets (kvadrat/liggende)
+- `hero-car-photo.jpg` — rigtigt CC0-foto (Karolina Grabowska, Pexels) brugt i før/efter-sliderens to lag; matte/farve-forskellen laves med CSS `filter`, ikke to forskellige billeder
 - `netlify.toml` — deploy-config
+- `bilpleje-dk-qr.png` (ligger på selve skrivebordet, ikke i projektmappen) — QR-kode der peger på den live side, genereret 9. aug 2026 til Daniel til print/deling
 
 ### Sådan tilføjer du en rigtig butik
-Butikskortene er ikke længere hardcodet HTML — de genereres fra et array kaldet `shops` øverst i `js/main.js`. For at tilføje en rigtig butik: tilføj et nyt objekt til arrayet med `name`, `city`, `cityKey` (lowercase, bruges til søgefilter), `services` (liste), `rating`, `reviews`, `verified` og `premium`. Ingen ændringer nødvendig i HTML.
+Butikskortene er ikke længere hardcodet HTML — de genereres fra et array kaldet `shops` øverst i `js/main.js`. For at tilføje en rigtig butik: tilføj et nyt objekt til arrayet med `name`, `city`, `cityKey` (lowercase, bruges til søgefilter), `services` (liste), `priceFrom` (tal, vises som "Fra X kr."), `rating`, `reviews` (antal), `verified`, `premium`, og valgfrit `sampleReview: { text, author }`. Ingen ændringer nødvendig i HTML.
 
 ## Formularer / leads
 - To Netlify Forms: `kunde-lead` ("Få tilbud"-knap på butikskort) og `butik-lead` ("For butikker"-sektion)
@@ -46,7 +48,17 @@ Butikskortene er ikke længere hardcodet HTML — de genereres fra et array kald
 - Alternativer der også var ledige, hvis minbilpleje.dk siden fortrydes: bilplejemarked.dk, bilplejemarkedet.dk
 - Endnu ikke købt — afventer bevist kundeinteresse fra Google Ads-kampagnen først
 
+## Anmeldelser
+- Kortene viser et fiktivt eksempel-citat pr. butik (`sampleReview`-feltet) — formålet er at give Daniel noget konkret at vise frem, når han pitcher en rigtig butik ("sådan vil en kundeanmeldelse se ud hos jer")
+- Der er IKKE bygget en rigtig anmeldelses-indsendelsesformular endnu. Planen, hvis/når det bliva relevant: en Netlify Form (samme mønster som lead-formularerne) hvor en kunde skriver anmeldelse → mail til Daniel → han godkender manuelt og tilføjer den til `sampleReview` i `shops`-arrayet. Bevidst IKKE fuldautomatisk (kræver en rigtig database/backend, som ikke giver mening at bygge endnu med 0 rigtige butikker)
+
+## Strategi drøftet (endnu ikke udført)
+- Daniel overvejer at fokusere først på ét lille geografisk område (fx Fyn): finde og onboarde alle bilpleje-butikker der, og køre en ny, lokalt målrettet Google Ads-kampagne (foreslået budget 100 kr./dag) i ca. 1 uge som test
+- Vigtigt teknisk forbehold givet videre til Daniel: hvis den nye lokale kampagne kører **samtidig** med den eksisterende landsdækkende (Performance Max-2, 40 kr./dag), kan de to kampagner byde mod hinanden i samme auktion for søgninger fra Fyn og gøre klik dyrere. Anbefaling: indsnævr hellere den eksisterende kampagnes målretning til Fyn i test-perioden, i stedet for at oprette en ny kampagne ved siden af
+- Daniel har bedt om IKKE at justere noget i kampagnen endnu — dette er kun en fremtidig plan, ikke udført
+
 ## Forretningsbeslutninger (vigtigt at huske hvorfor)
+- **Priser og "book direkte"-tekst rettet (9. aug 2026)** — sitet lovede priser og "ingen mellemled, kontakt direkte", men viste ingen priser og ALLE leads går rent faktisk til Daniels egen mail først (han er reelt mellemled lige nu). Kortene viser nu et `priceFrom`-eksempel-tal, og teksten siger nu ærligt "vi videresender din forespørgsel" i stedet for at love direkte kontakt
 - **Intet domæne endnu** — kører bevidst på netlify.app-adressen til at teste om der er kundeinteresse, før der investeres i et .dk-domæne
 - **Intet CVR** — kører som privatperson (Daniel Mortensen) indtil videre, ikke en registreret virksomhed
 - **Gratis for butikker i opstartsfasen** — bevidst valg om IKKE at bygge betaling/abonnement endnu. Begrundelse: ingen butikker er onboardet endnu, og at bede dem betale for en ubevist tjeneste er en hård sag at sælge. "TOP"-placering forbliver et fremtidigt betalt perk, men sælges ikke aktivt nu. Sitet er opdateret (9. aug 2026) med "Gratis i opstartsfasen"-badge i "For butikker"-sektionen for at gøre dette eksplicit og skabe en naturlig early-access-fortælling
@@ -54,7 +66,10 @@ Butikskortene er ikke længere hardcodet HTML — de genereres fra et array kald
 
 ## Ikke lavet endnu / naturlige næste skridt
 - Rigtige butiksdata i stedet for demo-cards (nu meget lettere at tilføje, se "Sådan tilføjer du en rigtig butik" ovenfor)
+- Fyn-fokus: opsøge rigtige butikker i ét område + evt. omlægge Google Ads-målretning dertil (drøftet, ikke udført — se "Strategi drøftet")
+- Anmeldelses-indsendelsesformular med manuel godkendelse (drøftet, ikke bygget — se "Anmeldelser")
 - Køb af minbilpleje.dk, når der er belæg for investeringen
 - Betalingsflow for butikker der vil have "TOP"-placering (bevidst udskudt, se forretningsbeslutninger)
 - Reel butiksverificering (den grønne "Verificeret"-pille er pt. kun visuel)
+- Overvej at rette selve overskriften "Book direkte" i trin 03 (brødteksten er rettet, men overskriften antyder stadig direkte booking) — Daniel valgte at lade den stå indtil videre
 - Følge op på Google Ads-performance efter et par dage/uger og justere budget/søgeord
