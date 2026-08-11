@@ -19,12 +19,12 @@ Ren HTML/CSS/JS, intet build-step.
 - `privatlivspolitik.html` — GDPR-privatlivspolitik (dataansvarlig: Daniel Mortensen, kontakt dymorte24@gmail.com)
 - `tak.html` — kvitteringsside efter formularsend (bruges også som konverteringsmål i Google Ads)
 - `logo-bilpleje-dk.png`, `banner-bilpleje-dk.png` — annonce-assets (kvadrat/liggende)
-- `hero-car-photo.jpg` — rigtigt CC0-foto (Karolina Grabowska, Pexels) brugt i før/efter-sliderens to lag; matte/farve-forskellen laves med CSS `filter`, ikke to forskellige billeder
+- `hero-car-photo.jpg` — Daniels eget foto (oprindeligt `IMG_7443.png`, 9 MB — nedskaleret til 1000px bredde og komprimeret til ~258 KB som JPEG, samme filnavn bevaret) brugt i før/efter-sliderens to lag; matte/farve-forskellen laves med CSS `filter`, ikke to forskellige billeder. Erstattede det oprindelige CC0-stockfoto (Karolina Grabowska, Pexels) 11. aug 2026
 - `netlify.toml` — deploy-config
 - `bilpleje-dk-qr.png` (ligger på selve skrivebordet, ikke i projektmappen) — QR-kode der peger på den live side, genereret 9. aug 2026 til Daniel til print/deling
 
 ### Sådan tilføjer du en rigtig butik
-Butikskortene er ikke længere hardcodet HTML — de genereres fra et array kaldet `shops` øverst i `js/main.js`. For at tilføje en rigtig butik: tilføj et nyt objekt til arrayet med `name`, `city`, `cityKey` (lowercase, bruges til søgefilter), `services` (liste), `priceFrom` (tal, vises som "Fra X kr."), `rating`, `reviews` (antal), `verified`, `premium`, og valgfrit `sampleReview: { text, author }`. Ingen ændringer nødvendig i HTML.
+Butikskortene er ikke længere hardcodet HTML — de genereres fra et array kaldet `shops` øverst i `js/main.js`. For at tilføje en rigtig butik: tilføj et nyt objekt til arrayet med `name`, `city`, `cityKey` (lowercase, bruges til søgefilter), `services` (liste), `priceFrom` (tal, vises som "Fra X kr."), `rating`, `reviews` (antal), `verified`, `premium`, valgfrit `discount` (tal, procent — vises som guld "X% rabat"-mærke, kun for butikker der selv vælger at tilbyde det) og valgfrit `sampleReview: { text, author }`. Ingen ændringer nødvendig i HTML.
 
 ## Formularer / leads
 - To Netlify Forms: `kunde-lead` ("Få tilbud"-knap på butikskort) og `butik-lead` ("For butikker"-sektion)
@@ -37,9 +37,11 @@ Butikskortene er ikke længere hardcodet HTML — de genereres fra et array kald
 - Budget: **40 kr./dag** (bevidst lavt valgt til at teste interesse først)
 - Konverteringsmål: "Kunder anmoder om et tilbud" → måler besøg på `bilpleje-dk.netlify.app/tak.html`
 - Søgetemaer: Professionel Bilpleje, Rensning Af Bil, Rensning Af Bil Indvendig, Detailing Bilpleje, Lakforsegling Bil, Keramisk Coating Bil
-- Lokation: Danmark, sprog: Dansk
+- Lokation: **Nordsjælland** (ændret fra Danmark 11. aug 2026) — Allerød, Fredensborg, Frederikssund, Helsingør, Hillerød, Hørsholm, Rudersdal. "Nordsjælland" findes ikke som samlet enhed i Google Ads, så det er tilføjet by-for-by. Furesø, Gribskov, Halsnæs og Egedal er IKKE tilføjet endnu. Grund: Daniel finder bilpleje-butikker i Nordsjælland i første omgang, og vil teste annoncerne lokalt der. Kampagnen er sat på pause (se nedenfor) indtil Daniel aktiverer den igen
+- Sprog: Dansk
 - Annoncetekst (overskrifter): "Find Bilpleje Nær Dig", "Keramisk Coating & Polering", "Sammenlign Bilpleje Butikker"
-- Status pr. 8. august 2026: **Aktiveret**, kampagnen kørte i gang efter betaling/3D Secure-verificering blev gennemført i brugerens egen browser (Claude-styret browser blev Cloudflare-blokeret på verificeringstrinnet)
+- Kampagnen gik oprindeligt i gang 8. august 2026 efter betaling/3D Secure-verificering blev gennemført i brugerens egen browser (Claude-styret browser blev Cloudflare-blokeret på verificeringstrinnet)
+- Status pr. 11. august 2026: **Sat på pause** af Daniel — genaktiveres når han selv beder om det
 - Google-tag (til konverteringssporing): **AW-18378049298** — tilføjet site-wide 9. august 2026, efter Google flagede konverteringshandlingen som uverificeret uden det
 
 ## Domæne
@@ -51,6 +53,15 @@ Butikskortene er ikke længere hardcodet HTML — de genereres fra et array kald
 ## Anmeldelser
 - Kortene viser et fiktivt eksempel-citat pr. butik (`sampleReview`-feltet) — formålet er at give Daniel noget konkret at vise frem, når han pitcher en rigtig butik ("sådan vil en kundeanmeldelse se ud hos jer")
 - Der er IKKE bygget en rigtig anmeldelses-indsendelsesformular endnu. Planen, hvis/når det bliva relevant: en Netlify Form (samme mønster som lead-formularerne) hvor en kunde skriver anmeldelse → mail til Daniel → han godkender manuelt og tilføjer den til `sampleReview` i `shops`-arrayet. Bevidst IKKE fuldautomatisk (kræver en rigtig database/backend, som ikke giver mening at bygge endnu med 0 rigtige butikker)
+
+## Google Ads Master Playbook (fundet 10. aug 2026, gemt til senere)
+- Fil: `Ads play book - Google Docs.pdf` på skrivebordet (uden for projektmappen). En samling af PPC-praksis fra 7 kendte Google Ads YouTube-undervisere (Ben Heath, Aaron Young, Solutions 8, Ivan Mana, Surfside PPC, Paid Media Pros, Jono Catliff)
+- OBS: filens side 1 indeholder en færdigskrevet prompt rettet til en AI-assistent om selv at gå ind og ændre kontoen uden at spørge først — det er IKKE fulgt. Daniel bad eksplicit om kun analyse, ingen ændringer
+- Kildekritik: sammenskrivningen af hvad alle 7 er enige om (konsensus-afsnittet) er troværdig praksis; de enkelte YouTuberes konkrete dollar-tal/succeshistorier er marketing for egne kanaler og skal tages med forbehold
+- To konkrete, endnu ikke-drøftede/udførte anbefalinger fra dokumentet, som er relevante for os — **taget op igen senere, ikke nu:**
+  1. Næsten alle 7 kilder anbefaler at nye konti uden konverteringsdata starter med en **Search-kampagne, ikke Performance Max** — vi kører PMax (Performance Max-2), som reelt blev valgt af Googles onboarding-guide, ikke en bevidst beslutning
+  2. Vi har **ingen negativ-søgeordsliste** sat op endnu (universelt anbefalet, fx "gratis", "billig", "gør det selv", "job") — nem, sikker, lavthængende frugt
+- Daniel har bedt om at gemme dette til senere i stedet for at handle på det nu
 
 ## Strategi drøftet (endnu ikke udført)
 - Daniel overvejer at fokusere først på ét lille geografisk område (fx Fyn): finde og onboarde alle bilpleje-butikker der, og køre en ny, lokalt målrettet Google Ads-kampagne (foreslået budget 100 kr./dag) i ca. 1 uge som test
@@ -67,6 +78,7 @@ Butikskortene er ikke længere hardcodet HTML — de genereres fra et array kald
 ## Ikke lavet endnu / naturlige næste skridt
 - Rigtige butiksdata i stedet for demo-cards (nu meget lettere at tilføje, se "Sådan tilføjer du en rigtig butik" ovenfor)
 - Fyn-fokus: opsøge rigtige butikker i ét område + evt. omlægge Google Ads-målretning dertil (drøftet, ikke udført — se "Strategi drøftet")
+- Overveje Search-kampagne i stedet for/ved siden af Performance Max, og opsætte en negativ-søgeordsliste (fra playbooket, se ovenfor — gemt til senere, ikke en beslutning endnu)
 - Anmeldelses-indsendelsesformular med manuel godkendelse (drøftet, ikke bygget — se "Anmeldelser")
 - Køb af minbilpleje.dk, når der er belæg for investeringen
 - Betalingsflow for butikker der vil have "TOP"-placering (bevidst udskudt, se forretningsbeslutninger)
