@@ -21,7 +21,40 @@ Ren HTML/CSS/JS, intet build-step.
 - `logo-bilpleje-dk.png`, `banner-bilpleje-dk.png` — annonce-assets (kvadrat/liggende)
 - `hero-car-photo.jpg` — Daniels eget foto (oprindeligt `IMG_7443.png`, 9 MB — nedskaleret til 1000px bredde og komprimeret til ~258 KB som JPEG, samme filnavn bevaret) brugt i før/efter-sliderens to lag; matte/farve-forskellen laves med CSS `filter`, ikke to forskellige billeder. Erstattede det oprindelige CC0-stockfoto (Karolina Grabowska, Pexels) 11. aug 2026
 - `netlify.toml` — deploy-config
+- `google0a9e92bd80e0a852.html` — Google Search Console-verifikationsfil, må IKKE slettes (se "Google Search Console" nedenfor)
 - `bilpleje-dk-qr.png` (ligger på selve skrivebordet, ikke i projektmappen) — QR-kode der peger på den live side, genereret 9. aug 2026 til Daniel til print/deling
+- `bilpleje/`, `keramisk-coating/`, `polering/`, `indvendig-rens/`, `folie/` — SEO-sider (by/ydelse/virksomhed), se "SEO-motor" nedenfor. Alle `noindex` (testdata)
+- `sitemap.xml`, `robots.txt` — se "SEO-motor" nedenfor
+
+## SEO-motor: by/ydelse/virksomheds-sider (bygget 11. aug 2026 — TESTDATA, ikke live-klar)
+Fuld lokal-SEO-struktur bygget efter Daniels detaljerede spec (inspireret af et dokument om "FindBilpleje.dk" — det navn/de tre rigtige virksomheder i dokumentet, Shine Wash/CH CarCare/GG AutoCare, er **bevidst IKKE brugt**. Kun de eksisterende 4 testbutikker fra `shops`-arrayet indgår).
+
+**Arkitektur-beslutning:** Ingen framework/build-værktøj findes i projektet (og intet Node.js på maskinen), så "fuldautomatisk dynamisk routing" (det spec'en egentlig bad om) er ikke muligt endnu. Løsningen er statiske HTML-filer, hånd/AI-genereret pr. by/ydelse/virksomhed — holdbart ved nuværende skala (4 butikker), men bliver en flaskehals ved 100+ butikker. Den beslutning tages når/hvis I når dertil.
+
+**URL-struktur** (mappe + `index.html` = pæne URL'er uden `.html`, virker automatisk på Netlify):
+- Bysider: `/bilpleje/aarhus/`, `/bilpleje/kobenhavn/`, `/bilpleje/odense/`
+- Virksomhedssider: `/bilpleje/aarhus/glansen-detailing/`, `/bilpleje/aarhus/autoshine-aarhus/`, `/bilpleje/kobenhavn/nordisk-bilpleje/`, `/bilpleje/odense/fyns-bil-pleje/`
+- Ydelse+by (kun hvor der er et reelt match — ingen tomme sider): `/keramisk-coating/aarhus/`, `/polering/aarhus/`, `/indvendig-rens/aarhus/`, `/keramisk-coating/kobenhavn/`, `/folie/kobenhavn/`, `/polering/odense/`, `/indvendig-rens/odense/`
+
+**Hver side har:** unik title/meta description, klikbare breadcrumbs, BreadcrumbList structured data, canonical tag, og på virksomhedssider LocalBusiness structured data (kun tal der allerede findes i `shops`-arrayet — intet opfundet).
+
+**Virksomhedssider har to niveauer** (samme mønster som de tidligere mockups):
+- **Verificeret** (Glansen Detailing, Nordisk Bilpleje): 2 billeder + "facts"-grid (fx "8+ års erfaring")
+- **Ikke-verificeret** (AutoShine Aarhus, Fyns Bil & Pleje): kun navn, ydelser, pris, anmeldelse
+
+**KRITISK — alt er `noindex` lige nu:** Alle 14 nye sider har `<meta name="robots" content="noindex">`, præcis som privatlivspolitik/tak-siderne. Google indekserer IKKE testdataen. `sitemap.xml` indeholder alle siderne til test af selve mekanismen, men må **ikke indsendes til Search Console** før testdata er erstattet med rigtige butikker og noindex er fjernet de rigtige steder. `robots.txt` er permissiv (blokerer intet — noindex-tags gør arbejdet).
+
+**Ændringer i eksisterende filer (design/funktionalitet upåvirket, testet):**
+- `js/main.js`: hvert shop-objekt har nu et `profileUrl`-felt. Hele butikskortet (ikke kun navnet) linker nu til profilsiden, via et usynligt `.card-link-overlay`-lag der dækker hele kortet. "Få tilbud"-knappen ligger over overlayet (z-index) og åbner stadig modalen uden at navigere væk — testet ved klik direkte på knappen. Søgefilter testet og virker uændret
+- `css/style.css`: tilføjet `.seo-page`, `.breadcrumb`, `.related-links`, `.card-link-overlay` (rent additivt). `.card` fik `position:relative`, `.card-cta` fik `position:relative; z-index:2` (nødvendigt for at overlayet ikke blokerer knappen)
+- De 12 butikskort på de 10 nye SEO-sider (bysider + ydelse-sider) har samme "hele kortet er klikbart"-mønster
+- De to gamle mockup-filer i `butik/`-mappen er slettet (afløst af den rigtige struktur under `/bilpleje/`)
+
+**Næste skridt når Daniel er klar:**
+1. Erstat testdata med de tre rigtige virksomheder (Shine Wash, CH CarCare, GG AutoCare) i `shops`-arrayet + generér deres sider efter samme mønster
+2. Fjern `noindex` fra de sider der har rigtigt indhold
+3. Indsend `sitemap.xml` til Google Search Console
+4. Overvej "om os"-tekst-felt i butiks-optag-skemaet, så rigtige butikker leverer rigtig beskrivelsestekst i stedet for eksempeltekst
 
 ### Sådan tilføjer du en rigtig butik
 Butikskortene er ikke længere hardcodet HTML — de genereres fra et array kaldet `shops` øverst i `js/main.js`. For at tilføje en rigtig butik: tilføj et nyt objekt til arrayet med `name`, `city`, `cityKey` (lowercase, bruges til søgefilter), `services` (liste), `priceFrom` (tal, vises som "Fra X kr."), `rating`, `reviews` (antal), `verified`, `premium`, valgfrit `discount` (tal, procent — vises som guld "X% rabat"-mærke, kun for butikker der selv vælger at tilbyde det) og valgfrit `sampleReview: { text, author }`. Ingen ændringer nødvendig i HTML.
@@ -44,6 +77,14 @@ Butikskortene er ikke længere hardcodet HTML — de genereres fra et array kald
 - Status pr. 11. august 2026: **Sat på pause** af Daniel — genaktiveres når han selv beder om det
 - Google-tag (til konverteringssporing): **AW-18378049298** — tilføjet site-wide 9. august 2026, efter Google flagede konverteringshandlingen som uverificeret uden det
 
+## Google Search Console
+- Sat op og verificeret 11. august 2026 for `https://bilpleje-dk.netlify.app/` (webadressepræfiks-metode, da vi ikke ejer et rigtigt domæne endnu)
+- Verificeringsmetode: HTML-fil (`google0a9e92bd80e0a852.html` i rodmappen — må ikke slettes, ellers mistes verificeringen)
+- Formål: viser gratis/organisk søgetrafik og hvilke sider Google rent faktisk har indekseret — adskilt fra Google Ads, som kun viser betalt trafik
+- Ingen data endnu (helt ny opsætning, Google skriver "prøv igen om et døgns tid")
+- Ikke lavet endnu: sitemap.xml er ikke oprettet/indsendt — ville hjælpe Google finde sider hurtigere, especially hvis butiks-profilsiderne (se nedenfor) bliver til virkelighed
+- Hvis/når domænet skifter til minbilpleje.dk, skal ejerskabet verificeres igen for det nye domæne
+
 ## Domæne
 - **bilpleje.dk er optaget** siden 1998 (peger på en bilpleje-blog, bilpleje.nu) — ikke muligt at købe
 - Valgt fremtidigt domænenavn: **minbilpleje.dk** (bekræftet ledigt 9. august 2026 via punktum.dk). Daniel foretrak det for at det er kort, selvom "min" signalerer enkelt-butik mere end markedsplads — accepteret tradeoff
@@ -63,10 +104,10 @@ Butikskortene er ikke længere hardcodet HTML — de genereres fra et array kald
   2. Vi har **ingen negativ-søgeordsliste** sat op endnu (universelt anbefalet, fx "gratis", "billig", "gør det selv", "job") — nem, sikker, lavthængende frugt
 - Daniel har bedt om at gemme dette til senere i stedet for at handle på det nu
 
-## Strategi drøftet (endnu ikke udført)
-- Daniel overvejer at fokusere først på ét lille geografisk område (fx Fyn): finde og onboarde alle bilpleje-butikker der, og køre en ny, lokalt målrettet Google Ads-kampagne (foreslået budget 100 kr./dag) i ca. 1 uge som test
-- Vigtigt teknisk forbehold givet videre til Daniel: hvis den nye lokale kampagne kører **samtidig** med den eksisterende landsdækkende (Performance Max-2, 40 kr./dag), kan de to kampagner byde mod hinanden i samme auktion for søgninger fra Fyn og gøre klik dyrere. Anbefaling: indsnævr hellere den eksisterende kampagnes målretning til Fyn i test-perioden, i stedet for at oprette en ny kampagne ved siden af
-- Daniel har bedt om IKKE at justere noget i kampagnen endnu — dette er kun en fremtidig plan, ikke udført
+## Strategi — geografisk fokus (OPDATERET, delvist udført)
+- Oprindelig idé (10. aug 2026): fokusere først på ét lille geografisk område (dengang nævnt: Fyn) for at finde og onboarde bilpleje-butikker lokalt, og teste Google Ads koncentreret dér
+- **Ændret til Nordsjælland** (11. aug 2026) — det er der Daniel rent faktisk har fundet bilpleje-butikkerne i første omgang, ikke Fyn. Kampagnens målretning er ændret til Nordsjælland-byer (se "Google Ads" ovenfor) i stedet for at oprette en ny separat kampagne, netop for at undgå at to kampagner byder mod hinanden i samme auktion
+- Kampagnen er sat på pause, mens Daniel finder butikker — aktiveres igen når han er klar
 
 ## Forretningsbeslutninger (vigtigt at huske hvorfor)
 - **Priser og "book direkte"-tekst rettet (9. aug 2026)** — sitet lovede priser og "ingen mellemled, kontakt direkte", men viste ingen priser og ALLE leads går rent faktisk til Daniels egen mail først (han er reelt mellemled lige nu). Kortene viser nu et `priceFrom`-eksempel-tal, og teksten siger nu ærligt "vi videresender din forespørgsel" i stedet for at love direkte kontakt
@@ -77,7 +118,7 @@ Butikskortene er ikke længere hardcodet HTML — de genereres fra et array kald
 
 ## Ikke lavet endnu / naturlige næste skridt
 - Rigtige butiksdata i stedet for demo-cards (nu meget lettere at tilføje, se "Sådan tilføjer du en rigtig butik" ovenfor)
-- Fyn-fokus: opsøge rigtige butikker i ét område + evt. omlægge Google Ads-målretning dertil (drøftet, ikke udført — se "Strategi drøftet")
+- Nordsjælland-fokus: opsøge rigtige butikker i de 7 tilføjede byer (se "Google Ads" ovenfor) — kampagne-målretning er allerede lavet, mangler kun rigtige butiksdata og genaktivering
 - Overveje Search-kampagne i stedet for/ved siden af Performance Max, og opsætte en negativ-søgeordsliste (fra playbooket, se ovenfor — gemt til senere, ikke en beslutning endnu)
 - Anmeldelses-indsendelsesformular med manuel godkendelse (drøftet, ikke bygget — se "Anmeldelser")
 - Køb af minbilpleje.dk, når der er belæg for investeringen

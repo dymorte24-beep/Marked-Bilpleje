@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TEST-sitemap, 11. aug 2026. Alle /bilpleje/, /keramisk-coating/, /polering/,
+  /indvendig-rens/ og /folie/ -sider er bygget på TESTDATA (de 4 demo-butikker
+  i js/main.js) og har <meta name="robots" content="noindex">. Indsend IKKE
+  denne sitemap til Search Console før testdataen er erstattet med rigtige
+  butikker og noindex er fjernet fra de relevante sider.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://bilpleje-dk.netlify.app/</loc></url>
+
+  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/aarhus/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/aarhus/glansen-detailing/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/aarhus/autoshine-aarhus/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/kobenhavn/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/kobenhavn/nordisk-bilpleje/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/odense/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/odense/fyns-bil-pleje/</loc></url>
+
+  <url><loc>https://bilpleje-dk.netlify.app/keramisk-coating/aarhus/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/polering/aarhus/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/indvendig-rens/aarhus/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/keramisk-coating/kobenhavn/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/folie/kobenhavn/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/polering/odense/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/indvendig-rens/odense/</loc></url>
+</urlset>
