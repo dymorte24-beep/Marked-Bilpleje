@@ -8,25 +8,25 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../../../css/style.css">
 </head>
 <body>
 
 <nav>
   <div class="wrap">
-    <a href="../index.html" class="logo">bilpleje<span>.dk</span></a>
+    <a href="../../../index.html" class="logo">bilpleje<span>.dk</span></a>
     <div class="nav-links">
-      <a href="../index.html#search">Find en butik</a>
-      <a href="../index.html#shops">For butikker</a>
+      <a href="../../../index.html#search">Find en butik</a>
+      <a href="../../../index.html#shops">For butikker</a>
     </div>
-    <a href="../index.html#shops" class="nav-cta">Bliv listet</a>
+    <a href="../../../index.html#shops" class="nav-cta">Bliv listet</a>
   </div>
 </nav>
 
 <section class="seo-page">
   <div class="wrap">
     <div class="breadcrumb" id="breadcrumb">
-      <a href="../index.html">Forside</a><span class="sep">/</span>Bilpleje
+      <a href="../../../index.html">Forside</a><span class="sep">/</span>Bilpleje
     </div>
 
     <div id="shopContent">
@@ -36,7 +36,7 @@
 </section>
 
 <footer>
-  <a href="../privatlivspolitik.html">Privatlivspolitik</a> · bilpleje.dk — prototype
+  <a href="../../../privatlivspolitik.html">Privatlivspolitik</a> · bilpleje.dk — prototype
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -59,8 +59,8 @@ async function loadShop(){
 
   document.title = shop.name + ' | Bilpleje.dk';
   breadcrumb.innerHTML = `
-    <a href="../index.html">Forside</a><span class="sep">/</span>
-    <a href="../index.html#search">Bilpleje</a><span class="sep">/</span>${shop.name}
+    <a href="../../../index.html">Forside</a><span class="sep">/</span>
+    <a href="../../../index.html#search">Bilpleje</a><span class="sep">/</span>${shop.name}
   `;
 
   content.innerHTML = `
@@ -69,7 +69,7 @@ async function loadShop(){
     <div class="card-tags" style="margin-bottom:20px;">
       <span class="pill">Eksempelpris: fra ${shop.price_from} kr.</span>
     </div>
-    <a href="../index.html#search"><button class="btn-primary">Få tilbud fra ${shop.name}</button></a>
+    <a href="../../../index.html#search"><button class="btn-primary">Få tilbud fra ${shop.name}</button></a>
   `;
 }
 loadShop();
