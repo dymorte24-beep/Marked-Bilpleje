@@ -181,6 +181,16 @@ section.search{
   font-size:15px;
   cursor:pointer;
 }
+.demo-notice{
+  background:#FFFBF2;
+  border:1px solid var(--gold);
+  border-radius:8px;
+  padding:12px 16px;
+  font-size:13px;
+  color:var(--navy);
+  margin-bottom:16px;
+}
+.demo-notice a{color:var(--navy); font-weight:600;}
 .results{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
 .card{
   position:relative;

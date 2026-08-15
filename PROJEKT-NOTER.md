@@ -4,6 +4,22 @@
 Markedsplads-side der forbinder private kunder med bilpleje-butikker i Danmark.
 Gratis for kunder, butikker betaler på sigt for listing/topplacering.
 
+## ⚠ Google Ads-konto suspenderet (14.-15. aug 2026) — VIGTIGT
+Kontoen blev suspenderet med begrundelsen **"Uacceptabel forretningspraksis"** (grov overtrædelse). Årsag (mest sandsynlig, ud fra Googles egen politiktekst om "urigtige oplysninger om din virksomhed"): annoncerne kørte til en side med **fiktive tillids-signaler** på de 4 demo-butikker, der så ægte ud:
+- "Verificeret"-mærke på butikker, der ikke er rigtige/tilmeldte
+- Fiktive ratings/anmeldelsestal (fx "4.9 ★ (112)")
+- Fiktive navngivne kunde-citater ("Mette, Aarhus" m.fl.)
+- Fiktive "facts" på profilsider (fx "8+ års erfaring", "500+ biler behandlet", "Certificeret coating-partner")
+- `aggregateRating` i LocalBusiness structured data (schema.org) — maskinlæsbar falsk rating, sandsynligvis den mest alvorlige enkeltfaktor
+- "TOP"/rabat-mærker der antyder en reel, betalt aftale med en ikke-eksisterende butik
+- Samme stock-foto genbrugt som "galleri" for to forskellige "butikker"
+
+**Fix udført (15. aug 2026):** Alle ovenstående fjernet fra hele sitet (forside, alle 3 bysider, alle 4 profilsider, alle 7 ydelse-sider). Tilbage er kun: navn, by, ydelser, et eksempel-prisniveau (nu tydeligt mærket "Eksempelpris"), og en synlig bjælke der siger sitet er under opbygning og butikkerne er eksempler. `aggregateRating` og hele LocalBusiness-blokken er fjernet fra JSON-LD på alle 4 profilsider (BreadcrumbList beholdt, den er bare navigation, ingen påstand om en virksomhed).
+
+**Status:** Rettelserne er pushet live. En appel til Google er udkast, endnu ikke sendt — skal godkendes af Daniel først, og bør kun sendes når rettelserne er bekræftet live, da gentagne/ubegrundede appeller kan begrænse retten til at appellere igen.
+
+**Lærdom fremadrettet:** Når rigtige butikker tilmeldes, må rating/anmeldelser/verificeret-status kun vises, hvis tallene er ægte (fx fra en rigtig Google-anmeldelse butikken selv leverer dokumentation for) — aldrig eksempeltal på en side, der er mål for betalt trafik.
+
 ## Hvor tingene ligger
 - **Lokal projektmappe:** `C:\Users\Daniel\Desktop\bilpleje-dk`
 - **GitHub-repo:** https://github.com/dymorte24-beep/Marked-Bilpleje
@@ -26,7 +42,8 @@ Ren HTML/CSS/JS, intet build-step.
 - `bilpleje/`, `keramisk-coating/`, `polering/`, `indvendig-rens/`, `folie/` — SEO-sider (by/ydelse/virksomhed), se "SEO-motor" nedenfor. Alle `noindex` (testdata)
 - `sitemap.xml`, `robots.txt` — se "SEO-motor" nedenfor
 
-## SEO-motor: by/ydelse/virksomheds-sider (bygget 11. aug 2026 — TESTDATA, ikke live-klar)
+## SEO-motor: by/ydelse/virksomheds-sider (bygget 11. aug 2026, pushet live 14. aug 2026 — TESTDATA, ikke søge-klar)
+**Status:** Alle filer er pushet til GitHub og ligger nu offentligt på `bilpleje-dk.netlify.app` (commit `7209e5e`). "Offentligt tilgængelig" ≠ "indekseret" — alle 14 nye sider er stadig `noindex`, så Google viser dem ikke i søgeresultater, selvom de kan besøges direkte via URL.
 Fuld lokal-SEO-struktur bygget efter Daniels detaljerede spec (inspireret af et dokument om "FindBilpleje.dk" — det navn/de tre rigtige virksomheder i dokumentet, Shine Wash/CH CarCare/GG AutoCare, er **bevidst IKKE brugt**. Kun de eksisterende 4 testbutikker fra `shops`-arrayet indgår).
 
 **Arkitektur-beslutning:** Ingen framework/build-værktøj findes i projektet (og intet Node.js på maskinen), så "fuldautomatisk dynamisk routing" (det spec'en egentlig bad om) er ikke muligt endnu. Løsningen er statiske HTML-filer, hånd/AI-genereret pr. by/ydelse/virksomhed — holdbart ved nuværende skala (4 butikker), men bliver en flaskehals ved 100+ butikker. Den beslutning tages når/hvis I når dertil.
@@ -49,6 +66,8 @@ Fuld lokal-SEO-struktur bygget efter Daniels detaljerede spec (inspireret af et 
 - `css/style.css`: tilføjet `.seo-page`, `.breadcrumb`, `.related-links`, `.card-link-overlay` (rent additivt). `.card` fik `position:relative`, `.card-cta` fik `position:relative; z-index:2` (nødvendigt for at overlayet ikke blokerer knappen)
 - De 12 butikskort på de 10 nye SEO-sider (bysider + ydelse-sider) har samme "hele kortet er klikbart"-mønster
 - De to gamle mockup-filer i `butik/`-mappen er slettet (afløst af den rigtige struktur under `/bilpleje/`)
+
+**Fejlsøgning 14. aug 2026 — "klikker Glansen Detailing, lander på Odense":** Testet grundigt på den live production-side (ikke kun lokalt): (1) direkte klik på Glansen Detailing-kortet på `/bilpleje/aarhus/`-bysiden → lander korrekt på Glansen-profilen; (2) samme test fra forsidens søgeresultater → samme korrekte resultat; (3) alle 4 kort-links inspiceret direkte i DOM'en (`getBoundingClientRect()`) — hver overlay har korrekt href og ingen af kortenes klik-områder overlapper hinanden. Ingen fejl fundet i koden. Tjekkede også om hero-billedet kunne forårsage layout-shift (som kan give fejlklik hvis siden "hopper" lige efter man trykker) — det gør det ikke, `.slider-box` har `aspect-ratio:4/3` sat, så pladsen er reserveret før billedet loader. Konklusion: koden er korrekt. Hvis det sker igen, brug for gerne: enhed (mobil/computer), browser, og præcis hvor på kortet der blev trykket.
 
 **Næste skridt når Daniel er klar:**
 1. Erstat testdata med de tre rigtige virksomheder (Shine Wash, CH CarCare, GG AutoCare) i `shops`-arrayet + generér deres sider efter samme mønster

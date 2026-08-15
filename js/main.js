@@ -1,29 +1,27 @@
 // Butikker — tilføj en ny butik ved at tilføje et objekt til denne liste
+// OBS: rating/anmeldelser/verificeret-mærke/rabat er bevidst IKKE med her.
+// Disse butikker er eksempeldata, og det ville være urigtige oplysninger at vise dem som verificerede/anmeldte.
+// Tilføj kun de felter tilbage, når der er en rigtig, tilmeldt butik med ægte tal bag.
 const shops = [
-  { name: "Glansen Detailing", city: "Aarhus C", cityKey: "aarhus", services: ["Keramisk coating", "Polering"], priceFrom: 799, rating: 4.9, reviews: 112, verified: true, premium: true, discount: 10, sampleReview: { text: "Super hurtig og grundig — bilen strålede bagefter.", author: "Mette, Aarhus" }, profileUrl: "bilpleje/aarhus/glansen-detailing/" },
-  { name: "AutoShine Aarhus", city: "Aarhus N", cityKey: "aarhus", services: ["Indvendig rens", "Polering"], priceFrom: 349, rating: 4.6, reviews: 54, verified: false, premium: false, sampleReview: { text: "Fair pris og professionelt arbejde hele vejen igennem.", author: "Jonas, Aarhus" }, profileUrl: "bilpleje/aarhus/autoshine-aarhus/" },
-  { name: "Nordisk Bilpleje", city: "København S", cityKey: "københavn", services: ["Folie", "Keramisk coating"], priceFrom: 899, rating: 5.0, reviews: 89, verified: true, premium: true, sampleReview: { text: "Anbefaler dem 100% — kommer helt sikkert igen.", author: "Sofie, København" }, profileUrl: "bilpleje/kobenhavn/nordisk-bilpleje/" },
-  { name: "Fyns Bil & Pleje", city: "Odense", cityKey: "odense", services: ["Polering", "Indvendig rens"], priceFrom: 399, rating: 4.4, reviews: 31, verified: false, premium: false, sampleReview: { text: "Rigtig god service — bilen så ud som ny.", author: "Peter, Odense" }, profileUrl: "bilpleje/odense/fyns-bil-pleje/" }
+  { name: "Glansen Detailing", city: "Aarhus C", cityKey: "aarhus", services: ["Keramisk coating", "Polering"], priceFrom: 799, profileUrl: "bilpleje/aarhus/glansen-detailing/" },
+  { name: "AutoShine Aarhus", city: "Aarhus N", cityKey: "aarhus", services: ["Indvendig rens", "Polering"], priceFrom: 349, profileUrl: "bilpleje/aarhus/autoshine-aarhus/" },
+  { name: "Nordisk Bilpleje", city: "København S", cityKey: "københavn", services: ["Folie", "Keramisk coating"], priceFrom: 899, profileUrl: "bilpleje/kobenhavn/nordisk-bilpleje/" },
+  { name: "Fyns Bil & Pleje", city: "Odense", cityKey: "odense", services: ["Polering", "Indvendig rens"], priceFrom: 399, profileUrl: "bilpleje/odense/fyns-bil-pleje/" }
 ];
 
 function renderShops(){
   const grid = document.getElementById('resultsGrid');
   grid.innerHTML = shops.map(shop => `
-    <div class="card${shop.premium ? ' premium' : ''}" data-city="${shop.cityKey}" data-services="${shop.services.join(',').toLowerCase()}">
+    <div class="card" data-city="${shop.cityKey}" data-services="${shop.services.join(',').toLowerCase()}">
       ${shop.profileUrl ? `<a class="card-link-overlay" href="${shop.profileUrl}" aria-label="Se profil for ${shop.name}"></a>` : ''}
       <div>
         <div class="card-name">${shop.name}</div>
         <div class="card-meta">${shop.city} · ${shop.services.join(', ')}</div>
         <div class="card-tags">
-          ${shop.verified ? '<span class="pill verified">Verificeret</span>' : ''}
-          <span class="pill">${shop.rating.toFixed(1)} ★ (${shop.reviews})</span>
-          <span class="pill">Fra ${shop.priceFrom} kr.</span>
-          ${shop.discount ? `<span class="pill discount">${shop.discount}% rabat</span>` : ''}
+          <span class="pill">Eksempelpris: fra ${shop.priceFrom} kr.</span>
         </div>
-        ${shop.sampleReview ? `<div class="card-review">"${shop.sampleReview.text}" — ${shop.sampleReview.author}</div>` : ''}
         <button class="card-cta" onclick="openLeadModal('${shop.name.replace(/'/g, "\\'")}')">Få tilbud</button>
       </div>
-      ${shop.premium ? '<div class="badge-premium">TOP</div>' : ''}
     </div>
   `).join('');
 }
