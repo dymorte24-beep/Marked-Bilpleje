@@ -16,7 +16,7 @@ Kontoen blev suspenderet med begrundelsen **"Uacceptabel forretningspraksis"** (
 
 **Fix udført (15. aug 2026):** Alle ovenstående fjernet fra hele sitet (forside, alle 3 bysider, alle 4 profilsider, alle 7 ydelse-sider). Tilbage er kun: navn, by, ydelser, et eksempel-prisniveau (nu tydeligt mærket "Eksempelpris"), og en synlig bjælke der siger sitet er under opbygning og butikkerne er eksempler. `aggregateRating` og hele LocalBusiness-blokken er fjernet fra JSON-LD på alle 4 profilsider (BreadcrumbList beholdt, den er bare navigation, ingen påstand om en virksomhed).
 
-**Status:** Rettelserne er pushet live. En appel til Google er udkast, endnu ikke sendt — skal godkendes af Daniel først, og bør kun sendes når rettelserne er bekræftet live, da gentagne/ubegrundede appeller kan begrænse retten til at appellere igen.
+**Status:** Rettelserne er pushet live og bekræftet på den rigtige produktionsside. Appel indsendt til Google 15. aug 2026 (Daniel gennemførte selv reCAPTCHA'en og tryk på Send). Google svarer normalt inden for 1-3 hverdage, kan tage længere. Kampagnen er fortsat sat på pause, indtil kontoen forhåbentlig genåbnes.
 
 **Lærdom fremadrettet:** Når rigtige butikker tilmeldes, må rating/anmeldelser/verificeret-status kun vises, hvis tallene er ægte (fx fra en rigtig Google-anmeldelse butikken selv leverer dokumentation for) — aldrig eksempeltal på en side, der er mål for betalt trafik.
 
@@ -75,8 +75,25 @@ Fuld lokal-SEO-struktur bygget efter Daniels detaljerede spec (inspireret af et 
 3. Indsend `sitemap.xml` til Google Search Console
 4. Overvej "om os"-tekst-felt i butiks-optag-skemaet, så rigtige butikker leverer rigtig beskrivelsestekst i stedet for eksempeltekst
 
-### Sådan tilføjer du en rigtig butik
-Butikskortene er ikke længere hardcodet HTML — de genereres fra et array kaldet `shops` øverst i `js/main.js`. For at tilføje en rigtig butik: tilføj et nyt objekt til arrayet med `name`, `city`, `cityKey` (lowercase, bruges til søgefilter), `services` (liste), `priceFrom` (tal, vises som "Fra X kr."), `rating`, `reviews` (antal), `verified`, `premium`, valgfrit `discount` (tal, procent — vises som guld "X% rabat"-mærke, kun for butikker der selv vælger at tilbyde det) og valgfrit `sampleReview: { text, author }`. Ingen ændringer nødvendig i HTML.
+### Sådan tilføjer du en rigtig butik (OPDATERET 15. aug 2026 — se "Database og admin-panel" nedenfor)
+Butikkerne ligger IKKE længere i `js/main.js` — de ligger i Supabase-databasen (tabellen `shops`). Nemmeste måde at tilføje en rigtig butik lige nu: bed mig gøre det, eller indsæt en ny række direkte i Supabase (Table Editor eller SQL). Felter: `name`, `city`, `city_key` (lowercase, bruges til søgefilter), `services` (liste), `price_from` (tal), `tier` (`gratis`/`betalt`), `verificeret` (kun sandt, når du selv har bekræftet butikken er ægte — se advarsel nedenfor), `godkendt` (skal være `true` for at butikken vises), `profile_url`. Et fremtidigt skridt er en formular i admin-panelet, så det ikke kræver SQL.
+
+## Database og admin-panel (bygget 15. aug 2026)
+Efter Google Ads-suspenderingen (se nedenfor) bad Daniel om et rigtigt system: en database i stedet for hardcodet data, og et admin-panel kun til ham med overblik over butiks-status og indkomne tilbudsforespørgsler.
+
+**Teknologi:** Supabase (gratis plan, hostet i eu-west-1/Irland). Konto oprettet af Daniel selv (dymorte24@gmail.com) — jeg opretter aldrig konti på tredjepartstjenester.
+- **Projekt-URL:** `https://xeosltdpvkcaudiijtge.supabase.co`
+- **Publishable/anon-nøgle** ligger direkte i `js/main.js` og `admin/index.html` — det er meningen, den er lavet til at være offentlig og styres af Row Level Security (RLS), ikke hemmelighed
+- **To tabeller:** `shops` (erstatter det gamle hardcodede array) og `tilbud_anmodninger` (hver "Få tilbud"-indsendelse)
+- **RLS-regler:** alle kan læse `shops`; kun en logget ind admin kan oprette/redigere/slette. Alle kan indsætte i `tilbud_anmodninger` (så kunder kan sende uden login); kun admin kan læse forespørgslerne
+
+**Forsiden (`js/main.js`)** henter nu butikker live fra databasen (`loadShops()`) i stedet for et hardcodet array — udseendet for besøgende er uændret. Lead-formularen ("Få tilbud") gemmer nu forespørgslen i `tilbud_anmodninger` UDOVER den eksisterende mail via Netlify Forms (rørt ikke ved den del). OBS: brugte `Promise.allSettled` for at vente på begge kald, før siden skifter til tak-siden — ellers kan navigationen nå at afbryde database-kaldet, før det er færdigt (fundet under test).
+
+**Admin-panel:** `/admin/` (noindex, ikke en del af den offentlige SEO-struktur). Login med mail/adgangskode via Supabase Auth. Viser en tabel over alle butikker (navn, by, tier, verificeret, godkendt) og en liste over alle tilbudsforespørgsler. Har en "skift adgangskode"-boks, fordi Daniels bruger blev oprettet via invitations-mail (han sætter selv sin adgangskode ved første login — jeg har aldrig kendt eller indtastet den).
+
+**Ikke testet af mig endnu:** Selve det indloggede admin-panel-view (tabellerne med rigtige data). Login-siden virker og fejlfrit, og selve datalaget er testet grundigt via direkte SQL-forespørgsler og en rigtig test-indsendelse gennem formularen — men jeg har ikke Daniels adgangskode og kunne derfor ikke se dashboardet selv. Daniel skal tjekke sin mail for invitationen, sætte en adgangskode, og bekræfte dashboardet ser rigtigt ud.
+
+**Naturlige næste skridt:** en formular i admin-panelet til at oprette/redigere butikker uden SQL; en offentlig tilmeldingsformular til butikker der selv vil oprette en profil (med `godkendt = false` som standard, så Daniel skal godkende før den vises — vigtigt efter suspenderings-lektien: intet går live uautoriseret).
 
 ## Formularer / leads
 - To Netlify Forms: `kunde-lead` ("Få tilbud"-knap på butikskort) og `butik-lead` ("For butikker"-sektion)
@@ -109,6 +126,7 @@ Butikskortene er ikke længere hardcodet HTML — de genereres fra et array kald
 - Valgt fremtidigt domænenavn: **minbilpleje.dk** (bekræftet ledigt 9. august 2026 via punktum.dk). Daniel foretrak det for at det er kort, selvom "min" signalerer enkelt-butik mere end markedsplads — accepteret tradeoff
 - Alternativer der også var ledige, hvis minbilpleje.dk siden fortrydes: bilplejemarked.dk, bilplejemarkedet.dk
 - Endnu ikke købt — afventer bevist kundeinteresse fra Google Ads-kampagnen først
+- Genbekræftet 15. aug 2026 (samme dag som Ads-suspenderingen): Daniel vil stadig vente. Ekstra grund lige nu: kontoen er suspenderet og kampagnen på pause, så der er ingen aktiv trafik at måle interesse ud fra. Genoptag domænesnakken når kontoen er genåbnet og kampagnen kører igen
 
 ## Anmeldelser
 - Kortene viser et fiktivt eksempel-citat pr. butik (`sampleReview`-feltet) — formålet er at give Daniel noget konkret at vise frem, når han pitcher en rigtig butik ("sådan vil en kundeanmeldelse se ud hos jer")

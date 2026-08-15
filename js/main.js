@@ -1,13 +1,28 @@
-// Butikker — tilføj en ny butik ved at tilføje et objekt til denne liste
-// OBS: rating/anmeldelser/verificeret-mærke/rabat er bevidst IKKE med her.
-// Disse butikker er eksempeldata, og det ville være urigtige oplysninger at vise dem som verificerede/anmeldte.
-// Tilføj kun de felter tilbage, når der er en rigtig, tilmeldt butik med ægte tal bag.
-const shops = [
-  { name: "Glansen Detailing", city: "Aarhus C", cityKey: "aarhus", services: ["Keramisk coating", "Polering"], priceFrom: 799, profileUrl: "bilpleje/aarhus/glansen-detailing/" },
-  { name: "AutoShine Aarhus", city: "Aarhus N", cityKey: "aarhus", services: ["Indvendig rens", "Polering"], priceFrom: 349, profileUrl: "bilpleje/aarhus/autoshine-aarhus/" },
-  { name: "Nordisk Bilpleje", city: "København S", cityKey: "københavn", services: ["Folie", "Keramisk coating"], priceFrom: 899, profileUrl: "bilpleje/kobenhavn/nordisk-bilpleje/" },
-  { name: "Fyns Bil & Pleje", city: "Odense", cityKey: "odense", services: ["Polering", "Indvendig rens"], priceFrom: 399, profileUrl: "bilpleje/odense/fyns-bil-pleje/" }
-];
+// Butikkerne hentes nu fra Supabase (se admin-panelet) i stedet for at være hardcodet her.
+// OBS: rating/anmeldelser/verificeret-mærke/rabat vises bevidst IKKE offentligt.
+// Disse butikker er stadig eksempeldata, og det ville være urigtige oplysninger at vise dem som verificerede/anmeldte.
+const SUPABASE_URL = 'https://xeosltdpvkcaudiijtge.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_iG0iWu8szH_7-uwErdxN9g_pE9YGFWd';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let shops = [];
+
+async function loadShops(){
+  const { data, error } = await db.from('shops').select('*').eq('godkendt', true).order('name');
+  if (error) {
+    console.error('Kunne ikke hente butikker fra databasen', error);
+    return;
+  }
+  shops = data.map(row => ({
+    name: row.name,
+    city: row.city,
+    cityKey: row.city_key,
+    services: row.services,
+    priceFrom: row.price_from,
+    profileUrl: row.profile_url
+  }));
+  renderShops();
+}
 
 function renderShops(){
   const grid = document.getElementById('resultsGrid');
@@ -25,7 +40,7 @@ function renderShops(){
     </div>
   `).join('');
 }
-renderShops();
+loadShops();
 
 // Before/after slider
 const box = document.getElementById('sliderBox');
@@ -88,28 +103,41 @@ function handleCustomerLeadSubmit(e){
   submitBtn.disabled = true;
   submitBtn.textContent = 'Sender...';
 
-  const body = new URLSearchParams(new FormData(form)).toString();
+  const formData = new FormData(form);
+  const body = new URLSearchParams(formData).toString();
 
-  fetch('/', {
+  // Gemmes også i databasen til admin-panelet. Ventes ind sammen med mail-afsendelsen
+  // nedenfor, så siden ikke skifter væk og afbryder database-kaldet, før det er færdigt.
+  const dbInsert = db.from('tilbud_anmodninger').insert({
+    butik: formData.get('butik'),
+    navn: formData.get('navn'),
+    kontakt: formData.get('kontakt'),
+    besked: formData.get('besked')
+  }).then(({ error }) => {
+    if (error) console.error('Kunne ikke gemme forespørgslen i databasen', error);
+  });
+
+  const netlifySubmit = fetch('/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body
-  })
-    .then(res => {
-      if (!res.ok) throw new Error('Netlify svarede med status ' + res.status);
+  });
+
+  Promise.allSettled([dbInsert, netlifySubmit]).then(([, netlifyResult]) => {
+    if (netlifyResult.status === 'fulfilled' && netlifyResult.value.ok) {
       window.location.href = 'tak.html?type=kunde';
-    })
-    .catch(() => {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Send forespørgsel';
-      let err = form.querySelector('.lead-error');
-      if (!err) {
-        err = document.createElement('p');
-        err.className = 'lead-error';
-        form.appendChild(err);
-      }
-      err.textContent = 'Der gik noget galt. Prøv igen om lidt.';
-    });
+      return;
+    }
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Send forespørgsel';
+    let err = form.querySelector('.lead-error');
+    if (!err) {
+      err = document.createElement('p');
+      err.className = 'lead-error';
+      form.appendChild(err);
+    }
+    err.textContent = 'Der gik noget galt. Prøv igen om lidt.';
+  });
 }
 
 // Lead form -> Netlify Forms (AJAX submit, no page reload)
