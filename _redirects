@@ -1,0 +1,4 @@
+# Nye butikker oprettet via admin-panelet får ikke deres egen statiske fil —
+# denne regel viser i stedet den fælles skabelon (bilpleje/profil.html) på samme pæne URL.
+# Rigtige filer (fx de 4 eksempel-butikker) har forrang og rammes IKKE af denne regel.
+/bilpleje/:city/:slug/  /bilpleje/profil.html  200

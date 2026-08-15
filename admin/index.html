@@ -178,11 +178,17 @@ function toggleShopBox(){
   box.style.display = box.style.display === 'block' ? 'none' : 'block';
 }
 
+function slugify(text){
+  return text.toLowerCase()
+    .replace(/æ/g,'e').replace(/ø/g,'o').replace(/å/g,'a')
+    .replace(/[^a-z0-9]+/g,'-')
+    .replace(/^-+|-+$/g,'');
+}
+
 function updateCityKey(){
   const city = document.getElementById('newShopCity').value.trim();
   const firstWord = city.split(' ')[0] || '';
-  const key = firstWord.toLowerCase().replace(/æ/g,'e').replace(/ø/g,'o').replace(/å/g,'a').replace(/[^a-z0-9]/g,'');
-  document.getElementById('newShopCityKey').value = key;
+  document.getElementById('newShopCityKey').value = slugify(firstWord);
 }
 
 async function createShop(){
@@ -201,9 +207,11 @@ async function createShop(){
     return;
   }
 
+  const profileUrl = `bilpleje/${cityKey}/${slugify(name)}/`;
+
   const { error } = await db.from('shops').insert({
     name, city, city_key: cityKey, services, price_from: priceFrom,
-    tier, verificeret, godkendt: true
+    tier, verificeret, godkendt: true, profile_url: profileUrl
   });
 
   if (error) {
