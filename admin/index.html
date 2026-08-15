@@ -32,6 +32,16 @@
   .pw-toggle{background:none; border:none; color:var(--navy); text-decoration:underline; font-size:13px; cursor:pointer; padding:0; margin-bottom:24px;}
   .pw-box{max-width:360px; background:#fff; border:1px solid var(--chrome-line); border-radius:10px; padding:20px; margin-bottom:24px; display:none;}
   .empty-row td{text-align:center; color:#6B7280; padding:20px;}
+  .shop-toggle{background:var(--navy); color:#fff; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:14px; font-weight:600; margin-bottom:16px;}
+  .shop-box{max-width:460px; background:#fff; border:1px solid var(--chrome-line); border-radius:10px; padding:20px; margin-bottom:24px; display:none;}
+  .shop-box label{display:block; font-size:13px; font-weight:600; color:var(--navy); margin-bottom:4px; margin-top:12px;}
+  .shop-box label:first-child{margin-top:0;}
+  .shop-box input[type="text"], .shop-box input[type="number"], .shop-box select{width:100%; padding:10px 12px; border:1px solid var(--chrome-line); border-radius:6px; font-size:15px; box-sizing:border-box;}
+  .checkbox-row{display:flex; flex-wrap:wrap; gap:12px; margin-top:4px;}
+  .checkbox-row label{display:flex; align-items:center; gap:6px; font-size:14px; font-weight:400; margin:0;}
+  .checkbox-row input{width:auto;}
+  .inline-check{display:flex; align-items:center; gap:8px; margin-top:14px;}
+  .inline-check label{margin:0; font-weight:400; font-size:14px;}
 </style>
 </head>
 <body>
@@ -59,6 +69,42 @@
   </div>
 
   <div class="section-title">Butikker</div>
+  <button class="shop-toggle" onclick="toggleShopBox()">+ Opret ny butik</button>
+  <div class="shop-box" id="shopBox">
+    <label for="newShopName">Navn</label>
+    <input type="text" id="newShopName">
+
+    <label for="newShopCity">By</label>
+    <input type="text" id="newShopCity" placeholder="Fx Aarhus C" oninput="updateCityKey()">
+
+    <label for="newShopCityKey">By-nøgle (udfyldes automatisk — tjek den er rigtig)</label>
+    <input type="text" id="newShopCityKey">
+
+    <label>Ydelser</label>
+    <div class="checkbox-row">
+      <label><input type="checkbox" class="service-check" value="Keramisk coating"> Keramisk coating</label>
+      <label><input type="checkbox" class="service-check" value="Polering"> Polering</label>
+      <label><input type="checkbox" class="service-check" value="Folie"> Folie</label>
+      <label><input type="checkbox" class="service-check" value="Indvendig rens"> Indvendig rens</label>
+    </div>
+
+    <label for="newShopPrice">Pris fra (kr.)</label>
+    <input type="number" id="newShopPrice" min="0">
+
+    <label for="newShopTier">Tier</label>
+    <select id="newShopTier">
+      <option value="gratis">Gratis</option>
+      <option value="betalt">Betalt</option>
+    </select>
+
+    <div class="inline-check">
+      <input type="checkbox" id="newShopVerified">
+      <label for="newShopVerified">Verificeret (sæt kun, hvis du selv har bekræftet butikken er ægte)</label>
+    </div>
+
+    <button class="btn-primary" style="width:100%; margin-top:16px;" onclick="createShop()">Opret butik</button>
+    <p class="error-msg" id="shopError"></p>
+  </div>
   <table>
     <thead><tr><th>Navn</th><th>By</th><th>Tier</th><th>Verificeret</th><th>Godkendt</th></tr></thead>
     <tbody id="shopsTable"><tr class="empty-row"><td colspan="5">Henter…</td></tr></tbody>
@@ -123,6 +169,57 @@ async function setPassword(){
   }
   errEl.style.color = '#1A7F4E';
   errEl.textContent = 'Adgangskode gemt.';
+}
+
+function toggleShopBox(){
+  const box = document.getElementById('shopBox');
+  box.style.display = box.style.display === 'block' ? 'none' : 'block';
+}
+
+function updateCityKey(){
+  const city = document.getElementById('newShopCity').value.trim();
+  const firstWord = city.split(' ')[0] || '';
+  const key = firstWord.toLowerCase().replace(/æ/g,'e').replace(/ø/g,'o').replace(/å/g,'a').replace(/[^a-z0-9]/g,'');
+  document.getElementById('newShopCityKey').value = key;
+}
+
+async function createShop(){
+  const name = document.getElementById('newShopName').value.trim();
+  const city = document.getElementById('newShopCity').value.trim();
+  const cityKey = document.getElementById('newShopCityKey').value.trim();
+  const services = Array.from(document.querySelectorAll('.service-check:checked')).map(c => c.value);
+  const priceFrom = parseInt(document.getElementById('newShopPrice').value, 10);
+  const tier = document.getElementById('newShopTier').value;
+  const verificeret = document.getElementById('newShopVerified').checked;
+  const errEl = document.getElementById('shopError');
+
+  if (!name || !city || !cityKey || services.length === 0 || !priceFrom) {
+    errEl.style.color = '#B3261E';
+    errEl.textContent = 'Udfyld navn, by, mindst én ydelse og en pris.';
+    return;
+  }
+
+  const { error } = await db.from('shops').insert({
+    name, city, city_key: cityKey, services, price_from: priceFrom,
+    tier, verificeret, godkendt: true
+  });
+
+  if (error) {
+    errEl.style.color = '#B3261E';
+    errEl.textContent = 'Kunne ikke oprette butikken. Prøv igen.';
+    return;
+  }
+
+  errEl.style.color = '#1A7F4E';
+  errEl.textContent = 'Butik oprettet!';
+  document.getElementById('newShopName').value = '';
+  document.getElementById('newShopCity').value = '';
+  document.getElementById('newShopCityKey').value = '';
+  document.getElementById('newShopPrice').value = '';
+  document.getElementById('newShopTier').value = 'gratis';
+  document.getElementById('newShopVerified').checked = false;
+  document.querySelectorAll('.service-check').forEach(c => c.checked = false);
+  loadDashboard();
 }
 
 function yesNoBadge(value){

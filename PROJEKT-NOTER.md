@@ -91,7 +91,9 @@ Efter Google Ads-suspenderingen (se nedenfor) bad Daniel om et rigtigt system: e
 
 **Admin-panel:** `/admin/` (noindex, ikke en del af den offentlige SEO-struktur). Login med mail/adgangskode via Supabase Auth. Viser en tabel over alle butikker (navn, by, tier, verificeret, godkendt) og en liste over alle tilbudsforespørgsler. Har en "skift adgangskode"-boks, fordi Daniels bruger blev oprettet via invitations-mail (han sætter selv sin adgangskode ved første login — jeg har aldrig kendt eller indtastet den).
 
-**Ikke testet af mig endnu:** Selve det indloggede admin-panel-view (tabellerne med rigtige data). Login-siden virker og fejlfrit, og selve datalaget er testet grundigt via direkte SQL-forespørgsler og en rigtig test-indsendelse gennem formularen — men jeg har ikke Daniels adgangskode og kunne derfor ikke se dashboardet selv. Daniel skal tjekke sin mail for invitationen, sætte en adgangskode, og bekræfte dashboardet ser rigtigt ud.
+**Status:** Fuldt testet og bekræftet virkende, inkl. det indloggede dashboard-view (15. aug 2026, samme dag).
+
+**Login-historik (relevant hvis det driller igen):** Den oprindelige invitations-mail virkede ikke — den blev sendt, FØR jeg nåede at rette Site URL i Supabase fra standardværdien (`localhost:3000`) til den rigtige admin-adresse, så linket pegede det forkerte sted hen. Løsning: slettede den fastlåste invite-bruger og oprettede i stedet en ny bruger direkte (Supabase Auth → "Create new user"), hvor Daniel selv skrev sin adgangskode direkte i browseren — jeg har på intet tidspunkt kendt eller indtastet den. Virker nu.
 
 **Naturlige næste skridt:** en formular i admin-panelet til at oprette/redigere butikker uden SQL; en offentlig tilmeldingsformular til butikker der selv vil oprette en profil (med `godkendt = false` som standard, så Daniel skal godkende før den vises — vigtigt efter suspenderings-lektien: intet går live uautoriseret).
 
