@@ -42,6 +42,8 @@
   .checkbox-row input{width:auto;}
   .inline-check{display:flex; align-items:center; gap:8px; margin-top:14px;}
   .inline-check label{margin:0; font-weight:400; font-size:14px;}
+  .delete-btn{background:none; border:1px solid #B3261E; color:#B3261E; padding:4px 10px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600;}
+  .delete-btn:hover{background:#FBEAEA;}
 </style>
 </head>
 <body>
@@ -106,8 +108,8 @@
     <p class="error-msg" id="shopError"></p>
   </div>
   <table>
-    <thead><tr><th>Navn</th><th>By</th><th>Tier</th><th>Verificeret</th><th>Godkendt</th></tr></thead>
-    <tbody id="shopsTable"><tr class="empty-row"><td colspan="5">Henter…</td></tr></tbody>
+    <thead><tr><th>Navn</th><th>By</th><th>Tier</th><th>Verificeret</th><th>Godkendt</th><th></th></tr></thead>
+    <tbody id="shopsTable"><tr class="empty-row"><td colspan="6">Henter…</td></tr></tbody>
   </table>
 
   <div class="section-title">Tilbudsforespørgsler</div>
@@ -222,6 +224,16 @@ async function createShop(){
   loadDashboard();
 }
 
+async function deleteShop(id, name){
+  if (!confirm(`Slet "${name}"? Det kan ikke fortrydes.`)) return;
+  const { error } = await db.from('shops').delete().eq('id', id);
+  if (error) {
+    alert('Kunne ikke slette butikken. Prøv igen.');
+    return;
+  }
+  loadDashboard();
+}
+
 function yesNoBadge(value){
   return value ? '<span class="badge yes">Ja</span>' : '<span class="badge no">Nej</span>';
 }
@@ -239,8 +251,9 @@ async function loadDashboard(){
         <td><span class="badge ${s.tier}">${s.tier}</span></td>
         <td>${yesNoBadge(s.verificeret)}</td>
         <td>${yesNoBadge(s.godkendt)}</td>
+        <td><button class="delete-btn" onclick="deleteShop('${s.id}', '${s.name.replace(/'/g, "\\'")}')">Slet</button></td>
       </tr>
-    `).join('') : '<tr class="empty-row"><td colspan="5">Ingen butikker endnu.</td></tr>';
+    `).join('') : '<tr class="empty-row"><td colspan="6">Ingen butikker endnu.</td></tr>';
   }
 
   const { data: leads, error: leadsError } = await db.from('tilbud_anmodninger').select('*').order('created_at', { ascending: false });
