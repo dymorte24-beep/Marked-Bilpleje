@@ -19,6 +19,7 @@ async function loadShops(){
     cityKey: row.city_key,
     services: row.services,
     priceFrom: row.price_from,
+    discount: row.discount,
     profileUrl: row.profile_url
   }));
   renderShops();
@@ -34,6 +35,7 @@ function renderShops(){
         <div class="card-meta">${shop.city} · ${shop.services.join(', ')}</div>
         <div class="card-tags">
           ${shop.priceFrom ? `<span class="pill">Fra ${shop.priceFrom} kr.</span>` : ''}
+          ${shop.discount ? `<span class="pill discount">${shop.discount}% rabat</span>` : ''}
         </div>
         <button class="card-cta" onclick="openLeadModal('${shop.name.replace(/'/g, "\\'")}')">Få tilbud</button>
       </div>

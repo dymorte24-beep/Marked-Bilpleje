@@ -4,7 +4,7 @@
 Markedsplads-side der forbinder private kunder med bilpleje-butikker i Danmark.
 Gratis for kunder, butikker betaler på sigt for listing/topplacering.
 
-## 🚗 Første 4 rigtige butikker live (17. aug 2026)
+## 🚗 Første 5 rigtige butikker live (17. aug 2026)
 De første rigtige, bekræftede butikker er nu på siden — demo-butikkerne (Glansen Detailing, AutoShine Aarhus, Nordisk Bilpleje, Fyns Bil & Pleje) er slettet fra databasen, og "eksempel-butik"-bjælken på forsiden er fjernet, da den ikke længere er sand.
 
 | Butik | By | Ydelser | Pris fra | Kontakt |
@@ -13,13 +13,17 @@ De første rigtige, bekræftede butikker er nu på siden — demo-butikkerne (Gl
 | CH CarCare | Helsingør (dækker hele Sjælland) | Keramisk coating, polering, indvendig rens, udvendig rens, hjulskift, mobil bilpleje | 500 kr. (hjulskift, FindBilpleje-pris) | 40 50 20 97, kontakt@ch-carcare.dk |
 | GG AutoCare | Holbæk | Keramisk coating, polering, indvendig rens, udvendig rens, lakforsegling/voks, sæderens, detailing, ozonbehandling, damprens | 299 kr. | Deniz A. Hansen, 42 47 42 61, jd@ggautocare.dk |
 | Carclean ApS | Birkerød | Keramisk coating, polering, indvendig rens | 4.490 kr. (inkl. lånebil) | Jakob Weesgaard, 45 82 19 24, carclean@carclean.dk |
+| NSJ-Bilpleje | Farum | Indvendig rens, udvendig rens, mobil bilpleje, damprens, læderpleje | 1.500 kr. | Christian, 41 27 12 87, info@nsj-bilpleje.dk |
 
-Alle 4 er markeret `verificeret: true` (Daniel har talt direkte med dem) og `tier: gratis` (ingen betaling opkrævet endnu, jf. "Gratis i opstartsfasen"). Oprettet via admin-panelets "Opret ny butik"-formular, som nu blev sat på sin første rigtige prøve.
+Alle 5 er markeret `verificeret: true` (Daniel har talt direkte med dem) og `tier: gratis` (ingen betaling opkrævet endnu, jf. "Gratis i opstartsfasen"). Oprettet via admin-panelets "Opret ny butik"-formular, som nu blev sat på sin første rigtige prøve.
+
+**Undervejs:** Prisfeltet er gjort valgfrit (nogle butikker har endnu ikke oplyst en startpris) — admin-panelet kræver den ikke længere, og den offentlige side skjuler blot prisfeltet, hvis det mangler, i stedet for at vise et tomt/forkert tal. "Eksempelpris"-teksten er fjernet overalt, da priserne nu er ægte. Tilføjede "Læderpleje" som ny ydelseskategori (NSJ-Bilpleje).
 
 **Ikke gjort endnu — bevidst fravalgt for at komme hurtigt i gang i dag:**
 - **Rabat vises ikke:** Shine Wash og CH CarCare har begge tilbudt 10% rabat via platformen, men der er intet rabat-felt i databasen/UI endnu (blev fjernet under Google Ads-oprydningen — se nedenfor). Skal bygges som en ny, ægte funktion, hvis det skal vises
-- **Kontaktoplysninger (telefon/mail/kontaktperson) er ikke gemt i databasen** — kun i denne fil. Bør tilføjes til `shops`-tabellen og admin-panelet, så Daniel ikke skal slå det op manuelt for at videresende et lead
-- **De 4 nye butikker har kun den simple, auto-genererede profilside** (fra `bilpleje/profil.html`-skabelonen) — ingen billeder eller "om os"-tekst endnu, præcis som de gamle demo-profiler havde. Det venter på, at butikkerne selv kan logge ind og redigere (endnu ikke bygget)
+- **Kontaktoplysninger (telefon/mail/kontaktperson/adresse) er ikke gemt i databasen** — kun i denne fil. Bør tilføjes til `shops`-tabellen og admin-panelet, så Daniel ikke skal slå det op manuelt for at videresende et lead. NSJ-Bilpleje har desuden en fysisk adresse (Nordvænget 20, 3520 Farum), som de andre (mest mobile) butikker ikke har
+- **NSJ-Bilpleje har en ægte Trustpilot-vurdering (4,9/5, ca. 90 anmeldelser)** — modsat de opdigtede ratings der udløste Google Ads-suspenderingen, er dette et rigtigt, efterprøveligt tredjeparts-tal. Ikke vist på siden endnu, da der ikke findes noget ratings-UI. Værd at overveje som en fremtidig funktion (med link til den rigtige Trustpilot-profil, så det er kildehenvist) — men bevidst ikke bygget i dag under tidspres, for ikke at genindføre ratings-visning uden omtanke
+- **De 5 nye butikker har kun den simple, auto-genererede profilside** (fra `bilpleje/profil.html`-skabelonen) — ingen billeder eller "om os"-tekst endnu, præcis som de gamle demo-profiler havde. Det venter på, at butikkerne selv kan logge ind og redigere (endnu ikke bygget)
 - **De gamle SEO-sider for Aarhus/København/Odense (by- og ydelse-sider) refererer stadig til de slettede demo-butikker** og viser nu tomme resultater — er `noindex`, så ikke kritisk, men bør ryddes op eller genbruges til de nye byer på et tidspunkt
 
 ## ⚠ Google Ads-konto suspenderet (14.-15. aug 2026) — VIGTIGT

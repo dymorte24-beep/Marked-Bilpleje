@@ -44,6 +44,10 @@
   .inline-check label{margin:0; font-weight:400; font-size:14px;}
   .delete-btn{background:none; border:1px solid #B3261E; color:#B3261E; padding:4px 10px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600;}
   .delete-btn:hover{background:#FBEAEA;}
+  .action-btn{background:none; border:1px solid var(--chrome-line); color:var(--navy); padding:4px 10px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; margin-right:6px;}
+  .action-btn:hover{background:var(--fog);}
+  .actions-cell{white-space:nowrap;}
+  .contact-row td{background:var(--fog); font-size:13px;}
 </style>
 </head>
 <body>
@@ -73,6 +77,8 @@
   <div class="section-title">Butikker</div>
   <button class="shop-toggle" onclick="toggleShopBox()">+ Opret ny butik</button>
   <div class="shop-box" id="shopBox">
+    <h3 id="shopBoxTitle" style="color:var(--navy); margin-bottom:4px;">Opret ny butik</h3>
+    <input type="hidden" id="editingShopId">
     <label for="newShopName">Navn</label>
     <input type="text" id="newShopName">
 
@@ -103,6 +109,18 @@
     <label for="newShopPrice">Pris fra (kr.) — valgfri, hvis ikke oplyst</label>
     <input type="number" id="newShopPrice" min="0">
 
+    <label for="newShopDiscount">Rabat (%) — valgfri, vises kun hvis udfyldt</label>
+    <input type="number" id="newShopDiscount" min="0" max="100">
+
+    <label for="newShopContactPerson">Kontaktperson — valgfri, kun synlig i panelet</label>
+    <input type="text" id="newShopContactPerson">
+
+    <label for="newShopPhone">Telefon — valgfri, kun synlig i panelet</label>
+    <input type="text" id="newShopPhone">
+
+    <label for="newShopEmail">Mail — valgfri, kun synlig i panelet</label>
+    <input type="email" id="newShopEmail">
+
     <label for="newShopTier">Tier</label>
     <select id="newShopTier">
       <option value="gratis">Gratis</option>
@@ -114,12 +132,12 @@
       <label for="newShopVerified">Verificeret (sæt kun, hvis du selv har bekræftet butikken er ægte)</label>
     </div>
 
-    <button class="btn-primary" style="width:100%; margin-top:16px;" onclick="createShop()">Opret butik</button>
+    <button class="btn-primary" style="width:100%; margin-top:16px;" onclick="saveShop()" id="shopSaveBtn">Opret butik</button>
     <p class="error-msg" id="shopError"></p>
   </div>
   <table>
-    <thead><tr><th>Navn</th><th>By</th><th>Tier</th><th>Verificeret</th><th>Godkendt</th><th></th></tr></thead>
-    <tbody id="shopsTable"><tr class="empty-row"><td colspan="6">Henter…</td></tr></tbody>
+    <thead><tr><th>Navn</th><th>By</th><th>Tier</th><th>Rabat</th><th>Verificeret</th><th>Godkendt</th><th></th></tr></thead>
+    <tbody id="shopsTable"><tr class="empty-row"><td colspan="7">Henter…</td></tr></tbody>
   </table>
 
   <div class="section-title">Tilbudsforespørgsler</div>
@@ -183,9 +201,55 @@ async function setPassword(){
   errEl.textContent = 'Adgangskode gemt.';
 }
 
+function resetShopForm(){
+  document.getElementById('editingShopId').value = '';
+  document.getElementById('newShopName').value = '';
+  document.getElementById('newShopCity').value = '';
+  document.getElementById('newShopCityKey').value = '';
+  document.querySelectorAll('.service-check').forEach(c => c.checked = false);
+  document.getElementById('newShopPrice').value = '';
+  document.getElementById('newShopDiscount').value = '';
+  document.getElementById('newShopContactPerson').value = '';
+  document.getElementById('newShopPhone').value = '';
+  document.getElementById('newShopEmail').value = '';
+  document.getElementById('newShopTier').value = 'gratis';
+  document.getElementById('newShopVerified').checked = false;
+  document.getElementById('shopBoxTitle').textContent = 'Opret ny butik';
+  document.getElementById('shopSaveBtn').textContent = 'Opret butik';
+  document.getElementById('shopError').textContent = '';
+}
+
 function toggleShopBox(){
+  resetShopForm();
   const box = document.getElementById('shopBox');
   box.style.display = box.style.display === 'block' ? 'none' : 'block';
+}
+
+function openEditBox(id){
+  const shop = currentShops.find(s => s.id === id);
+  if (!shop) return;
+  document.getElementById('editingShopId').value = shop.id;
+  document.getElementById('newShopName').value = shop.name;
+  document.getElementById('newShopCity').value = shop.city;
+  document.getElementById('newShopCityKey').value = shop.city_key;
+  document.querySelectorAll('.service-check').forEach(c => { c.checked = shop.services.includes(c.value); });
+  document.getElementById('newShopPrice').value = shop.price_from || '';
+  document.getElementById('newShopDiscount').value = shop.discount || '';
+  document.getElementById('newShopContactPerson').value = shop.contact_person || '';
+  document.getElementById('newShopPhone').value = shop.phone || '';
+  document.getElementById('newShopEmail').value = shop.email || '';
+  document.getElementById('newShopTier').value = shop.tier;
+  document.getElementById('newShopVerified').checked = shop.verificeret;
+  document.getElementById('shopBoxTitle').textContent = 'Rediger ' + shop.name;
+  document.getElementById('shopSaveBtn').textContent = 'Gem ændringer';
+  document.getElementById('shopError').textContent = '';
+  document.getElementById('shopBox').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleContact(id){
+  const row = document.getElementById('contact-' + id);
+  if (row) row.style.display = row.style.display === 'table-row' ? 'none' : 'table-row';
 }
 
 function slugify(text){
@@ -201,13 +265,19 @@ function updateCityKey(){
   document.getElementById('newShopCityKey').value = slugify(firstWord);
 }
 
-async function createShop(){
+async function saveShop(){
+  const editingId = document.getElementById('editingShopId').value;
   const name = document.getElementById('newShopName').value.trim();
   const city = document.getElementById('newShopCity').value.trim();
   const cityKey = document.getElementById('newShopCityKey').value.trim();
   const services = Array.from(document.querySelectorAll('.service-check:checked')).map(c => c.value);
   const priceRaw = document.getElementById('newShopPrice').value.trim();
   const priceFrom = priceRaw ? parseInt(priceRaw, 10) : null;
+  const discountRaw = document.getElementById('newShopDiscount').value.trim();
+  const discount = discountRaw ? parseInt(discountRaw, 10) : null;
+  const contactPerson = document.getElementById('newShopContactPerson').value.trim() || null;
+  const phone = document.getElementById('newShopPhone').value.trim() || null;
+  const email = document.getElementById('newShopEmail').value.trim() || null;
   const tier = document.getElementById('newShopTier').value;
   const verificeret = document.getElementById('newShopVerified').checked;
   const errEl = document.getElementById('shopError');
@@ -218,30 +288,35 @@ async function createShop(){
     return;
   }
 
-  const profileUrl = `bilpleje/${cityKey}/${slugify(name)}/`;
-
-  const { error } = await db.from('shops').insert({
+  const shopData = {
     name, city, city_key: cityKey, services, price_from: priceFrom,
-    tier, verificeret, godkendt: true, profile_url: profileUrl
-  });
+    discount, contact_person: contactPerson, phone, email,
+    tier, verificeret
+  };
+
+  let error;
+  if (editingId) {
+    ({ error } = await db.from('shops').update(shopData).eq('id', editingId));
+  } else {
+    shopData.godkendt = true;
+    shopData.profile_url = `bilpleje/${cityKey}/${slugify(name)}/`;
+    ({ error } = await db.from('shops').insert(shopData));
+  }
 
   if (error) {
     errEl.style.color = '#B3261E';
-    errEl.textContent = 'Kunne ikke oprette butikken. Prøv igen.';
+    errEl.textContent = 'Kunne ikke gemme butikken. Prøv igen.';
     return;
   }
 
+  const wasEditing = !!editingId;
+  resetShopForm();
   errEl.style.color = '#1A7F4E';
-  errEl.textContent = 'Butik oprettet!';
-  document.getElementById('newShopName').value = '';
-  document.getElementById('newShopCity').value = '';
-  document.getElementById('newShopCityKey').value = '';
-  document.getElementById('newShopPrice').value = '';
-  document.getElementById('newShopTier').value = 'gratis';
-  document.getElementById('newShopVerified').checked = false;
-  document.querySelectorAll('.service-check').forEach(c => c.checked = false);
+  errEl.textContent = wasEditing ? 'Ændringer gemt!' : 'Butik oprettet!';
   loadDashboard();
 }
+
+let currentShops = [];
 
 async function deleteShop(id, name){
   if (!confirm(`Slet "${name}"? Det kan ikke fortrydes.`)) return;
@@ -260,19 +335,28 @@ function yesNoBadge(value){
 async function loadDashboard(){
   const { data: shops, error: shopsError } = await db.from('shops').select('*').order('name');
   const shopsTable = document.getElementById('shopsTable');
+  currentShops = shops || [];
   if (shopsError) {
-    shopsTable.innerHTML = `<tr class="empty-row"><td colspan="5">Kunne ikke hente butikker.</td></tr>`;
+    shopsTable.innerHTML = `<tr class="empty-row"><td colspan="7">Kunne ikke hente butikker.</td></tr>`;
   } else {
     shopsTable.innerHTML = shops.length ? shops.map(s => `
       <tr>
         <td>${s.name}</td>
         <td>${s.city}</td>
         <td><span class="badge ${s.tier}">${s.tier}</span></td>
+        <td>${s.discount ? s.discount + '%' : '–'}</td>
         <td>${yesNoBadge(s.verificeret)}</td>
         <td>${yesNoBadge(s.godkendt)}</td>
-        <td><button class="delete-btn" onclick="deleteShop('${s.id}', '${s.name.replace(/'/g, "\\'")}')">Slet</button></td>
+        <td class="actions-cell">
+          <button class="action-btn" onclick="toggleContact('${s.id}')">Kontakt</button>
+          <button class="action-btn" onclick="openEditBox('${s.id}')">Rediger</button>
+          <button class="delete-btn" onclick="deleteShop('${s.id}', '${s.name.replace(/'/g, "\\'")}')">Slet</button>
+        </td>
       </tr>
-    `).join('') : '<tr class="empty-row"><td colspan="6">Ingen butikker endnu.</td></tr>';
+      <tr class="contact-row" id="contact-${s.id}" style="display:none;">
+        <td colspan="7"><strong>Kontakt:</strong> ${s.contact_person || '–'} · ${s.phone || '–'} · ${s.email || '–'}</td>
+      </tr>
+    `).join('') : '<tr class="empty-row"><td colspan="7">Ingen butikker endnu.</td></tr>';
   }
 
   const { data: leads, error: leadsError } = await db.from('tilbud_anmodninger').select('*').order('created_at', { ascending: false });
