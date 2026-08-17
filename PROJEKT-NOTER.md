@@ -27,6 +27,10 @@ Alle 5 er markeret `verificeret: true` (Daniel har talt direkte med dem) og `tie
 
 **"Verificeret"-mærket er tilbage offentligt (17. aug 2026):** Nu hvor de 5 butikker er ægte og bekræftede (ikke opdigtede demo-butikker), viser siden igen det grønne "Verificeret"-mærke — stadig kun sat af Daniel i admin-panelet, aldrig noget en butik selv kan slå til. Vigtig forskel til suspenderings-sagen: dengang var mærket løgn (butikkerne fandtes ikke), nu er det sandt.
 
+**By-sider genopbygget som én fælles skabelon (17. aug 2026):** De 14 gamle statiske filer, der pegede på de slettede demo-butikker (3 bysider, 4 profiler, 7 ydelse-sider for Aarhus/København/Odense), er slettet. I stedet er der nu `bilpleje/by.html` — én delt skabelon (samme mønster som `profil.html`), der henter alle butikker i en by fra databasen ud fra URL'en. Virker automatisk for de 5 rigtige byer (Brøndby, Helsingør, Holbæk, Birkerød, Farum) og enhver fremtidig by — ingen grund til at bygge en ny fil, næste gang en butik kommer til i en ny by. Testet på tværs af flere byer, inkl. æ/ø. `profil.html`'s brødkrumme peger nu også korrekt på butikkens by-side.
+
+**Bevidst fravalgt:** Individuelle ydelse+by-sider (fx "keramisk coating i Helsingør") er IKKE bygget for de nye byer. Med kun 1 butik pr. by ville hver ydelse-side vise nøjagtig samme ene resultat som by-siden — "tyndt/næsten-duplikeret indhold", som kan skade fremfor at hjælpe SEO. Genovervej når en by har flere butikker.
+
 **Stadig ikke gjort:**
 - **De 5 nye butikker har kun den simple, auto-genererede profilside** (fra `bilpleje/profil.html`-skabelonen) — ingen billeder eller "om os"-tekst endnu, præcis som de gamle demo-profiler havde. Det venter på, at butikkerne selv kan logge ind og redigere (endnu ikke bygget)
 - **De gamle SEO-sider for Aarhus/København/Odense (by- og ydelse-sider) refererer stadig til de slettede demo-butikker** og viser nu tomme resultater — er `noindex`, så ikke kritisk, men bør ryddes op eller genbruges til de nye byer på et tidspunkt

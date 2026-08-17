@@ -48,6 +48,9 @@
   .action-btn:hover{background:var(--fog);}
   .actions-cell{white-space:nowrap;}
   .contact-row td{background:var(--fog); font-size:13px;}
+  .forward-btn{background:none; border:1px solid var(--chrome-line); color:#6B7280; padding:5px 12px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; white-space:nowrap;}
+  .forward-btn:hover{background:var(--fog);}
+  .forward-btn.is-forwarded{background:#E7F7EE; border-color:#1A7F4E; color:#1A7F4E;}
 </style>
 </head>
 <body>
@@ -142,8 +145,8 @@
 
   <div class="section-title">Tilbudsforespørgsler</div>
   <table>
-    <thead><tr><th>Dato</th><th>Butik</th><th>Navn</th><th>Kontakt</th><th>Besked</th></tr></thead>
-    <tbody id="leadsTable"><tr class="empty-row"><td colspan="5">Henter…</td></tr></tbody>
+    <thead><tr><th>Dato</th><th>Butik</th><th>Navn</th><th>Kontakt</th><th>Besked</th><th>Videresendt</th></tr></thead>
+    <tbody id="leadsTable"><tr class="empty-row"><td colspan="6">Henter…</td></tr></tbody>
   </table>
 </div>
 
@@ -362,7 +365,7 @@ async function loadDashboard(){
   const { data: leads, error: leadsError } = await db.from('tilbud_anmodninger').select('*').order('created_at', { ascending: false });
   const leadsTable = document.getElementById('leadsTable');
   if (leadsError) {
-    leadsTable.innerHTML = `<tr class="empty-row"><td colspan="5">Kunne ikke hente forespørgsler.</td></tr>`;
+    leadsTable.innerHTML = `<tr class="empty-row"><td colspan="6">Kunne ikke hente forespørgsler.</td></tr>`;
   } else {
     leadsTable.innerHTML = leads.length ? leads.map(l => `
       <tr>
@@ -371,9 +374,23 @@ async function loadDashboard(){
         <td>${l.navn}</td>
         <td>${l.kontakt}</td>
         <td>${l.besked || '–'}</td>
+        <td>
+          <button class="forward-btn ${l.videresendt ? 'is-forwarded' : ''}" onclick="toggleForwarded('${l.id}', ${l.videresendt})">
+            ${l.videresendt ? '✓ Videresendt' : 'Marker som sendt'}
+          </button>
+        </td>
       </tr>
-    `).join('') : '<tr class="empty-row"><td colspan="5">Ingen forespørgsler endnu.</td></tr>';
+    `).join('') : '<tr class="empty-row"><td colspan="6">Ingen forespørgsler endnu.</td></tr>';
   }
+}
+
+async function toggleForwarded(id, current){
+  const { error } = await db.from('tilbud_anmodninger').update({ videresendt: !current }).eq('id', id);
+  if (error) {
+    alert('Kunne ikke opdatere status. Prøv igen.');
+    return;
+  }
+  loadDashboard();
 }
 
 db.auth.onAuthStateChange((event, session) => {
