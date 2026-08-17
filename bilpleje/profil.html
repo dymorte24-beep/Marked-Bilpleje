@@ -59,8 +59,8 @@ async function loadShop(){
 
   document.title = shop.name + ' | Bilpleje.dk';
   breadcrumb.innerHTML = `
-    <a href="../../../index.html">Forside</a><span class="sep">/</span>
-    <a href="../../../index.html#search">Bilpleje</a><span class="sep">/</span>${shop.name}
+    <a href="/index.html">Forside</a><span class="sep">/</span>
+    <a href="/bilpleje/${shop.city_key}/">${shop.city}</a><span class="sep">/</span>${shop.name}
   `;
 
   content.innerHTML = `

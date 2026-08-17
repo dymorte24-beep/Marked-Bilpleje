@@ -25,6 +25,8 @@ Alle 5 er markeret `verificeret: true` (Daniel har talt direkte med dem) og `tie
 - **Admin-panelet har nu en "Kontakt"-knap** per butik, der folder en linje ud med kontaktperson/telefon/mail, i stedet for at proppe det ind som faste kolonner
 - **NSJ-Bilpleje har en ægte Trustpilot-vurdering (4,9/5, ca. 90 anmeldelser)** og en fysisk adresse (Nordvænget 20, 3520 Farum) — ingen af delene er gemt eller vist endnu. Trustpilot-tallet er særligt interessant som fremtidig funktion, da det (modsat de opdigtede ratings der udløste Google Ads-suspenderingen) er et rigtigt, efterprøveligt tredjeparts-tal — men bevidst ikke bygget under tidspres, for ikke at genindføre ratings-visning uden omtanke. Adressefelt findes ikke i databasen endnu
 
+**"Verificeret"-mærket er tilbage offentligt (17. aug 2026):** Nu hvor de 5 butikker er ægte og bekræftede (ikke opdigtede demo-butikker), viser siden igen det grønne "Verificeret"-mærke — stadig kun sat af Daniel i admin-panelet, aldrig noget en butik selv kan slå til. Vigtig forskel til suspenderings-sagen: dengang var mærket løgn (butikkerne fandtes ikke), nu er det sandt.
+
 **Stadig ikke gjort:**
 - **De 5 nye butikker har kun den simple, auto-genererede profilside** (fra `bilpleje/profil.html`-skabelonen) — ingen billeder eller "om os"-tekst endnu, præcis som de gamle demo-profiler havde. Det venter på, at butikkerne selv kan logge ind og redigere (endnu ikke bygget)
 - **De gamle SEO-sider for Aarhus/København/Odense (by- og ydelse-sider) refererer stadig til de slettede demo-butikker** og viser nu tomme resultater — er `noindex`, så ikke kritisk, men bør ryddes op eller genbruges til de nye byer på et tidspunkt

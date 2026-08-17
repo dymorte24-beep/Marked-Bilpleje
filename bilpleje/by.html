@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bilpleje | Bilpleje.dk</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="/index.html" class="logo">bilpleje<span>.dk</span></a>
+    <div class="nav-links">
+      <a href="/index.html#search">Find en butik</a>
+      <a href="/index.html#shops">For butikker</a>
+    </div>
+    <a href="/index.html#shops" class="nav-cta">Bliv listet</a>
+  </div>
+</nav>
+
+<section class="seo-page">
+  <div class="wrap">
+    <div class="breadcrumb" id="breadcrumb">
+      <a href="/index.html">Forside</a><span class="sep">/</span>Bilpleje
+    </div>
+
+    <div id="cityContent">
+      <p class="intro">Henter…</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <a href="/privatlivspolitik.html">Privatlivspolitik</a> · bilpleje.dk — prototype
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL = 'https://xeosltdpvkcaudiijtge.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_iG0iWu8szH_7-uwErdxN9g_pE9YGFWd';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function loadCity(){
+  const parts = window.location.pathname.replace(/^\/|\/$/g, '').split('/');
+  const cityKey = parts[parts.length - 1];
+  const { data: shops, error } = await db.from('shops').select('*').eq('city_key', cityKey).eq('godkendt', true).order('name');
+
+  const content = document.getElementById('cityContent');
+  const breadcrumb = document.getElementById('breadcrumb');
+
+  if (error || !shops || shops.length === 0) {
+    content.innerHTML = '<h1>Bilpleje</h1><p class="intro">Ingen butikker fundet i denne by endnu.</p>';
+    return;
+  }
+
+  const cityName = shops[0].city;
+  document.title = 'Bilpleje i ' + cityName + ' | Bilpleje.dk';
+  breadcrumb.innerHTML = `<a href="/index.html">Forside</a><span class="sep">/</span>Bilpleje<span class="sep">/</span>${cityName}`;
+
+  const cards = shops.map(s => `
+    <div class="card">
+      ${s.profile_url ? `<a class="card-link-overlay" href="/${s.profile_url}" aria-label="Se profil for ${s.name}"></a>` : ''}
+      <div>
+        <div class="card-name">${s.name}</div>
+        <div class="card-meta">${s.city} · ${s.services.join(', ')}</div>
+        <div class="card-tags">
+          ${s.verificeret ? '<span class="pill verified">Verificeret</span>' : ''}
+          ${s.price_from ? `<span class="pill">Fra ${s.price_from} kr.</span>` : ''}
+          ${s.discount ? `<span class="pill discount">${s.discount}% rabat</span>` : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  content.innerHTML = `
+    <h1>Bilpleje i ${cityName}</h1>
+    <p class="intro">Find og sammenlign bilpleje-butikker i ${cityName}. Gratis at søge, book direkte hos butikken.</p>
+    <div class="results">${cards}</div>
+  `;
+}
+loadCity();
+</script>
+
+</body>
+</html>
