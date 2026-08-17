@@ -20,6 +20,7 @@ async function loadShops(){
     services: row.services,
     priceFrom: row.price_from,
     discount: row.discount,
+    verificeret: row.verificeret,
     profileUrl: row.profile_url
   }));
   renderShops();
@@ -34,6 +35,7 @@ function renderShops(){
         <div class="card-name">${shop.name}</div>
         <div class="card-meta">${shop.city} · ${shop.services.join(', ')}</div>
         <div class="card-tags">
+          ${shop.verificeret ? `<span class="pill verified">Verificeret</span>` : ''}
           ${shop.priceFrom ? `<span class="pill">Fra ${shop.priceFrom} kr.</span>` : ''}
           ${shop.discount ? `<span class="pill discount">${shop.discount}% rabat</span>` : ''}
         </div>

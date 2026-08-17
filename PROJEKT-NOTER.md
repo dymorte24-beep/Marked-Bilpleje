@@ -19,10 +19,13 @@ Alle 5 er markeret `verificeret: true` (Daniel har talt direkte med dem) og `tie
 
 **Undervejs:** Prisfeltet er gjort valgfrit (nogle butikker har endnu ikke oplyst en startpris) — admin-panelet kræver den ikke længere, og den offentlige side skjuler blot prisfeltet, hvis det mangler, i stedet for at vise et tomt/forkert tal. "Eksempelpris"-teksten er fjernet overalt, da priserne nu er ægte. Tilføjede "Læderpleje" som ny ydelseskategori (NSJ-Bilpleje).
 
-**Ikke gjort endnu — bevidst fravalgt for at komme hurtigt i gang i dag:**
-- **Rabat vises ikke:** Shine Wash og CH CarCare har begge tilbudt 10% rabat via platformen, men der er intet rabat-felt i databasen/UI endnu (blev fjernet under Google Ads-oprydningen — se nedenfor). Skal bygges som en ny, ægte funktion, hvis det skal vises
-- **Kontaktoplysninger (telefon/mail/kontaktperson/adresse) er ikke gemt i databasen** — kun i denne fil. Bør tilføjes til `shops`-tabellen og admin-panelet, så Daniel ikke skal slå det op manuelt for at videresende et lead. NSJ-Bilpleje har desuden en fysisk adresse (Nordvænget 20, 3520 Farum), som de andre (mest mobile) butikker ikke har
-- **NSJ-Bilpleje har en ægte Trustpilot-vurdering (4,9/5, ca. 90 anmeldelser)** — modsat de opdigtede ratings der udløste Google Ads-suspenderingen, er dette et rigtigt, efterprøveligt tredjeparts-tal. Ikke vist på siden endnu, da der ikke findes noget ratings-UI. Værd at overveje som en fremtidig funktion (med link til den rigtige Trustpilot-profil, så det er kildehenvist) — men bevidst ikke bygget i dag under tidspres, for ikke at genindføre ratings-visning uden omtanke
+**Opdatering samme dag — rabat, kontaktinfo og redigering tilføjet:**
+- `shops`-tabellen har nu `discount`, `contact_person`, `phone`, `email`. Shine Wash og CH CarCare er sat til `discount: 10` (den ægte rabat de har tilbudt) og vises nu som et gyldent "10% rabat"-mærke på den offentlige side, ligesom prisen. Alle 5 butikkers kontaktoplysninger er gemt (kontaktperson/telefon/mail er bevidst KUN synlige i admin-panelet, ikke offentligt)
+- **Admin-panelet har nu en "Rediger"-knap** — genbruger opret-formularen (nu `saveShop()` i stedet for `createShop()`), forudfylder med butikkens nuværende data, og opdaterer i stedet for at oprette en ny. Testet grundigt: forudfylder korrekt, gemmer korrekt, tabellen forbliver korrekt bagefter
+- **Admin-panelet har nu en "Kontakt"-knap** per butik, der folder en linje ud med kontaktperson/telefon/mail, i stedet for at proppe det ind som faste kolonner
+- **NSJ-Bilpleje har en ægte Trustpilot-vurdering (4,9/5, ca. 90 anmeldelser)** og en fysisk adresse (Nordvænget 20, 3520 Farum) — ingen af delene er gemt eller vist endnu. Trustpilot-tallet er særligt interessant som fremtidig funktion, da det (modsat de opdigtede ratings der udløste Google Ads-suspenderingen) er et rigtigt, efterprøveligt tredjeparts-tal — men bevidst ikke bygget under tidspres, for ikke at genindføre ratings-visning uden omtanke. Adressefelt findes ikke i databasen endnu
+
+**Stadig ikke gjort:**
 - **De 5 nye butikker har kun den simple, auto-genererede profilside** (fra `bilpleje/profil.html`-skabelonen) — ingen billeder eller "om os"-tekst endnu, præcis som de gamle demo-profiler havde. Det venter på, at butikkerne selv kan logge ind og redigere (endnu ikke bygget)
 - **De gamle SEO-sider for Aarhus/København/Odense (by- og ydelse-sider) refererer stadig til de slettede demo-butikker** og viser nu tomme resultater — er `noindex`, så ikke kritisk, men bør ryddes op eller genbruges til de nye byer på et tidspunkt
 

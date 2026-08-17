@@ -67,6 +67,7 @@ async function loadShop(){
     <h1>${shop.name}</h1>
     <p class="intro">${shop.city} · ${shop.services.join(', ')}</p>
     <div class="card-tags" style="margin-bottom:20px;">
+      ${shop.verificeret ? `<span class="pill verified">Verificeret</span>` : ''}
       ${shop.price_from ? `<span class="pill">Fra ${shop.price_from} kr.</span>` : ''}
       ${shop.discount ? `<span class="pill discount">${shop.discount}% rabat</span>` : ''}
     </div>
