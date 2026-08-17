@@ -67,7 +67,7 @@ async function loadShop(){
     <h1>${shop.name}</h1>
     <p class="intro">${shop.city} · ${shop.services.join(', ')}</p>
     <div class="card-tags" style="margin-bottom:20px;">
-      <span class="pill">Eksempelpris: fra ${shop.price_from} kr.</span>
+      ${shop.price_from ? `<span class="pill">Fra ${shop.price_from} kr.</span>` : ''}
     </div>
     <a href="../../../index.html#search"><button class="btn-primary">Få tilbud fra ${shop.name}</button></a>
   `;

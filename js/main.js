@@ -1,6 +1,6 @@
-// Butikkerne hentes nu fra Supabase (se admin-panelet) i stedet for at være hardcodet her.
-// OBS: rating/anmeldelser/verificeret-mærke/rabat vises bevidst IKKE offentligt.
-// Disse butikker er stadig eksempeldata, og det ville være urigtige oplysninger at vise dem som verificerede/anmeldte.
+// Butikkerne hentes fra Supabase (se admin-panelet) i stedet for at være hardcodet her.
+// OBS: rating/anmeldelser/verificeret-mærke vises bevidst IKKE offentligt endnu —
+// kun når der findes ægte, kildehenviste tal (fx en rigtig Trustpilot-profil), ikke opfundne.
 const SUPABASE_URL = 'https://xeosltdpvkcaudiijtge.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_iG0iWu8szH_7-uwErdxN9g_pE9YGFWd';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -33,7 +33,7 @@ function renderShops(){
         <div class="card-name">${shop.name}</div>
         <div class="card-meta">${shop.city} · ${shop.services.join(', ')}</div>
         <div class="card-tags">
-          <span class="pill">Eksempelpris: fra ${shop.priceFrom} kr.</span>
+          ${shop.priceFrom ? `<span class="pill">Fra ${shop.priceFrom} kr.</span>` : ''}
         </div>
         <button class="card-cta" onclick="openLeadModal('${shop.name.replace(/'/g, "\\'")}')">Få tilbud</button>
       </div>

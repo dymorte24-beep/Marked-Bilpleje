@@ -4,6 +4,24 @@
 Markedsplads-side der forbinder private kunder med bilpleje-butikker i Danmark.
 Gratis for kunder, butikker betaler på sigt for listing/topplacering.
 
+## 🚗 Første 4 rigtige butikker live (17. aug 2026)
+De første rigtige, bekræftede butikker er nu på siden — demo-butikkerne (Glansen Detailing, AutoShine Aarhus, Nordisk Bilpleje, Fyns Bil & Pleje) er slettet fra databasen, og "eksempel-butik"-bjælken på forsiden er fjernet, da den ikke længere er sand.
+
+| Butik | By | Ydelser | Pris fra | Kontakt |
+|---|---|---|---|---|
+| Shine Wash | Brøndby (mobil på hele Sjælland) | Polering, indvendig rens, udvendig rens, lakforsegling/voks, sæderens, mobil bilpleje, ventilationsrens, damprens | 599 kr. | Ibrahim, 22 71 89 89, info@shinewash.dk |
+| CH CarCare | Helsingør (dækker hele Sjælland) | Keramisk coating, polering, indvendig rens, udvendig rens, hjulskift, mobil bilpleje | 500 kr. (hjulskift, FindBilpleje-pris) | 40 50 20 97, kontakt@ch-carcare.dk |
+| GG AutoCare | Holbæk | Keramisk coating, polering, indvendig rens, udvendig rens, lakforsegling/voks, sæderens, detailing, ozonbehandling, damprens | 299 kr. | Deniz A. Hansen, 42 47 42 61, jd@ggautocare.dk |
+| Carclean ApS | Birkerød | Keramisk coating, polering, indvendig rens | 4.490 kr. (inkl. lånebil) | Jakob Weesgaard, 45 82 19 24, carclean@carclean.dk |
+
+Alle 4 er markeret `verificeret: true` (Daniel har talt direkte med dem) og `tier: gratis` (ingen betaling opkrævet endnu, jf. "Gratis i opstartsfasen"). Oprettet via admin-panelets "Opret ny butik"-formular, som nu blev sat på sin første rigtige prøve.
+
+**Ikke gjort endnu — bevidst fravalgt for at komme hurtigt i gang i dag:**
+- **Rabat vises ikke:** Shine Wash og CH CarCare har begge tilbudt 10% rabat via platformen, men der er intet rabat-felt i databasen/UI endnu (blev fjernet under Google Ads-oprydningen — se nedenfor). Skal bygges som en ny, ægte funktion, hvis det skal vises
+- **Kontaktoplysninger (telefon/mail/kontaktperson) er ikke gemt i databasen** — kun i denne fil. Bør tilføjes til `shops`-tabellen og admin-panelet, så Daniel ikke skal slå det op manuelt for at videresende et lead
+- **De 4 nye butikker har kun den simple, auto-genererede profilside** (fra `bilpleje/profil.html`-skabelonen) — ingen billeder eller "om os"-tekst endnu, præcis som de gamle demo-profiler havde. Det venter på, at butikkerne selv kan logge ind og redigere (endnu ikke bygget)
+- **De gamle SEO-sider for Aarhus/København/Odense (by- og ydelse-sider) refererer stadig til de slettede demo-butikker** og viser nu tomme resultater — er `noindex`, så ikke kritisk, men bør ryddes op eller genbruges til de nye byer på et tidspunkt
+
 ## ⚠ Google Ads-konto suspenderet (14.-15. aug 2026) — VIGTIGT
 Kontoen blev suspenderet med begrundelsen **"Uacceptabel forretningspraksis"** (grov overtrædelse). Årsag (mest sandsynlig, ud fra Googles egen politiktekst om "urigtige oplysninger om din virksomhed"): annoncerne kørte til en side med **fiktive tillids-signaler** på de 4 demo-butikker, der så ægte ud:
 - "Verificeret"-mærke på butikker, der ikke er rigtige/tilmeldte

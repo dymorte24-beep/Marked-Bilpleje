@@ -97,9 +97,10 @@
       <label><input type="checkbox" class="service-check" value="Ventilationsrens"> Ventilationsrens</label>
       <label><input type="checkbox" class="service-check" value="Ozonbehandling"> Ozonbehandling</label>
       <label><input type="checkbox" class="service-check" value="Damprens"> Damprens</label>
+      <label><input type="checkbox" class="service-check" value="Læderpleje"> Læderpleje</label>
     </div>
 
-    <label for="newShopPrice">Pris fra (kr.)</label>
+    <label for="newShopPrice">Pris fra (kr.) — valgfri, hvis ikke oplyst</label>
     <input type="number" id="newShopPrice" min="0">
 
     <label for="newShopTier">Tier</label>
@@ -205,14 +206,15 @@ async function createShop(){
   const city = document.getElementById('newShopCity').value.trim();
   const cityKey = document.getElementById('newShopCityKey').value.trim();
   const services = Array.from(document.querySelectorAll('.service-check:checked')).map(c => c.value);
-  const priceFrom = parseInt(document.getElementById('newShopPrice').value, 10);
+  const priceRaw = document.getElementById('newShopPrice').value.trim();
+  const priceFrom = priceRaw ? parseInt(priceRaw, 10) : null;
   const tier = document.getElementById('newShopTier').value;
   const verificeret = document.getElementById('newShopVerified').checked;
   const errEl = document.getElementById('shopError');
 
-  if (!name || !city || !cityKey || services.length === 0 || !priceFrom) {
+  if (!name || !city || !cityKey || services.length === 0) {
     errEl.style.color = '#B3261E';
-    errEl.textContent = 'Udfyld navn, by, mindst én ydelse og en pris.';
+    errEl.textContent = 'Udfyld navn, by og mindst én ydelse.';
     return;
   }
 
