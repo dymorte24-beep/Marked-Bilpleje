@@ -1,27 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  TEST-sitemap, 11. aug 2026. Alle /bilpleje/, /keramisk-coating/, /polering/,
-  /indvendig-rens/ og /folie/ -sider er bygget på TESTDATA (de 4 demo-butikker
-  i js/main.js) og har <meta name="robots" content="noindex">. Indsend IKKE
-  denne sitemap til Search Console før testdataen er erstattet med rigtige
-  butikker og noindex er fjernet fra de relevante sider.
+  Opdateret 18. aug 2026. Afspejler de rigtige, bekræftede butikker.
+  Alle sider har stadig <meta name="robots" content="noindex"> — denne
+  sitemap er IKKE indsendt til Search Console endnu. Fjern noindex fra
+  siderne, og indsend først derefter denne sitemap.
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://bilpleje-dk.netlify.app/</loc></url>
 
-  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/aarhus/</loc></url>
-  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/aarhus/glansen-detailing/</loc></url>
-  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/aarhus/autoshine-aarhus/</loc></url>
-  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/kobenhavn/</loc></url>
-  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/kobenhavn/nordisk-bilpleje/</loc></url>
-  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/odense/</loc></url>
-  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/odense/fyns-bil-pleje/</loc></url>
-
-  <url><loc>https://bilpleje-dk.netlify.app/keramisk-coating/aarhus/</loc></url>
-  <url><loc>https://bilpleje-dk.netlify.app/polering/aarhus/</loc></url>
-  <url><loc>https://bilpleje-dk.netlify.app/indvendig-rens/aarhus/</loc></url>
-  <url><loc>https://bilpleje-dk.netlify.app/keramisk-coating/kobenhavn/</loc></url>
-  <url><loc>https://bilpleje-dk.netlify.app/folie/kobenhavn/</loc></url>
-  <url><loc>https://bilpleje-dk.netlify.app/polering/odense/</loc></url>
-  <url><loc>https://bilpleje-dk.netlify.app/indvendig-rens/odense/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/brondby/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/brondby/shine-wash/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/helsingor/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/helsingor/ch-carcare/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/holbek/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/holbek/gg-autocare/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/birkerod/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/birkerod/carclean-aps/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/farum/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/farum/nsj-bilpleje/</loc></url>
 </urlset>
