@@ -1,5 +1,17 @@
 # Bilpleje.dk — Projektoverblik
 
+## 📝 Profilen udvidet: tagline, om-tekst, åbningstider m.m. (19. aug 2026)
+Efter en større spec fra Daniel om at forbedre virksomhedsportalen blev omfanget bevidst skåret ned til det, der var "let at implementere og gav værdi" — ingen billed-upload (Daniel lægger selv billeder op og indsætter et link), ingen FAQ-builder, ingen pris-pr-ydelse endnu (alle vurderet for store/risikable til en hurtig runde, se den fulde analyse tidligere i samtalen).
+
+**Nye felter på `shops`:** `tagline`, `description`, `address`, `coverage_areas`, `opening_hours` (jsonb, fri tekst pr. ugedag), `why_choose_us` (op til 4 punkter), `instagram`, `facebook`, `hero_image_url` (rent tekstfelt til et billed-link — ingen upload-kode).
+
+**Rettet samtidig:**
+- `bilpleje/profil.html` fik lead-modalen flyttet ind på selve siden ("Få tilbud" åbnede før bare forsiden igen) — genbruger den eksisterende `tilbud_anmodninger`-tabel og Netlify-formular, ingen parallelt system
+- `js/main.js` gjort sikker at genbruge på andre sider end forsiden (tjekker om `#resultsGrid`/`#sliderBox` findes, før den rører dem) — nødvendigt for at kunne dele lead-modal-koden med profilsiden uden fejl
+- Samme redirect-bug-mønster som tidligere fundet igen: `tak.html`-omdirigering i main.js var relativ, hvilket ville pege forkert sted hen fra en dybere URL som profilsiden — rettet til root-relativ `/tak.html`
+
+**Fejlsøgning — butik-panel login "flashede" tilbage til login-siden:** Ramte alle 6 butikskonti ens efter den første vellykkede test. Første gæt (kapløb mellem `onAuthStateChange` og `getSession`) var forkert — rettelsen løste det ikke. Den afgørende oplysning var, at det VIRKEDE fra Daniels telefon — det udelukkede kode/Supabase og pegede på lokale, forældede login-data i hans stationære browser (givet dagens meget store mængde konto-oprettelse/sletning/login-tests på samme side). Løst ved at rydde browserdata / bruge inkognito. **Lærdom:** ved mystiske login-symptomer, tjek altid om det også sker på en anden enhed/browser, FØR der graves i koden — havde sparet en fejlslagen kode-rettelse.
+
 ## 🚨 Sikkerhedshul: butiks-konti havde adgang til admin-panelet (19. aug 2026 — LUKKET SAMME DAG)
 Opdaget af Daniel selv, samme dag butiks-login blev bygget: han kunne logge ind på `/admin/` med hvilken som helst af de 6 nye butiks-konti, og se HELE admin-dashboardet — inkl. `tilbud_anmodninger` (alle kunders navn/telefon/mail/besked på tværs af ALLE butikker, ikke kun sin egen) samt fuld opret/slet-adgang til andre butikkers profiler.
 
