@@ -1,5 +1,26 @@
 # Bilpleje.dk — Projektoverblik
 
+## 🔑 Butikker kan nu selv logge ind og redigere deres profil (19. aug 2026)
+Bygget efter Daniels ønske om, at bilpleje-butikker selv kan rette i deres egen visning uden at gå gennem admin-panelet.
+
+**Ny side:** `/butik-panel/` (noindex, diskret link i forsidens footer). Login via Supabase Auth, samme mønster som `/admin/`, men viser og redigerer KUN den ene butik, kontoen hører til.
+
+**Hvad en butik selv kan ændre:** ydelser, pris fra, rabat, kontaktperson, telefon, mail.
+**Hvad en butik IKKE kan ændre — låst på databaseniveau, ikke kun i UI'en:** navn, by, "Verificeret", "Godkendt", tier, hvilken konto der ejer butikken. Dette er bevidst ufravigeligt: det var præcis den slags falske tillidssignaler (opdigtet "Verificeret") der udløste Google Ads-suspenderingen i august, så en butik må aldrig kunne sætte det selv.
+
+**Sådan er det sikret (`shops`-tabellen):**
+- Ny kolonne `owner_id uuid references auth.users(id) on delete set null`
+- UPDATE-policyen `"Admin kan opdatere butikker"` (using true — alle authenticated) er erstattet af `"Ejer eller admin kan opdatere butik"` (`owner_id = auth.uid() OR auth.jwt()->>'email' = 'dymorte24@gmail.com'`)
+- En `before update`-trigger (`protect_admin_fields` / `protect_admin_only_shop_fields()`) nulstiller navn/by/city_key/profile_url/verificeret/godkendt/tier/owner_id til deres gamle værdi, medmindre opdateringen kommer fra Daniels egen mail. Vigtig detalje fundet under test: triggeren skal specifikt tillade forespørgsler UDEN en JWT (dvs. direkte adgang via Supabase SQL Editor/dashboard) — ellers blokerer den også Daniels egne admin-rettelser lavet direkte i databasen
+
+**Sådan oprettes en butiks-login (manuelt, ikke selv-tilmelding — bevidst valg for at undgå at nogen kan udgive sig for en anden butik):**
+1. Daniel opretter brugeren i Supabase → Authentication → "Create new user" (samme metode som hans egen konto — Daniel skriver selv adgangskoden, den bliver aldrig set af Claude)
+2. Claude kobler kontoens UID til den rigtige butik: `update shops set owner_id = '<uid>' where name = '<butik>';`
+
+**Pilottest gennemført med Final Shine (kontakt@finalshine.dk):** Første forsøg fejlede ("forkert mail eller adgangskode") — kontoen var oprettet og bekræftet, men "Last signed in" var tomt, formentlig pga. rod med browser-autoudfyldning i opret-dialogen. Løst ved at slette og oprette kontoen på ny. Undervejs opdaget og rettet endnu en fejl: `owner_id`-fremmednøglen manglede `on delete set null`, så sletningen af den første (defekte) konto fejlede med en databasefejl, fordi Final Shines butik stadig pegede på den. Efter begge rettelser: login, visning af egne data, redigering og gem bekræftet virkende af Daniel selv — og "Verificeret"-mærket sad stadig urørt bagefter, hvilket bekræfter beskyttelsen virker i praksis.
+
+**Stadig kun Final Shine har en konto.** De andre 5 butikker skal have login oprettet efter samme opskrift, når Daniel er klar til det.
+
 ## 🚗 6. rigtige butik: Final Shine, Aarhus (19. aug 2026)
 Oprettet via admin-panelet, samme mønster som de andre 5. Keramisk coating, polering, indvendig rens, udvendig rens, lakforsegling/voks, sæderens, mobil bilpleje, ozonbehandling, damprens, solfilm — 200 kr. fra, ingen rabat, verificeret. Kontakt: Hashem, 42 34 13 10, kontakt@finalshine.dk.
 
