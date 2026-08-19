@@ -29,7 +29,7 @@ async function loadShops(){
 function renderShops(){
   const grid = document.getElementById('resultsGrid');
   grid.innerHTML = shops.map(shop => `
-    <div class="card" data-city="${shop.cityKey}" data-services="${shop.services.join(',').toLowerCase()}">
+    <div class="card" data-city="${shop.city}" data-services="${shop.services.join(',').toLowerCase()}">
       ${shop.profileUrl ? `<a class="card-link-overlay" href="${shop.profileUrl}" aria-label="Se profil for ${shop.name}"></a>` : ''}
       <div>
         <div class="card-name">${shop.name}</div>
@@ -66,11 +66,15 @@ box.addEventListener('touchstart', e => setPos(e.touches[0].clientX));
 box.addEventListener('touchmove', e => setPos(e.touches[0].clientX));
 
 // City/service filter
+function normalizeCity(str){
+  return str.toLowerCase().replace(/æ/g,'e').replace(/ø/g,'o').replace(/å/g,'a');
+}
+
 function filterCards(){
-  const city = document.getElementById('citySearch').value.trim().toLowerCase();
+  const city = normalizeCity(document.getElementById('citySearch').value.trim());
   const service = document.getElementById('serviceSearch').value.trim().toLowerCase();
   document.querySelectorAll('.card').forEach(card => {
-    const cityMatch = !city || card.dataset.city.includes(city);
+    const cityMatch = !city || normalizeCity(card.dataset.city).includes(city);
     const serviceMatch = service === 'alle ydelser' || (card.dataset.services || '').includes(service);
     card.style.display = (cityMatch && serviceMatch) ? 'flex' : 'none';
   });

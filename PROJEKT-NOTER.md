@@ -1,5 +1,15 @@
 # Bilpleje.dk — Projektoverblik
 
+## ✅ Pre-launch QA-gennemgang (18. aug 2026) — inden Google Ads genstartes
+Gik hele siden igennem som en rigtig kunde ville opleve den, før betalt trafik begynder igen. Fandt og rettede to reelle problemer:
+- **`sitemap.xml` var helt forældet** — pegede stadig på alle 14 slettede demo-sider (ville give 404, hvis nogen/noget besøgte dem). Genopbygget til kun at liste de rigtige, nuværende sider
+- **`privatlivspolitik.html` var ude af trit med virkeligheden** — nævnte kun Netlify som databehandler, ikke Supabase (tilføjet efter politikken blev skrevet), og lovede automatisk sletning af data, hvilket ikke er sådan systemet reelt fungerer. Begge dele rettet
+- **`tilbud_anmodninger`-tabellen manglede en DELETE-policy** — opdaget da oprydning af en testforespørgsel fejlede stille (ingen fejl, men rækken blev heller ikke slettet). Tilføjet
+
+Testet og bekræftet fungerende: forsidens søg/filter (by + alle 14 ydelser), alle 5 butiksprofiler, alle 5 bysider, begge formularer (kunde-lead og butik-tilmelding) ende-til-ende, mobilvisning, og "Videresendt"-knappen (bekræftet togglable begge veje). Ingen fejl i browser-konsollen på nogen af de testede sider.
+
+**Mindre, ikke-kritisk observation:** Carclean ApS' pris (4.490 kr.) inkluderer "lånebil" ifølge Daniels oprindelige oplysninger, men den detalje vises ikke noget sted — der er intet felt til uddybende pris-noter endnu.
+
 ## Hvad er det
 Markedsplads-side der forbinder private kunder med bilpleje-butikker i Danmark.
 Gratis for kunder, butikker betaler på sigt for listing/topplacering.
