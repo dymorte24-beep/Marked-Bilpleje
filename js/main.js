@@ -8,6 +8,7 @@ const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let shops = [];
 
 async function loadShops(){
+  if (!document.getElementById('resultsGrid')) return;
   const { data, error } = await db.from('shops').select('*').eq('godkendt', true).order('name');
   if (error) {
     console.error('Kunne ikke hente butikker fra databasen', error);
@@ -46,24 +47,26 @@ function renderShops(){
 }
 loadShops();
 
-// Before/after slider
+// Before/after slider (kun til stede på forsiden)
 const box = document.getElementById('sliderBox');
-const shine = document.querySelector('.layer-shine');
-const handle = document.getElementById('handle');
-let dragging = false;
+if (box) {
+  const shine = document.querySelector('.layer-shine');
+  const handle = document.getElementById('handle');
+  let dragging = false;
 
-function setPos(clientX){
-  const rect = box.getBoundingClientRect();
-  let pct = ((clientX - rect.left) / rect.width) * 100;
-  pct = Math.max(4, Math.min(96, pct));
-  shine.style.clipPath = `inset(0 ${100-pct}% 0 0)`;
-  handle.style.left = pct + '%';
+  const setPos = (clientX) => {
+    const rect = box.getBoundingClientRect();
+    let pct = ((clientX - rect.left) / rect.width) * 100;
+    pct = Math.max(4, Math.min(96, pct));
+    shine.style.clipPath = `inset(0 ${100-pct}% 0 0)`;
+    handle.style.left = pct + '%';
+  };
+  box.addEventListener('mousedown', e => { dragging = true; setPos(e.clientX); });
+  window.addEventListener('mousemove', e => { if(dragging) setPos(e.clientX); });
+  window.addEventListener('mouseup', () => dragging = false);
+  box.addEventListener('touchstart', e => setPos(e.touches[0].clientX));
+  box.addEventListener('touchmove', e => setPos(e.touches[0].clientX));
 }
-box.addEventListener('mousedown', e => { dragging = true; setPos(e.clientX); });
-window.addEventListener('mousemove', e => { if(dragging) setPos(e.clientX); });
-window.addEventListener('mouseup', () => dragging = false);
-box.addEventListener('touchstart', e => setPos(e.touches[0].clientX));
-box.addEventListener('touchmove', e => setPos(e.touches[0].clientX));
 
 // City/service filter
 function normalizeCity(str){
@@ -133,7 +136,7 @@ function handleCustomerLeadSubmit(e){
 
   Promise.allSettled([dbInsert, netlifySubmit]).then(([, netlifyResult]) => {
     if (netlifyResult.status === 'fulfilled' && netlifyResult.value.ok) {
-      window.location.href = 'tak.html?type=kunde';
+      window.location.href = '/tak.html?type=kunde';
       return;
     }
     submitBtn.disabled = false;

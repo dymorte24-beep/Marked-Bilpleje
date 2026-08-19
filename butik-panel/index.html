@@ -36,6 +36,18 @@
   .checkbox-row label{display:flex; align-items:center; gap:6px; font-size:14px; font-weight:400; margin:0;}
   .checkbox-row input{width:auto;}
   .no-shop-box{background:#fff; border:1px solid var(--chrome-line); border-radius:10px; padding:24px; text-align:center; color:#3A4150;}
+  .field-section{font-size:15px; font-weight:700; color:var(--navy); margin:28px 0 4px; padding-top:16px; border-top:1px solid var(--chrome-line);}
+  .field-section:first-child{margin-top:0; padding-top:0; border-top:none;}
+  .field-hint{color:#6B7280; font-size:13px; margin-top:4px;}
+  .edit-box textarea{width:100%; padding:10px 12px; border:1px solid var(--chrome-line); border-radius:6px; font-size:15px; box-sizing:border-box; font-family:inherit; resize:vertical;}
+  .char-counter{color:#6B7280; font-size:12px; margin-top:4px; text-align:right;}
+  .hours-row{display:flex; align-items:center; gap:10px; margin-top:8px;}
+  .hours-row span{width:80px; font-size:14px; color:var(--ink); flex-shrink:0;}
+  .hours-row input{flex:1; padding:8px 10px; border:1px solid var(--chrome-line); border-radius:6px; font-size:14px; box-sizing:border-box;}
+  .why-row{display:flex; align-items:center; gap:8px; margin-top:8px;}
+  .why-row span{color:var(--gold-dark); font-weight:700; flex-shrink:0;}
+  .why-row input{flex:1; padding:8px 10px; border:1px solid var(--chrome-line); border-radius:6px; font-size:14px; box-sizing:border-box;}
+  .hero-preview{width:100%; max-width:280px; border-radius:8px; margin-top:10px; display:none; border:1px solid var(--chrome-line);}
 </style>
 </head>
 <body>
@@ -81,6 +93,42 @@
     </div>
 
     <div class="edit-box">
+      <div class="field-section">Hovedbillede</div>
+      <label for="myHeroImage">Billed-link</label>
+      <input type="text" id="myHeroImage" placeholder="https://..." oninput="updateHeroPreview()">
+      <p class="field-hint">Indsæt et link til et billede — fx af jeres værksted, en bil I har behandlet, eller et flot resultat. Vi lægger selv billedet op for jer, hvis I sender os det.</p>
+      <img id="heroPreview" class="hero-preview">
+
+      <label for="myTagline" style="margin-top:16px;">Tagline</label>
+      <input type="text" id="myTagline" placeholder="Fx: Professionel bilpleje og overfladebehandling i Aarhus" maxlength="120">
+
+      <label for="myDescription">Om virksomheden</label>
+      <textarea id="myDescription" rows="5" maxlength="700" oninput="updateCharCounter()"></textarea>
+      <p class="char-counter" id="descCounter">0 / 700</p>
+      <p class="field-hint">Fortæl kort hvem I er, hvad I specialiserer jer i, og hvad kunder kan forvente.</p>
+
+      <div class="field-section">Adresse &amp; område</div>
+      <label for="myAddress">Adresse</label>
+      <input type="text" id="myAddress" placeholder="Fx Holmstrupgårdvej 5, 8220 Brabrand">
+
+      <label for="myCoverageAreas">Områder I dækker</label>
+      <input type="text" id="myCoverageAreas" placeholder="Fx Aarhus og omkringliggende områder">
+
+      <label>Åbningstider</label>
+      <div id="hoursRows"></div>
+      <p class="field-hint">Skriv fx "9-17" eller "Efter aftale" — lad stå tomt hvis I holder lukket den dag.</p>
+
+      <div class="field-section">Hvorfor vælge os?</div>
+      <div id="whyRows"></div>
+      <p class="field-hint">Op til 4 korte punkter, fx "Specialister i keramisk coating".</p>
+
+      <div class="field-section">Sociale medier</div>
+      <label for="myInstagram">Instagram</label>
+      <input type="text" id="myInstagram" placeholder="https://instagram.com/...">
+      <label for="myFacebook">Facebook</label>
+      <input type="text" id="myFacebook" placeholder="https://facebook.com/...">
+
+      <div class="field-section">Ydelser &amp; kontakt</div>
       <label>Ydelser</label>
       <div class="checkbox-row">
         <label><input type="checkbox" class="service-check" value="Keramisk coating"> Keramisk coating</label>
@@ -128,6 +176,40 @@ const SUPABASE_KEY = 'sb_publishable_iG0iWu8szH_7-uwErdxN9g_pE9YGFWd';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let myShop = null;
+const DAYS = ['Mandag','Tirsdag','Onsdag','Torsdag','Fredag','Lørdag','Søndag'];
+
+function buildHoursRows(hours){
+  hours = hours || {};
+  document.getElementById('hoursRows').innerHTML = DAYS.map(day => {
+    const key = day.toLowerCase();
+    const val = hours[key] || '';
+    return `<div class="hours-row"><span>${day}</span><input type="text" class="hours-input" data-day="${key}" value="${val.replace(/"/g,'&quot;')}"></div>`;
+  }).join('');
+}
+
+function buildWhyRows(items){
+  items = items || [];
+  document.getElementById('whyRows').innerHTML = [0,1,2,3].map(i => {
+    const val = items[i] || '';
+    return `<div class="why-row"><span>✓</span><input type="text" class="why-input" maxlength="80" value="${val.replace(/"/g,'&quot;')}"></div>`;
+  }).join('');
+}
+
+function updateCharCounter(){
+  const len = document.getElementById('myDescription').value.length;
+  document.getElementById('descCounter').textContent = len + ' / 700';
+}
+
+function updateHeroPreview(){
+  const url = document.getElementById('myHeroImage').value.trim();
+  const img = document.getElementById('heroPreview');
+  if (url) {
+    img.src = url;
+    img.style.display = 'block';
+  } else {
+    img.style.display = 'none';
+  }
+}
 
 function showDashboard(){
   document.getElementById('loginView').style.display = 'none';
@@ -206,6 +288,18 @@ async function loadMyShop(){
   document.getElementById('myContactPerson').value = myShop.contact_person || '';
   document.getElementById('myPhone').value = myShop.phone || '';
   document.getElementById('myEmail').value = myShop.email || '';
+
+  document.getElementById('myHeroImage').value = myShop.hero_image_url || '';
+  updateHeroPreview();
+  document.getElementById('myTagline').value = myShop.tagline || '';
+  document.getElementById('myDescription').value = myShop.description || '';
+  updateCharCounter();
+  document.getElementById('myAddress').value = myShop.address || '';
+  document.getElementById('myCoverageAreas').value = myShop.coverage_areas || '';
+  buildHoursRows(myShop.opening_hours);
+  buildWhyRows(myShop.why_choose_us);
+  document.getElementById('myInstagram').value = myShop.instagram || '';
+  document.getElementById('myFacebook').value = myShop.facebook || '';
 }
 
 async function saveMyShop(){
@@ -224,9 +318,28 @@ async function saveMyShop(){
   const phone = document.getElementById('myPhone').value.trim() || null;
   const email = document.getElementById('myEmail').value.trim() || null;
 
+  const heroImageUrl = document.getElementById('myHeroImage').value.trim() || null;
+  const tagline = document.getElementById('myTagline').value.trim() || null;
+  const description = document.getElementById('myDescription').value.trim() || null;
+  const address = document.getElementById('myAddress').value.trim() || null;
+  const coverageAreas = document.getElementById('myCoverageAreas').value.trim() || null;
+  const instagram = document.getElementById('myInstagram').value.trim() || null;
+  const facebook = document.getElementById('myFacebook').value.trim() || null;
+
+  const openingHours = {};
+  document.querySelectorAll('.hours-input').forEach(input => {
+    const val = input.value.trim();
+    if (val) openingHours[input.dataset.day] = val;
+  });
+  const whyChooseUs = Array.from(document.querySelectorAll('.why-input')).map(i => i.value.trim()).filter(v => v);
+
   const { error } = await db.from('shops').update({
     services, price_from: priceFrom, discount,
-    contact_person: contactPerson, phone, email
+    contact_person: contactPerson, phone, email,
+    hero_image_url: heroImageUrl, tagline, description,
+    address, coverage_areas: coverageAreas,
+    opening_hours: openingHours, why_choose_us: whyChooseUs,
+    instagram, facebook
   }).eq('id', myShop.id);
 
   if (error) {

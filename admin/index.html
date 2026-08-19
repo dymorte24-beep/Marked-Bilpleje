@@ -51,6 +51,14 @@
   .forward-btn{background:none; border:1px solid var(--chrome-line); color:#6B7280; padding:5px 12px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; white-space:nowrap;}
   .forward-btn:hover{background:var(--fog);}
   .forward-btn.is-forwarded{background:#E7F7EE; border-color:#1A7F4E; color:#1A7F4E;}
+  .field-section{font-size:15px; font-weight:700; color:var(--navy); margin:28px 0 4px; padding-top:16px; border-top:1px solid var(--chrome-line);}
+  .shop-box textarea{width:100%; padding:10px 12px; border:1px solid var(--chrome-line); border-radius:6px; font-size:15px; box-sizing:border-box; font-family:inherit; resize:vertical;}
+  .hours-row{display:flex; align-items:center; gap:10px; margin-top:8px;}
+  .hours-row span{width:80px; font-size:14px; flex-shrink:0;}
+  .hours-row input{flex:1; padding:8px 10px; border:1px solid var(--chrome-line); border-radius:6px; font-size:14px; box-sizing:border-box;}
+  .why-row{display:flex; align-items:center; gap:8px; margin-top:8px;}
+  .why-row span{color:var(--gold-dark); font-weight:700; flex-shrink:0;}
+  .why-row input{flex:1; padding:8px 10px; border:1px solid var(--chrome-line); border-radius:6px; font-size:14px; box-sizing:border-box;}
 </style>
 </head>
 <body>
@@ -91,6 +99,34 @@
     <label for="newShopCityKey">By-nøgle (udfyldes automatisk — tjek den er rigtig)</label>
     <input type="text" id="newShopCityKey">
 
+    <div class="field-section">Profiltekst</div>
+    <label for="newShopHeroImage">Hovedbillede — billed-link</label>
+    <input type="text" id="newShopHeroImage" placeholder="https://...">
+
+    <label for="newShopTagline">Tagline</label>
+    <input type="text" id="newShopTagline" maxlength="120">
+
+    <label for="newShopDescription">Om virksomheden</label>
+    <textarea id="newShopDescription" rows="4" maxlength="700"></textarea>
+
+    <label for="newShopAddress">Adresse</label>
+    <input type="text" id="newShopAddress">
+
+    <label for="newShopCoverageAreas">Områder</label>
+    <input type="text" id="newShopCoverageAreas">
+
+    <label>Åbningstider</label>
+    <div id="hoursRows"></div>
+
+    <label>Hvorfor vælge os?</label>
+    <div id="whyRows"></div>
+
+    <label for="newShopInstagram">Instagram</label>
+    <input type="text" id="newShopInstagram">
+    <label for="newShopFacebook">Facebook</label>
+    <input type="text" id="newShopFacebook">
+
+    <div class="field-section">Ydelser</div>
     <label>Ydelser</label>
     <div class="checkbox-row">
       <label><input type="checkbox" class="service-check" value="Keramisk coating"> Keramisk coating</label>
@@ -184,6 +220,25 @@ async function handleSession(session){
   showDashboard();
 }
 
+const DAYS = ['Mandag','Tirsdag','Onsdag','Torsdag','Fredag','Lørdag','Søndag'];
+
+function buildHoursRows(hours){
+  hours = hours || {};
+  document.getElementById('hoursRows').innerHTML = DAYS.map(day => {
+    const key = day.toLowerCase();
+    const val = hours[key] || '';
+    return `<div class="hours-row"><span>${day}</span><input type="text" class="hours-input" data-day="${key}" value="${val.replace(/"/g,'&quot;')}"></div>`;
+  }).join('');
+}
+
+function buildWhyRows(items){
+  items = items || [];
+  document.getElementById('whyRows').innerHTML = [0,1,2,3].map(i => {
+    const val = items[i] || '';
+    return `<div class="why-row"><span>✓</span><input type="text" class="why-input" maxlength="80" value="${val.replace(/"/g,'&quot;')}"></div>`;
+  }).join('');
+}
+
 function togglePwBox(){
   const box = document.getElementById('pwBox');
   box.style.display = box.style.display === 'block' ? 'none' : 'block';
@@ -234,6 +289,15 @@ function resetShopForm(){
   document.getElementById('newShopEmail').value = '';
   document.getElementById('newShopTier').value = 'gratis';
   document.getElementById('newShopVerified').checked = false;
+  document.getElementById('newShopHeroImage').value = '';
+  document.getElementById('newShopTagline').value = '';
+  document.getElementById('newShopDescription').value = '';
+  document.getElementById('newShopAddress').value = '';
+  document.getElementById('newShopCoverageAreas').value = '';
+  document.getElementById('newShopInstagram').value = '';
+  document.getElementById('newShopFacebook').value = '';
+  buildHoursRows(null);
+  buildWhyRows(null);
   document.getElementById('shopBoxTitle').textContent = 'Opret ny butik';
   document.getElementById('shopSaveBtn').textContent = 'Opret butik';
   document.getElementById('shopError').textContent = '';
@@ -260,6 +324,15 @@ function openEditBox(id){
   document.getElementById('newShopEmail').value = shop.email || '';
   document.getElementById('newShopTier').value = shop.tier;
   document.getElementById('newShopVerified').checked = shop.verificeret;
+  document.getElementById('newShopHeroImage').value = shop.hero_image_url || '';
+  document.getElementById('newShopTagline').value = shop.tagline || '';
+  document.getElementById('newShopDescription').value = shop.description || '';
+  document.getElementById('newShopAddress').value = shop.address || '';
+  document.getElementById('newShopCoverageAreas').value = shop.coverage_areas || '';
+  document.getElementById('newShopInstagram').value = shop.instagram || '';
+  document.getElementById('newShopFacebook').value = shop.facebook || '';
+  buildHoursRows(shop.opening_hours);
+  buildWhyRows(shop.why_choose_us);
   document.getElementById('shopBoxTitle').textContent = 'Rediger ' + shop.name;
   document.getElementById('shopSaveBtn').textContent = 'Gem ændringer';
   document.getElementById('shopError').textContent = '';
@@ -302,6 +375,20 @@ async function saveShop(){
   const verificeret = document.getElementById('newShopVerified').checked;
   const errEl = document.getElementById('shopError');
 
+  const heroImageUrl = document.getElementById('newShopHeroImage').value.trim() || null;
+  const tagline = document.getElementById('newShopTagline').value.trim() || null;
+  const description = document.getElementById('newShopDescription').value.trim() || null;
+  const address = document.getElementById('newShopAddress').value.trim() || null;
+  const coverageAreas = document.getElementById('newShopCoverageAreas').value.trim() || null;
+  const instagram = document.getElementById('newShopInstagram').value.trim() || null;
+  const facebook = document.getElementById('newShopFacebook').value.trim() || null;
+  const openingHours = {};
+  document.querySelectorAll('.hours-input').forEach(input => {
+    const val = input.value.trim();
+    if (val) openingHours[input.dataset.day] = val;
+  });
+  const whyChooseUs = Array.from(document.querySelectorAll('.why-input')).map(i => i.value.trim()).filter(v => v);
+
   if (!name || !city || !cityKey || services.length === 0) {
     errEl.style.color = '#B3261E';
     errEl.textContent = 'Udfyld navn, by og mindst én ydelse.';
@@ -311,7 +398,11 @@ async function saveShop(){
   const shopData = {
     name, city, city_key: cityKey, services, price_from: priceFrom,
     discount, contact_person: contactPerson, phone, email,
-    tier, verificeret
+    tier, verificeret,
+    hero_image_url: heroImageUrl, tagline, description,
+    address, coverage_areas: coverageAreas,
+    opening_hours: openingHours, why_choose_us: whyChooseUs,
+    instagram, facebook
   };
 
   let error;
