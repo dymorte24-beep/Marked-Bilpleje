@@ -351,8 +351,9 @@ async function saveMyShop(){
   errEl.textContent = 'Ændringer gemt!';
 }
 
-db.auth.onAuthStateChange((event, session) => {
-  if (session) showDashboard(); else showLogin();
+db.auth.onAuthStateChange((event) => {
+  if (event === 'SIGNED_OUT') showLogin();
+  else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') showDashboard();
 });
 
 db.auth.getSession().then(({ data: { session } }) => {
