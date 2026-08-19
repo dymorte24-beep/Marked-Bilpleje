@@ -87,7 +87,7 @@ Kontoen blev suspenderet med begrundelsen **"Uacceptabel forretningspraksis"** (
 
 **Fix udført (15. aug 2026):** Alle ovenstående fjernet fra hele sitet (forside, alle 3 bysider, alle 4 profilsider, alle 7 ydelse-sider). Tilbage er kun: navn, by, ydelser, et eksempel-prisniveau (nu tydeligt mærket "Eksempelpris"), og en synlig bjælke der siger sitet er under opbygning og butikkerne er eksempler. `aggregateRating` og hele LocalBusiness-blokken er fjernet fra JSON-LD på alle 4 profilsider (BreadcrumbList beholdt, den er bare navigation, ingen påstand om en virksomhed).
 
-**Status:** Rettelserne er pushet live og bekræftet på den rigtige produktionsside. Appel indsendt til Google 15. aug 2026 (Daniel gennemførte selv reCAPTCHA'en og tryk på Send). Google svarer normalt inden for 1-3 hverdage, kan tage længere. Kampagnen er fortsat sat på pause, indtil kontoen forhåbentlig genåbnes.
+**Status: LØST.** Rettelserne er pushet live og bekræftet på den rigtige produktionsside. Appel indsendt til Google 15. aug 2026 (Daniel gennemførte selv reCAPTCHA'en og tryk på Send). Kontoen er siden åbnet igen, og Daniel genstartede kampagnen 19. aug 2026 — se "Google Ads" nedenfor.
 
 **Lærdom fremadrettet:** Når rigtige butikker tilmeldes, må rating/anmeldelser/verificeret-status kun vises, hvis tallene er ægte (fx fra en rigtig Google-anmeldelse butikken selv leverer dokumentation for) — aldrig eksempeltal på en side, der er mål for betalt trafik.
 
@@ -183,7 +183,7 @@ Efter Google Ads-suspenderingen (se nedenfor) bad Daniel om et rigtigt system: e
 - Sprog: Dansk
 - Annoncetekst (overskrifter): "Find Bilpleje Nær Dig", "Keramisk Coating & Polering", "Sammenlign Bilpleje Butikker"
 - Kampagnen gik oprindeligt i gang 8. august 2026 efter betaling/3D Secure-verificering blev gennemført i brugerens egen browser (Claude-styret browser blev Cloudflare-blokeret på verificeringstrinnet)
-- Status pr. 11. august 2026: **Sat på pause** af Daniel — genaktiveres når han selv beder om det
+- **Genaktiveret af Daniel 19. august 2026** — betalt trafik kører nu igen. Sat på pause 11. aug 2026, holdt på pause under Google Ads-suspenderingen (se nedenfor) og hele oprydningen/QA-gennemgangen; alt det arbejde (fjernelse af fiktive tillidssignaler, søgefejl på æ/ø/å rettet, Final Shine tilføjet som 6. rigtige butik) var forberedelsen til netop dette
 - Google-tag (til konverteringssporing): **AW-18378049298** — tilføjet site-wide 9. august 2026, efter Google flagede konverteringshandlingen som uverificeret uden det
 
 ## Google Search Console
