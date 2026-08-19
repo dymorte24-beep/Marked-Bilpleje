@@ -1,5 +1,18 @@
 # Bilpleje.dk — Projektoverblik
 
+## 🐛 Byge-søgning fejlede for byer med æ/ø/å (19. aug 2026) — rettet
+Daniel rapporterede: søgning på "Birkerød" gav ingen resultater, selvom Carclean ApS findes i Birkerød og intet var valgt i ydelses-filteret.
+
+**Root cause:** Butikskortene blev tagget med `data-city` sat til `shop.cityKey` — den ASCII-normaliserede værdi der bruges til URL-slugs (fx "birkerod", via æ→e/ø→o/å→a). Søgefeltet blev derimod sammenlignet mod det, brugeren rent faktisk taster (fx "Birkerød", med ægte ø) efter kun `.toLowerCase()` — ingen fjernelse af diakritiske tegn. Så `"birkerod".includes("birkerød")` var altid falsk.
+
+Ramte reelt 4 af de 5 rigtige byer (Brøndby, Helsingør, Holbæk, Birkerød indeholder alle æ/ø — kun Farum gjorde ikke, hvilket er grunden til at søgning under den tidligere QA-gennemgang så ud til at virke: Farum var den ene by, der ikke kunne afsløre fejlen).
+
+**Fix (`js/main.js`):**
+- Kortene tagges nu med `data-city="${shop.city}"` (det rigtige bynavn) i stedet for `cityKey`
+- Ny `normalizeCity()`-hjælpefunktion (samme æ→e/ø→o/å→a-transform som slug-genereringen) anvendes nu på BÅDE søgefeltets tekst og det gemte bynavn, før de sammenlignes — så det virker uanset om man taster med eller uden diakritiske tegn
+
+Pushet (commit `6784f2f`) og bekræftet virkende direkte i browseren på den live side: søgning på både "Birkerød" (viser kun Carclean ApS) og "Helsingør" (viser kun CH CarCare) giver nu korrekt, filtreret resultat.
+
 ## ✅ Pre-launch QA-gennemgang (18. aug 2026) — inden Google Ads genstartes
 Gik hele siden igennem som en rigtig kunde ville opleve den, før betalt trafik begynder igen. Fandt og rettede to reelle problemer:
 - **`sitemap.xml` var helt forældet** — pegede stadig på alle 14 slettede demo-sider (ville give 404, hvis nogen/noget besøgte dem). Genopbygget til kun at liste de rigtige, nuværende sider
