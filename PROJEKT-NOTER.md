@@ -1,5 +1,19 @@
 # Bilpleje.dk — Projektoverblik
 
+## 🚨 Sikkerhedshul: butiks-konti havde adgang til admin-panelet (19. aug 2026 — LUKKET SAMME DAG)
+Opdaget af Daniel selv, samme dag butiks-login blev bygget: han kunne logge ind på `/admin/` med hvilken som helst af de 6 nye butiks-konti, og se HELE admin-dashboardet — inkl. `tilbud_anmodninger` (alle kunders navn/telefon/mail/besked på tværs af ALLE butikker, ikke kun sin egen) samt fuld opret/slet-adgang til andre butikkers profiler.
+
+**Root cause:** Da butiks-login blev bygget, blev kun `shops`-tabellens UPDATE-politik gjort ejer-specifik. Resten af systemet — `/admin/`-sidens login-tjek, og INSERT/DELETE på `shops`, og SELECT/UPDATE/DELETE på `tilbud_anmodninger` — var alle bygget dengang Daniel var den ENESTE nogensinde loggede-ind bruger, og antog derfor stiltiende "logget ind = admin". Den antagelse holdt op med at være sand, i det øjeblik de 6 butikker fik hver deres konto, men blev ikke opdaget/rettet på det tidspunkt.
+
+**Rettet (samme dag):**
+- Ny SQL-funktion `is_admin()` (tjekker `auth.jwt()->>'email' = 'dymorte24@gmail.com'`)
+- `tilbud_anmodninger`: SELECT, UPDATE og DELETE er nu `is_admin()`-only (var: alle loggede-ind brugere)
+- `shops`: INSERT og DELETE er nu `is_admin()`-only (var: alle loggede-ind brugere). UPDATE var allerede korrekt ejer-scoped fra tidligere samme dag
+- `admin/index.html`: tilføjet `handleSession()` som tjekker `session.user.email`, og logger enhver ikke-admin-konto øjeblikkeligt ud igen med besked "Denne konto har ikke adgang til admin-panelet" — lukker hullet på side-niveau, ikke kun i databasen
+- Bekræftet af Daniel: butiks-konti afvises korrekt fra `/admin/` nu, og hans egen login virker stadig uændret
+
+**Lærdom fremadrettet:** Når en ny slags bruger/rolle tilføjes til systemet (som butiks-konti var her), skal ALLE eksisterende RLS-politikker og sidernes egne login-tjek gennemgås for stiltiende "authenticated = admin"-antagelser — ikke kun de dele, den nye funktion direkte rører ved. Denne fejl var reelt til stede, så snart første butik fik en konto, ikke først da alle 6 var oprettet — det var bare først da Daniel faktisk prøvede at logge ind med en butik-konto på `/admin/`, at den blev opdaget.
+
 ## 🔑 Butikker kan nu selv logge ind og redigere deres profil (19. aug 2026)
 Bygget efter Daniels ønske om, at bilpleje-butikker selv kan rette i deres egen visning uden at gå gennem admin-panelet.
 
