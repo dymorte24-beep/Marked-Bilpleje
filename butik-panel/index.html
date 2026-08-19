@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Butik-panel – Bilpleje.dk</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+  body{background:var(--fog);}
+  .panel-wrap{max-width:640px; margin:0 auto; padding:40px 24px;}
+  .panel-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;}
+  .panel-header h1{color:var(--navy); font-size:26px;}
+  .login-box{max-width:360px; margin:80px auto; background:#fff; border-radius:10px; padding:32px; border:1px solid var(--chrome-line);}
+  .login-box h2{color:var(--navy); margin-bottom:8px;}
+  .login-box .sub{color:#6B7280; font-size:14px; margin-bottom:20px;}
+  .login-box input, .pw-box input{width:100%; padding:10px 12px; margin-bottom:12px; border:1px solid var(--chrome-line); border-radius:6px; font-size:15px; box-sizing:border-box;}
+  .error-msg{color:#B3261E; font-size:13px; margin-top:4px; min-height:16px;}
+  .logout-btn{background:none; border:1px solid var(--chrome-line); padding:8px 16px; border-radius:6px; cursor:pointer; font-size:14px;}
+  .pw-toggle{background:none; border:none; color:var(--navy); text-decoration:underline; font-size:13px; cursor:pointer; padding:0; margin-bottom:24px;}
+  .pw-box{max-width:360px; background:#fff; border:1px solid var(--chrome-line); border-radius:10px; padding:20px; margin-bottom:24px; display:none;}
+  .status-box{background:#fff; border:1px solid var(--chrome-line); border-radius:10px; padding:20px; margin-bottom:24px;}
+  .status-box .badge{display:inline-block; padding:2px 10px; border-radius:20px; font-size:12px; font-weight:600;}
+  .status-box .badge.yes{background:#E7F7EE; color:#1A7F4E;}
+  .status-box .badge.no{background:var(--fog); color:#6B7280;}
+  .status-box p{margin-bottom:8px; font-size:14px;}
+  .status-box .hint{color:#6B7280; font-size:13px; margin-top:12px; margin-bottom:0;}
+  .edit-box{background:#fff; border:1px solid var(--chrome-line); border-radius:10px; padding:20px;}
+  .edit-box label{display:block; font-size:13px; font-weight:600; color:var(--navy); margin-bottom:4px; margin-top:12px;}
+  .edit-box label:first-child{margin-top:0;}
+  .edit-box input[type="text"], .edit-box input[type="number"], .edit-box input[type="email"]{width:100%; padding:10px 12px; border:1px solid var(--chrome-line); border-radius:6px; font-size:15px; box-sizing:border-box;}
+  .checkbox-row{display:flex; flex-wrap:wrap; gap:12px; margin-top:4px;}
+  .checkbox-row label{display:flex; align-items:center; gap:6px; font-size:14px; font-weight:400; margin:0;}
+  .checkbox-row input{width:auto;}
+  .no-shop-box{background:#fff; border:1px solid var(--chrome-line); border-radius:10px; padding:24px; text-align:center; color:#3A4150;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="../index.html" class="logo">bilpleje<span>.dk</span></a>
+  </div>
+</nav>
+
+<div id="loginView" class="panel-wrap" style="display:none;">
+  <div class="login-box">
+    <h2>Butik-login</h2>
+    <p class="sub">Log ind for at redigere din profil på bilpleje.dk.</p>
+    <input type="email" id="loginEmail" placeholder="Mail" autocomplete="username">
+    <input type="password" id="loginPassword" placeholder="Adgangskode" autocomplete="current-password">
+    <button class="btn-primary" style="width:100%;" onclick="login()">Log ind</button>
+    <p class="error-msg" id="loginError"></p>
+  </div>
+</div>
+
+<div id="dashboardView" class="panel-wrap" style="display:none;">
+  <div class="panel-header">
+    <h1 id="shopHeading">Mit panel</h1>
+    <button class="logout-btn" onclick="logout()">Log ud</button>
+  </div>
+  <button class="pw-toggle" onclick="togglePwBox()">Skift adgangskode</button>
+  <div class="pw-box" id="pwBox">
+    <input type="password" id="newPassword" placeholder="Ny adgangskode" autocomplete="new-password">
+    <button class="btn-primary" onclick="setPassword()">Gem adgangskode</button>
+    <p class="error-msg" id="pwError"></p>
+  </div>
+
+  <div id="noShopBox" class="no-shop-box" style="display:none;">
+    Din konto er endnu ikke koblet til en bestemt butik på bilpleje.dk. Kontakt os, så ordner vi det.
+  </div>
+
+  <div id="shopContent" style="display:none;">
+    <div class="status-box">
+      <p><strong>Verificeret:</strong> <span id="statusVerificeret" class="badge"></span></p>
+      <p><strong>Synlig på bilpleje.dk:</strong> <span id="statusGodkendt" class="badge"></span></p>
+      <p class="hint">Disse to felter sættes af bilpleje.dk og kan ikke ændres herfra. Kontakt os, hvis noget skal opdateres.</p>
+    </div>
+
+    <div class="edit-box">
+      <label>Ydelser</label>
+      <div class="checkbox-row">
+        <label><input type="checkbox" class="service-check" value="Keramisk coating"> Keramisk coating</label>
+        <label><input type="checkbox" class="service-check" value="Polering"> Polering</label>
+        <label><input type="checkbox" class="service-check" value="Folie"> Folie</label>
+        <label><input type="checkbox" class="service-check" value="Indvendig rens"> Indvendig rens</label>
+        <label><input type="checkbox" class="service-check" value="Udvendig rens"> Udvendig rens</label>
+        <label><input type="checkbox" class="service-check" value="Lakforsegling/voks"> Lakforsegling/voks</label>
+        <label><input type="checkbox" class="service-check" value="Sæderens"> Sæderens</label>
+        <label><input type="checkbox" class="service-check" value="Hjulskift"> Hjulskift</label>
+        <label><input type="checkbox" class="service-check" value="Mobil bilpleje"> Mobil bilpleje</label>
+        <label><input type="checkbox" class="service-check" value="Detailing"> Detailing</label>
+        <label><input type="checkbox" class="service-check" value="Ventilationsrens"> Ventilationsrens</label>
+        <label><input type="checkbox" class="service-check" value="Ozonbehandling"> Ozonbehandling</label>
+        <label><input type="checkbox" class="service-check" value="Damprens"> Damprens</label>
+        <label><input type="checkbox" class="service-check" value="Læderpleje"> Læderpleje</label>
+        <label><input type="checkbox" class="service-check" value="Solfilm"> Solfilm</label>
+      </div>
+
+      <label for="myPrice">Pris fra (kr.) — valgfri</label>
+      <input type="number" id="myPrice" min="0">
+
+      <label for="myDiscount">Rabat (%) — valgfri, vises kun hvis udfyldt</label>
+      <input type="number" id="myDiscount" min="0" max="100">
+
+      <label for="myContactPerson">Kontaktperson</label>
+      <input type="text" id="myContactPerson">
+
+      <label for="myPhone">Telefon</label>
+      <input type="text" id="myPhone">
+
+      <label for="myEmail">Mail</label>
+      <input type="email" id="myEmail">
+
+      <button class="btn-primary" style="width:100%; margin-top:16px;" onclick="saveMyShop()">Gem ændringer</button>
+      <p class="error-msg" id="saveError"></p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL = 'https://xeosltdpvkcaudiijtge.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_iG0iWu8szH_7-uwErdxN9g_pE9YGFWd';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let myShop = null;
+
+function showDashboard(){
+  document.getElementById('loginView').style.display = 'none';
+  document.getElementById('dashboardView').style.display = 'block';
+  loadMyShop();
+}
+
+function showLogin(){
+  document.getElementById('loginView').style.display = 'block';
+  document.getElementById('dashboardView').style.display = 'none';
+}
+
+function togglePwBox(){
+  const box = document.getElementById('pwBox');
+  box.style.display = box.style.display === 'block' ? 'none' : 'block';
+}
+
+async function login(){
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  const { error } = await db.auth.signInWithPassword({ email, password });
+  if (error) {
+    document.getElementById('loginError').textContent = 'Forkert mail eller adgangskode.';
+    return;
+  }
+  showDashboard();
+}
+
+async function logout(){
+  await db.auth.signOut();
+  showLogin();
+}
+
+async function setPassword(){
+  const password = document.getElementById('newPassword').value;
+  const errEl = document.getElementById('pwError');
+  if (password.length < 8) {
+    errEl.textContent = 'Adgangskoden skal være mindst 8 tegn.';
+    return;
+  }
+  const { error } = await db.auth.updateUser({ password });
+  if (error) {
+    errEl.textContent = 'Kunne ikke gemme adgangskoden. Prøv igen.';
+    return;
+  }
+  errEl.style.color = '#1A7F4E';
+  errEl.textContent = 'Adgangskode gemt.';
+}
+
+function badge(value){
+  return value
+    ? '<span class="badge yes">Ja</span>'
+    : '<span class="badge no">Nej, endnu ikke</span>';
+}
+
+async function loadMyShop(){
+  const { data: { user } } = await db.auth.getUser();
+  const { data, error } = await db.from('shops').select('*').eq('owner_id', user.id).maybeSingle();
+
+  if (error || !data) {
+    document.getElementById('noShopBox').style.display = 'block';
+    document.getElementById('shopContent').style.display = 'none';
+    return;
+  }
+
+  myShop = data;
+  document.getElementById('noShopBox').style.display = 'none';
+  document.getElementById('shopContent').style.display = 'block';
+  document.getElementById('shopHeading').textContent = myShop.name;
+  document.getElementById('statusVerificeret').outerHTML = '<span id="statusVerificeret" class="badge ' + (myShop.verificeret ? 'yes' : 'no') + '">' + (myShop.verificeret ? 'Ja' : 'Nej, endnu ikke') + '</span>';
+  document.getElementById('statusGodkendt').outerHTML = '<span id="statusGodkendt" class="badge ' + (myShop.godkendt ? 'yes' : 'no') + '">' + (myShop.godkendt ? 'Ja' : 'Nej, endnu ikke') + '</span>';
+
+  document.querySelectorAll('.service-check').forEach(c => { c.checked = myShop.services.includes(c.value); });
+  document.getElementById('myPrice').value = myShop.price_from || '';
+  document.getElementById('myDiscount').value = myShop.discount || '';
+  document.getElementById('myContactPerson').value = myShop.contact_person || '';
+  document.getElementById('myPhone').value = myShop.phone || '';
+  document.getElementById('myEmail').value = myShop.email || '';
+}
+
+async function saveMyShop(){
+  const errEl = document.getElementById('saveError');
+  const services = Array.from(document.querySelectorAll('.service-check:checked')).map(c => c.value);
+  if (services.length === 0) {
+    errEl.style.color = '#B3261E';
+    errEl.textContent = 'Vælg mindst én ydelse.';
+    return;
+  }
+  const priceRaw = document.getElementById('myPrice').value.trim();
+  const priceFrom = priceRaw ? parseInt(priceRaw, 10) : null;
+  const discountRaw = document.getElementById('myDiscount').value.trim();
+  const discount = discountRaw ? parseInt(discountRaw, 10) : null;
+  const contactPerson = document.getElementById('myContactPerson').value.trim() || null;
+  const phone = document.getElementById('myPhone').value.trim() || null;
+  const email = document.getElementById('myEmail').value.trim() || null;
+
+  const { error } = await db.from('shops').update({
+    services, price_from: priceFrom, discount,
+    contact_person: contactPerson, phone, email
+  }).eq('id', myShop.id);
+
+  if (error) {
+    errEl.style.color = '#B3261E';
+    errEl.textContent = 'Kunne ikke gemme ændringerne. Prøv igen.';
+    return;
+  }
+  errEl.style.color = '#1A7F4E';
+  errEl.textContent = 'Ændringer gemt!';
+}
+
+db.auth.onAuthStateChange((event, session) => {
+  if (session) showDashboard(); else showLogin();
+});
+
+db.auth.getSession().then(({ data: { session } }) => {
+  if (session) showDashboard(); else showLogin();
+});
+</script>
+
+</body>
+</html>
