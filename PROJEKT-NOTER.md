@@ -19,7 +19,7 @@ Bygget efter Daniels ønske om, at bilpleje-butikker selv kan rette i deres egen
 
 **Pilottest gennemført med Final Shine (kontakt@finalshine.dk):** Første forsøg fejlede ("forkert mail eller adgangskode") — kontoen var oprettet og bekræftet, men "Last signed in" var tomt, formentlig pga. rod med browser-autoudfyldning i opret-dialogen. Løst ved at slette og oprette kontoen på ny. Undervejs opdaget og rettet endnu en fejl: `owner_id`-fremmednøglen manglede `on delete set null`, så sletningen af den første (defekte) konto fejlede med en databasefejl, fordi Final Shines butik stadig pegede på den. Efter begge rettelser: login, visning af egne data, redigering og gem bekræftet virkende af Daniel selv — og "Verificeret"-mærket sad stadig urørt bagefter, hvilket bekræfter beskyttelsen virker i praksis.
 
-**Stadig kun Final Shine har en konto.** De andre 5 butikker skal have login oprettet efter samme opskrift, når Daniel er klar til det.
+**Opdatering samme dag — udrullet til alle 6:** Daniel oprettede selv login til de resterende 5 butikker (Shine Wash, CH CarCare, GG AutoCare, Carclean ApS, NSJ-Bilpleje) via Supabase, samme metode som Final Shine. Alle 6 `owner_id`-koblinger verificeret korrekte via SQL. Alle 6 butikker på bilpleje.dk har nu adgang til `/butik-panel/` med deres egen mail.
 
 ## 🚗 6. rigtige butik: Final Shine, Aarhus (19. aug 2026)
 Oprettet via admin-panelet, samme mønster som de andre 5. Keramisk coating, polering, indvendig rens, udvendig rens, lakforsegling/voks, sæderens, mobil bilpleje, ozonbehandling, damprens, solfilm — 200 kr. fra, ingen rabat, verificeret. Kontakt: Hashem, 42 34 13 10, kontakt@finalshine.dk.
