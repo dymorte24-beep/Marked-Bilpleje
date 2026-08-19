@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Opdateret 18. aug 2026. Afspejler de rigtige, bekræftede butikker.
+  Opdateret 19. aug 2026. Afspejler de rigtige, bekræftede butikker.
   Alle sider har stadig <meta name="robots" content="noindex"> — denne
   sitemap er IKKE indsendt til Search Console endnu. Fjern noindex fra
   siderne, og indsend først derefter denne sitemap.
@@ -8,6 +8,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://bilpleje-dk.netlify.app/</loc></url>
 
+  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/aarhus/</loc></url>
+  <url><loc>https://bilpleje-dk.netlify.app/bilpleje/aarhus/final-shine/</loc></url>
   <url><loc>https://bilpleje-dk.netlify.app/bilpleje/brondby/</loc></url>
   <url><loc>https://bilpleje-dk.netlify.app/bilpleje/brondby/shine-wash/</loc></url>
   <url><loc>https://bilpleje-dk.netlify.app/bilpleje/helsingor/</loc></url>

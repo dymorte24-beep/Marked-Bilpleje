@@ -1,5 +1,14 @@
 # Bilpleje.dk — Projektoverblik
 
+## 🚗 6. rigtige butik: Final Shine, Aarhus (19. aug 2026)
+Oprettet via admin-panelet, samme mønster som de andre 5. Keramisk coating, polering, indvendig rens, udvendig rens, lakforsegling/voks, sæderens, mobil bilpleje, ozonbehandling, damprens, solfilm — 200 kr. fra, ingen rabat, verificeret. Kontakt: Hashem, 42 34 13 10, kontakt@finalshine.dk.
+
+**Noter:**
+- Tilføjede **"Solfilm"** som ny ydelseskategori (admin-checkbox + forsidens filter) — fandtes ikke før
+- Daniel oplyste også adresse (Holmstrupgårdvej 5, 8220 Brabrand), åbningstider (hverdage 9–16) og hjemmeside (finalshine.dk) — **ingen af de tre er gemt**, da der ikke findes felter til dem i databasen/panelet endnu. Bevidst fravalgt at udvide skemaet denne gang; tag det op igen hvis det bliver et tilbagevendende behov
+- "Udvendig klargøring" (Final Shines eget ord) er lagt under den eksisterende "Udvendig rens"-kategori, for at holde søgefilteret samlet i stedet for at splitte i en ny, næsten identisk kategori
+- Aarhus har tidligere haft en demo-butik og en statisk by-side, som blev slettet 17. aug — intet at rydde op i, den fælles `by.html`-skabelon viser automatisk Final Shine på `/bilpleje/aarhus/`
+
 ## 💬 Idé: AI-chat på virksomhedsprofiler (analyseret 19. aug 2026 — IKKE igangsat)
 Daniel fremlagde en detaljeret spec til en AI-chat pr. virksomhedsprofil ("Spørg om [butik]"), der svarer kun ud fra virksomhedens egne godkendte data og guider mod en tilbudsforespørgsel. Fuld arkitektur-analyse lavet, ingen kode skrevet. Kort opsummeret:
 - **Passer godt ind uden framework-skift.** Netlify Functions (nyt for projektet — første server-side kode) beskytter Claude API-nøglen; `bilpleje/profil.html` er allerede det fælles skabelon-sted, så chatten kan bygges ét sted og virke for alle butikker
