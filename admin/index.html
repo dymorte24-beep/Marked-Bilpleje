@@ -157,6 +157,8 @@ const SUPABASE_URL = 'https://xeosltdpvkcaudiijtge.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_iG0iWu8szH_7-uwErdxN9g_pE9YGFWd';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+const ADMIN_EMAIL = 'dymorte24@gmail.com';
+
 function showDashboard(){
   document.getElementById('loginView').style.display = 'none';
   document.getElementById('dashboardView').style.display = 'block';
@@ -168,6 +170,20 @@ function showLogin(){
   document.getElementById('dashboardView').style.display = 'none';
 }
 
+async function handleSession(session){
+  if (!session) {
+    showLogin();
+    return;
+  }
+  if (session.user.email !== ADMIN_EMAIL) {
+    await db.auth.signOut();
+    showLogin();
+    document.getElementById('loginError').textContent = 'Denne konto har ikke adgang til admin-panelet.';
+    return;
+  }
+  showDashboard();
+}
+
 function togglePwBox(){
   const box = document.getElementById('pwBox');
   box.style.display = box.style.display === 'block' ? 'none' : 'block';
@@ -176,12 +192,12 @@ function togglePwBox(){
 async function login(){
   const email = document.getElementById('loginEmail').value;
   const password = document.getElementById('loginPassword').value;
-  const { error } = await db.auth.signInWithPassword({ email, password });
+  const { data, error } = await db.auth.signInWithPassword({ email, password });
   if (error) {
     document.getElementById('loginError').textContent = 'Forkert mail eller adgangskode.';
     return;
   }
-  showDashboard();
+  await handleSession(data.session);
 }
 
 async function logout(){
@@ -395,11 +411,11 @@ async function toggleForwarded(id, current){
 }
 
 db.auth.onAuthStateChange((event, session) => {
-  if (session) showDashboard(); else showLogin();
+  handleSession(session);
 });
 
 db.auth.getSession().then(({ data: { session } }) => {
-  if (session) showDashboard(); else showLogin();
+  handleSession(session);
 });
 </script>
 
