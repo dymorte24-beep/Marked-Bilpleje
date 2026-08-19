@@ -1,5 +1,13 @@
 # Bilpleje.dk — Projektoverblik
 
+## 💬 Idé: AI-chat på virksomhedsprofiler (analyseret 19. aug 2026 — IKKE igangsat)
+Daniel fremlagde en detaljeret spec til en AI-chat pr. virksomhedsprofil ("Spørg om [butik]"), der svarer kun ud fra virksomhedens egne godkendte data og guider mod en tilbudsforespørgsel. Fuld arkitektur-analyse lavet, ingen kode skrevet. Kort opsummeret:
+- **Passer godt ind uden framework-skift.** Netlify Functions (nyt for projektet — første server-side kode) beskytter Claude API-nøglen; `bilpleje/profil.html` er allerede det fælles skabelon-sted, så chatten kan bygges ét sted og virke for alle butikker
+- **Genbrug frem for duplikering:** ny data (åbningstider, mobil-dækning, FAQ) bør ligge i nye kolonner på den eksisterende `shops`-tabel (`ai_enabled`, `ai_info` jsonb) — IKKE duplikere services/pris/by, som allerede findes
+- **To åbne beslutninger, ikke afgjort endnu:** (1) skal "Få et tilbud" i chatten blive på profilsiden (kræver at lead-modalen porteres dertil, den findes i dag kun på `index.html`), eller sende brugeren til forsiden; (2) hvor rate-limiting skal bo (foreslået: en simpel tabel i Supabase, for ikke at hente en ny tjeneste ind)
+- **Separat, ikke-relateret observation undervejs:** `shops`-tabellens RLS tillader offentlig læsning af HELE tabellen, inkl. `contact_person`/`phone`/`email`, som adminpanelet kun holder skjult i UI'en, ikke reelt adgangsbegrænset. Ikke skabt af chat-idéen, men værd at kigge på separat
+- **Status:** Daniel vil vente. Anthropic API koster efter forbrug (kræver egen konto + betalingskort, ikke oprettet endnu); Netlify Functions dækkes af nuværende Personal-plan
+
 ## 🐛 Byge-søgning fejlede for byer med æ/ø/å (19. aug 2026) — rettet
 Daniel rapporterede: søgning på "Birkerød" gav ingen resultater, selvom Carclean ApS findes i Birkerød og intet var valgt i ydelses-filteret.
 
