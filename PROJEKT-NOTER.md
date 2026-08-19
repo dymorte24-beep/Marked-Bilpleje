@@ -184,6 +184,13 @@ Efter Google Ads-suspenderingen (se nedenfor) bad Daniel om et rigtigt system: e
 - Annoncetekst (overskrifter): "Find Bilpleje Nær Dig", "Keramisk Coating & Polering", "Sammenlign Bilpleje Butikker"
 - Kampagnen gik oprindeligt i gang 8. august 2026 efter betaling/3D Secure-verificering blev gennemført i brugerens egen browser (Claude-styret browser blev Cloudflare-blokeret på verificeringstrinnet)
 - **Genaktiveret af Daniel 19. august 2026** — betalt trafik kører nu igen. Sat på pause 11. aug 2026, holdt på pause under Google Ads-suspenderingen (se nedenfor) og hele oprydningen/QA-gennemgangen; alt det arbejde (fjernelse af fiktive tillidssignaler, søgefejl på æ/ø/å rettet, Final Shine tilføjet som 6. rigtige butik) var forberedelsen til netop dette
+- **⚠ Statustjek samme dag (19. aug 2026):** Logget ind på Google Ads (Daniel loggede selv ind, jeg kiggede read-only). Kampagnen kører (grøn/"Aktiveret"), men status er **"Kvalificeret (begrænset)"** — ikke fuld visning endnu, af tre grunde:
+  1. **Annonceidentitet skal verificeres senest 11. sep. 2026** ellers risikerer flere annoncer at blive sat på pause/begrænset. Kræver Daniels egen handling i Google Ads (identitetsverificering) — jeg kan ikke gøre dette for ham
+  2. **Aktivgruppe 1 er "under fornyet gennemgang"** (politik-begrænsning) — sandsynligvis en eftervirkning af suspenderings-sagen: kontoen er åbnet igen, men selve annonceindholdet bliver tjekket igen efter det. Der findes en "Appel"-knap i diagnostikpanelet, men den er IKKE trykket — kræver Daniels beslutning, evt. bedst at vente til den igangværende gennemgang er færdig i stedet for at appellere oveni
+  3. **Annoncekvalitet er "Dårlig"** — aktivgruppen mangler nok variation i overskrifter/billeder/beskrivelser. Reelt fixbart ved at tilføje flere aktiver i Google Ads
+  - Tal indtil videre: 84 klik, 2.390 eksponeringer — men næsten alt skete 8.-9. aug (før suspenderingen), fladt siden. Ingen bekræftede leads endnu (matcher tomt admin-panel)
+  - Der var også en generel (ikke-akut) anbefaling om at aktivere totrinsverificering på selve Google-kontoen
+  - **OBS budget-uoverensstemmelse:** kampagnen viser **50 kr./dag** live i Google Ads, men disse noter (se nedenfor) har tidligere sagt 40 kr./dag — ikke afklaret om Daniel har ændret det, eller om noten var forældet. Spørg Daniel
 - Google-tag (til konverteringssporing): **AW-18378049298** — tilføjet site-wide 9. august 2026, efter Google flagede konverteringshandlingen som uverificeret uden det
 
 ## Google Search Console
