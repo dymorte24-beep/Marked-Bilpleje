@@ -5,6 +5,12 @@ const SUPABASE_URL = 'https://xeosltdpvkcaudiijtge.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_iG0iWu8szH_7-uwErdxN9g_pE9YGFWd';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// Sender hændelser til Google-tagget, hvis det er indlæst på siden (ikke alle sider har det endnu).
+// Fejler aldrig højlydt — sporing må ikke kunne vælte den funktion, den sidder på.
+function track(name, params){
+  if (typeof gtag === 'function') gtag('event', name, params || {});
+}
+
 let shops = [];
 
 async function loadShops(){
@@ -76,17 +82,22 @@ function normalizeCity(str){
 function filterCards(){
   const city = normalizeCity(document.getElementById('citySearch').value.trim());
   const service = document.getElementById('serviceSearch').value.trim().toLowerCase();
+  let visibleCount = 0;
   document.querySelectorAll('.card').forEach(card => {
     const cityMatch = !city || normalizeCity(card.dataset.city).includes(city);
     const serviceMatch = service === 'alle ydelser' || (card.dataset.services || '').includes(service);
-    card.style.display = (cityMatch && serviceMatch) ? 'flex' : 'none';
+    const visible = cityMatch && serviceMatch;
+    card.style.display = visible ? 'flex' : 'none';
+    if (visible) visibleCount++;
   });
+  track('search', { search_term: city, service, results_count: visibleCount });
 }
 
 // Lead modal (customer -> shop request)
 const leadModal = document.getElementById('leadModal');
 
 function openLeadModal(shopName){
+  track('lead_cta_click', { shop_name: shopName });
   document.getElementById('modalShopName').textContent = 'Få tilbud fra ' + shopName;
   document.getElementById('modalButikField').value = shopName;
   document.querySelector('#leadModal form').reset();
@@ -136,6 +147,7 @@ function handleCustomerLeadSubmit(e){
 
   Promise.allSettled([dbInsert, netlifySubmit]).then(([, netlifyResult]) => {
     if (netlifyResult.status === 'fulfilled' && netlifyResult.value.ok) {
+      track('generate_lead', { shop_name: formData.get('butik') });
       window.location.href = '/tak.html?type=kunde';
       return;
     }
