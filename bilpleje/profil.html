@@ -98,6 +98,10 @@ async function loadShop(){
     return;
   }
 
+  db.from('profil_visninger').insert({ butik: shop.name }).then(({ error }) => {
+    if (error) console.error('Kunne ikke logge profilvisning', error);
+  });
+
   document.title = shop.name + ' | Bilpleje.dk';
   breadcrumb.innerHTML = `
     <a href="/index.html">Forside</a><span class="sep">/</span>

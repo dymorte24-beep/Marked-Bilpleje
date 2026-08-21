@@ -180,10 +180,10 @@
     <tbody id="shopsTable"><tr class="empty-row"><td colspan="7">Henter…</td></tr></tbody>
   </table>
 
-  <div class="section-title">Klik pr. butik (seneste 30 dage) <span style="font-size:12px; font-weight:400; color:#6B7280;">— opdateres automatisk</span></div>
+  <div class="section-title">Statistik pr. butik (seneste 30 dage) <span style="font-size:12px; font-weight:400; color:#6B7280;">— opdateres automatisk</span></div>
   <table>
-    <thead><tr><th>Butik</th><th>Klik på "Få tilbud"</th></tr></thead>
-    <tbody id="clicksTable"><tr class="empty-row"><td colspan="2">Henter…</td></tr></tbody>
+    <thead><tr><th>Butik</th><th>Klik på profil</th><th>Klik på "Få tilbud"</th></tr></thead>
+    <tbody id="clicksTable"><tr class="empty-row"><td colspan="3">Henter…</td></tr></tbody>
   </table>
 
   <div class="section-title">Tilbudsforespørgsler</div>
@@ -502,19 +502,28 @@ async function loadDashboard(){
   loadClickStats();
 }
 
+function countByButik(rows){
+  const counts = {};
+  (rows || []).forEach(r => { counts[r.butik] = (counts[r.butik] || 0) + 1; });
+  return counts;
+}
+
 async function loadClickStats(){
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-  const { data: clicks, error } = await db.from('butik_klik').select('butik').gte('created_at', thirtyDaysAgo);
+  const [{ data: views, error: viewsError }, { data: clicks, error: clicksError }] = await Promise.all([
+    db.from('profil_visninger').select('butik').gte('created_at', thirtyDaysAgo),
+    db.from('butik_klik').select('butik').gte('created_at', thirtyDaysAgo)
+  ]);
   const clicksTable = document.getElementById('clicksTable');
-  if (error) {
-    clicksTable.innerHTML = `<tr class="empty-row"><td colspan="2">Kunne ikke hente klik.</td></tr>`;
+  if (viewsError || clicksError) {
+    clicksTable.innerHTML = `<tr class="empty-row"><td colspan="3">Kunne ikke hente statistik.</td></tr>`;
     return;
   }
-  const counts = {};
-  (clicks || []).forEach(c => { counts[c.butik] = (counts[c.butik] || 0) + 1; });
-  const names = currentShops.length ? currentShops.map(s => s.name) : Object.keys(counts);
-  const rows = names.map(name => ({ name, count: counts[name] || 0 })).sort((a, b) => b.count - a.count);
-  clicksTable.innerHTML = rows.length ? rows.map(r => `<tr><td>${r.name}</td><td>${r.count}</td></tr>`).join('') : '<tr class="empty-row"><td colspan="2">Ingen butikker endnu.</td></tr>';
+  const viewCounts = countByButik(views);
+  const clickCounts = countByButik(clicks);
+  const names = currentShops.length ? currentShops.map(s => s.name) : Object.keys({ ...viewCounts, ...clickCounts });
+  const rows = names.map(name => ({ name, views: viewCounts[name] || 0, clicks: clickCounts[name] || 0 })).sort((a, b) => b.clicks - a.clicks);
+  clicksTable.innerHTML = rows.length ? rows.map(r => `<tr><td>${r.name}</td><td>${r.views}</td><td>${r.clicks}</td></tr>`).join('') : '<tr class="empty-row"><td colspan="3">Ingen butikker endnu.</td></tr>';
 }
 
 let clickStatsInterval = null;
