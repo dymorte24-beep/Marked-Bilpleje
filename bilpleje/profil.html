@@ -10,7 +10,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../../css/style.css">
 <style>
-  .hero-img{width:100%; max-height:360px; object-fit:cover; border-radius:10px; margin-bottom:20px;}
+  .profile-header{display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start; justify-content:space-between;}
+  .profile-header-text{flex:1; min-width:240px;}
+  .hero-img{width:180px; height:180px; object-fit:cover; border-radius:10px; flex-shrink:0; border:1px solid var(--chrome-line);}
   .tagline{color:#3A4150; font-size:17px; margin:6px 0 0;}
   .profile-section{margin-top:32px; padding-top:24px; border-top:1px solid var(--chrome-line);}
   .profile-section h2{font-size:18px; margin-bottom:10px;}
@@ -118,16 +120,20 @@ async function loadShop(){
   const socialHtml = socialLinks.length ? `<div class="profile-section"><h2>Følg os</h2><p>${socialLinks.join(' · ')}</p></div>` : '';
 
   content.innerHTML = `
-    ${shop.hero_image_url ? `<img src="${shop.hero_image_url}" alt="${shop.name}" class="hero-img">` : ''}
-    <h1>${shop.name}</h1>
-    <p class="intro">${shop.city}${shop.address ? ' · ' + shop.address : ''}</p>
-    ${shop.tagline ? `<p class="tagline">${shop.tagline}</p>` : ''}
-    <div class="card-tags" style="margin:16px 0 20px;">
-      ${shop.verificeret ? `<span class="pill verified">Verificeret</span>` : ''}
-      ${shop.price_from ? `<span class="pill">Fra ${shop.price_from} kr.</span>` : ''}
-      ${shop.discount ? `<span class="pill discount">${shop.discount}% rabat</span>` : ''}
+    <div class="profile-header">
+      <div class="profile-header-text">
+        <h1>${shop.name}</h1>
+        <p class="intro">${shop.city}${shop.address ? ' · ' + shop.address : ''}</p>
+        ${shop.tagline ? `<p class="tagline">${shop.tagline}</p>` : ''}
+        <div class="card-tags" style="margin:16px 0 20px;">
+          ${shop.verificeret ? `<span class="pill verified">Verificeret</span>` : ''}
+          ${shop.price_from ? `<span class="pill">Fra ${shop.price_from} kr.</span>` : ''}
+          ${shop.discount ? `<span class="pill discount">${shop.discount}% rabat</span>` : ''}
+        </div>
+        <button class="btn-primary" onclick="openLeadModal('${shop.name.replace(/'/g, "\\'")}')">Få tilbud fra ${shop.name}</button>
+      </div>
+      ${shop.hero_image_url ? `<img src="${shop.hero_image_url}" alt="${shop.name}" class="hero-img">` : ''}
     </div>
-    <button class="btn-primary" onclick="openLeadModal('${shop.name.replace(/'/g, "\\'")}')">Få tilbud fra ${shop.name}</button>
 
     ${shop.description ? `<div class="profile-section"><h2>Om ${shop.name}</h2><p>${shop.description}</p></div>` : ''}
 
