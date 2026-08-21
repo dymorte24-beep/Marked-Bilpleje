@@ -98,6 +98,9 @@ const leadModal = document.getElementById('leadModal');
 
 function openLeadModal(shopName){
   track('lead_cta_click', { shop_name: shopName });
+  db.from('butik_klik').insert({ butik: shopName }).then(({ error }) => {
+    if (error) console.error('Kunne ikke logge klik', error);
+  });
   document.getElementById('modalShopName').textContent = 'Få tilbud fra ' + shopName;
   document.getElementById('modalButikField').value = shopName;
   document.querySelector('#leadModal form').reset();
