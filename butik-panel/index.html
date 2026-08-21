@@ -353,7 +353,10 @@ async function saveMyShop(){
 
 db.auth.onAuthStateChange((event) => {
   if (event === 'SIGNED_OUT') showLogin();
-  else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') showDashboard();
+  else if (event === 'SIGNED_IN') showDashboard();
+  // TOKEN_REFRESHED bevidst ignoreret: Supabase forlænger sessionen i baggrunden automatisk —
+  // hvis vi genindlæser formularen her, overskriver vi det, butikken er ved at skrive, men endnu
+  // ikke har trykket "Gem" (det var den reelle årsag til at "Hvorfor vælge os" så ud til at blive slettet).
 });
 
 db.auth.getSession().then(({ data: { session } }) => {
