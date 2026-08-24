@@ -12,6 +12,7 @@ function track(name, params){
 }
 
 let shops = [];
+let wizardAnswers = null;
 
 async function loadShops(){
   if (!document.getElementById('resultsGrid')) return;
@@ -39,7 +40,9 @@ async function loadShops(){
 
 function renderShops(){
   const grid = document.getElementById('resultsGrid');
-  grid.innerHTML = shops.map(shop => `
+  if (!grid) return;
+  const list = wizardAnswers ? scoredShopOrder() : shops;
+  grid.innerHTML = list.map(shop => `
     <div class="card" data-city="${shop.city}" data-services="${shop.services.join(',').toLowerCase()}">
       ${shop.profileUrl ? `<a class="card-link-overlay" href="${shop.profileUrl}" aria-label="Se profil for ${shop.name}"></a>` : ''}
       <div>
@@ -97,6 +100,85 @@ function filterCards(){
   });
   track('search', { search_term: city, service, results_count: visibleCount });
 }
+
+// Onboarding-wizard (popup ved landing) — sorterer eksisterende butiksdata,
+// filtrerer/skjuler intet, og bruger kun felter der allerede findes.
+const WIZARD_SERVICES = ['Polering','Keramisk coating','Indvendig rens','Udvendig klargøring','Lakforsegling/voks','Sæderens','Damprens','Ozonbehandling','Mobil bilpleje'];
+const WIZARD_SERVICE_ALIAS = { 'Udvendig klargøring': 'Udvendig rens' };
+const WIZARD_PRIORITIES = ['Pris','Gode anmeldelser','Placering','Rabat','Kvalitet'];
+
+function scoredShopOrder(){
+  const { city, service, priority } = wizardAnswers;
+  const cityNorm = city ? normalizeCity(city) : '';
+  const mappedService = WIZARD_SERVICE_ALIAS[service] || service;
+
+  const score = (shop) => {
+    let s = 0;
+    const cityMatch = cityNorm && normalizeCity(shop.city).includes(cityNorm);
+    if (cityMatch) s += 1000;
+    if (mappedService && shop.services.includes(mappedService)) s += 500;
+    if (priority === 'Pris' && shop.priceFrom) s += Math.max(0, 500 - shop.priceFrom);
+    if (priority === 'Gode anmeldelser' && shop.reviewRating && shop.reviewVisible !== false) s += shop.reviewRating * 100 + Math.min(shop.reviewCount || 0, 100);
+    if (priority === 'Placering' && cityMatch) s += 300;
+    if (priority === 'Rabat' && shop.discount) s += shop.discount * 20;
+    if (priority === 'Kvalitet') s += (shop.verificeret ? 200 : 0) + (shop.reviewRating ? shop.reviewRating * 50 : 0);
+    return s;
+  };
+  return [...shops].sort((a, b) => score(b) - score(a));
+}
+
+function initWizard(){
+  const modal = document.getElementById('wizardModal');
+  if (!modal || sessionStorage.getItem('wizardShown')) return;
+
+  document.getElementById('wizardServiceOptions').innerHTML = WIZARD_SERVICES.map(s =>
+    `<button class="wizard-option" onclick="wizardChooseService('${s.replace(/'/g, "\\'")}')">${s}</button>`
+  ).join('');
+  document.getElementById('wizardPriorityOptions').innerHTML = WIZARD_PRIORITIES.map(p =>
+    `<button class="wizard-option" onclick="wizardChoosePriority('${p.replace(/'/g, "\\'")}')">${p}</button>`
+  ).join('');
+
+  modal.classList.add('open');
+  sessionStorage.setItem('wizardShown', '1');
+}
+
+function wizardGoToStep(step){
+  [1, 2, 3].forEach(n => {
+    document.getElementById('wizardStep' + n).style.display = (n === step) ? 'block' : 'none';
+  });
+}
+
+function wizardStep1Next(){
+  wizardAnswers = { city: document.getElementById('wizardCity').value.trim(), service: '', priority: '' };
+  wizardGoToStep(2);
+}
+
+function wizardChooseService(service){
+  wizardAnswers.service = service;
+  wizardGoToStep(3);
+}
+
+function wizardChoosePriority(priority){
+  wizardAnswers.priority = priority;
+  finishWizard();
+}
+
+function skipWizard(){
+  document.getElementById('wizardModal').classList.remove('open');
+}
+
+function finishWizard(){
+  skipWizard();
+  const cityInput = document.getElementById('citySearch');
+  const serviceSelect = document.getElementById('serviceSearch');
+  if (wizardAnswers.city) cityInput.value = wizardAnswers.city;
+  if (wizardAnswers.service) serviceSelect.value = WIZARD_SERVICE_ALIAS[wizardAnswers.service] || wizardAnswers.service;
+  track('wizard_completed', wizardAnswers);
+  renderShops();
+  document.getElementById('search').scrollIntoView({ behavior: 'smooth' });
+}
+
+initWizard();
 
 // Lead modal (customer -> shop request)
 const leadModal = document.getElementById('leadModal');

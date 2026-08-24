@@ -154,6 +154,34 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="wizardModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="skipWizard()" aria-label="Luk">&times;</button>
+
+    <div class="wizard-step" id="wizardStep1">
+      <p class="wizard-progress">Trin 1 af 3</p>
+      <h3>Hvor skal du bruge en bilplejer?</h3>
+      <input type="text" id="wizardCity" class="wizard-input" placeholder="By eller postnummer">
+      <button class="btn-primary" style="width:100%; margin-top:14px;" onclick="wizardStep1Next()">Næste</button>
+      <p class="wizard-skip" onclick="skipWizard()">Spring over</p>
+    </div>
+
+    <div class="wizard-step" id="wizardStep2" style="display:none;">
+      <p class="wizard-progress">Trin 2 af 3</p>
+      <h3>Hvad skal du have lavet?</h3>
+      <div class="wizard-options" id="wizardServiceOptions"></div>
+      <p class="wizard-skip" onclick="skipWizard()">Spring over</p>
+    </div>
+
+    <div class="wizard-step" id="wizardStep3" style="display:none;">
+      <p class="wizard-progress">Trin 3 af 3</p>
+      <h3>Hvad er vigtigst for dig?</h3>
+      <div class="wizard-options" id="wizardPriorityOptions"></div>
+      <p class="wizard-skip" onclick="skipWizard()">Spring over</p>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="js/main.js"></script>
 
