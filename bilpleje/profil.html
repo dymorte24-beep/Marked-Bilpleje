@@ -127,7 +127,7 @@ async function loadShop(){
     </div>
   ` : '';
 
-  const hasReview = shop.review_rating && shop.review_count;
+  const hasReview = shop.review_rating && shop.review_count && shop.review_visible !== false;
   const reviewLabel = hasReview ? `⭐ ${shop.review_rating} (${shop.review_count}${shop.review_source ? ' på ' + shop.review_source : ''})` : '';
   const reviewHtml = hasReview
     ? (shop.review_url

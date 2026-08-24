@@ -135,6 +135,10 @@
     <input type="text" id="newShopReviewSource" placeholder="Fx Trustpilot eller Google">
     <label for="newShopReviewUrl">Link til anmeldelserne</label>
     <input type="text" id="newShopReviewUrl" placeholder="https://...">
+    <div class="inline-check">
+      <input type="checkbox" id="newShopReviewVisible" checked>
+      <label for="newShopReviewVisible">Vis anmeldelsen offentligt (slå fra for at skjule uden at slette tallene)</label>
+    </div>
 
     <div class="field-section">Ydelser</div>
     <label>Ydelser</label>
@@ -318,6 +322,7 @@ function resetShopForm(){
   document.getElementById('newShopReviewCount').value = '';
   document.getElementById('newShopReviewSource').value = '';
   document.getElementById('newShopReviewUrl').value = '';
+  document.getElementById('newShopReviewVisible').checked = true;
   buildHoursRows(null);
   buildWhyRows(null);
   document.getElementById('shopBoxTitle').textContent = 'Opret ny butik';
@@ -357,6 +362,7 @@ function openEditBox(id){
   document.getElementById('newShopReviewCount').value = shop.review_count || '';
   document.getElementById('newShopReviewSource').value = shop.review_source || '';
   document.getElementById('newShopReviewUrl').value = shop.review_url || '';
+  document.getElementById('newShopReviewVisible').checked = shop.review_visible !== false;
   buildHoursRows(shop.opening_hours);
   buildWhyRows(shop.why_choose_us);
   document.getElementById('shopBoxTitle').textContent = 'Rediger ' + shop.name;
@@ -420,6 +426,7 @@ async function saveShop(){
   const reviewCount = reviewCountRaw ? parseInt(reviewCountRaw, 10) : null;
   const reviewSource = document.getElementById('newShopReviewSource').value.trim() || null;
   const reviewUrl = document.getElementById('newShopReviewUrl').value.trim() || null;
+  const reviewVisible = document.getElementById('newShopReviewVisible').checked;
 
   if (!name || !city || !cityKey || services.length === 0) {
     errEl.style.color = '#B3261E';
@@ -436,7 +443,8 @@ async function saveShop(){
     opening_hours: openingHours, why_choose_us: whyChooseUs,
     instagram, facebook,
     review_rating: reviewRating, review_count: reviewCount,
-    review_source: reviewSource, review_url: reviewUrl
+    review_source: reviewSource, review_url: reviewUrl,
+    review_visible: reviewVisible
   };
 
   let error;

@@ -28,7 +28,11 @@ async function loadShops(){
     priceFrom: row.price_from,
     discount: row.discount,
     verificeret: row.verificeret,
-    profileUrl: row.profile_url
+    profileUrl: row.profile_url,
+    reviewRating: row.review_rating,
+    reviewCount: row.review_count,
+    reviewSource: row.review_source,
+    reviewVisible: row.review_visible
   }));
   renderShops();
 }
@@ -42,6 +46,7 @@ function renderShops(){
         <div class="card-name">${shop.name}</div>
         <div class="card-meta">${shop.city} · ${shop.services.join(', ')}</div>
         <div class="card-tags">
+          ${(shop.reviewRating && shop.reviewCount && shop.reviewVisible !== false) ? `<span class="pill">⭐ ${shop.reviewRating} (${shop.reviewCount}${shop.reviewSource ? ' på ' + shop.reviewSource : ''})</span>` : ''}
           ${shop.verificeret ? `<span class="pill verified">Verificeret</span>` : ''}
           ${shop.priceFrom ? `<span class="pill">Fra ${shop.priceFrom} kr.</span>` : ''}
           ${shop.discount ? `<span class="pill discount">${shop.discount}% rabat</span>` : ''}

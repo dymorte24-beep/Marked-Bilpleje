@@ -78,6 +78,7 @@ async function loadCity(){
         <div class="card-name">${s.name}</div>
         <div class="card-meta">${s.city} · ${s.services.join(', ')}</div>
         <div class="card-tags">
+          ${(s.review_rating && s.review_count && s.review_visible !== false) ? `<span class="pill">⭐ ${s.review_rating} (${s.review_count}${s.review_source ? ' på ' + s.review_source : ''})</span>` : ''}
           ${s.verificeret ? '<span class="pill verified">Verificeret</span>' : ''}
           ${s.price_from ? `<span class="pill">Fra ${s.price_from} kr.</span>` : ''}
           ${s.discount ? `<span class="pill discount">${s.discount}% rabat</span>` : ''}
