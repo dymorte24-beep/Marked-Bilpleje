@@ -127,6 +127,14 @@ async function loadShop(){
     </div>
   ` : '';
 
+  const hasReview = shop.review_rating && shop.review_count;
+  const reviewLabel = hasReview ? `⭐ ${shop.review_rating} (${shop.review_count}${shop.review_source ? ' på ' + shop.review_source : ''})` : '';
+  const reviewHtml = hasReview
+    ? (shop.review_url
+        ? `<a href="${shop.review_url}" target="_blank" rel="noopener" class="pill" style="text-decoration:none;">${reviewLabel}</a>`
+        : `<span class="pill">${reviewLabel}</span>`)
+    : '';
+
   const socialLinks = [];
   if (shop.instagram) socialLinks.push(`<a href="${shop.instagram}" target="_blank" rel="noopener">Instagram</a>`);
   if (shop.facebook) socialLinks.push(`<a href="${shop.facebook}" target="_blank" rel="noopener">Facebook</a>`);
@@ -139,6 +147,7 @@ async function loadShop(){
         <p class="intro">${shop.city}${shop.address ? ' · ' + shop.address : ''}</p>
         ${shop.tagline ? `<p class="tagline">${shop.tagline}</p>` : ''}
         <div class="card-tags" style="margin:16px 0 20px;">
+          ${reviewHtml}
           ${shop.verificeret ? `<span class="pill verified">Verificeret</span>` : ''}
           ${shop.price_from ? `<span class="pill">Fra ${shop.price_from} kr.</span>` : ''}
           ${shop.discount ? `<span class="pill discount">${shop.discount}% rabat</span>` : ''}
