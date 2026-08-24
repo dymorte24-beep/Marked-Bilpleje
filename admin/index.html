@@ -127,6 +127,10 @@
     <input type="text" id="newShopFacebook">
 
     <div class="field-section">Anmeldelser <span style="font-size:12px; font-weight:400; color:#6B7280;">— kun rigtige, efterprøvelige tal. Skal have et link til kilden</span></div>
+    <div id="reviewSuggestionBox" style="display:none; background:#FFFBF2; border:1px solid var(--gold); border-radius:8px; padding:12px 14px; margin-top:8px;">
+      <p id="reviewSuggestionText" style="font-size:13px; color:var(--navy); margin-bottom:8px;"></p>
+      <button type="button" class="action-btn" onclick="useReviewSuggestion()">Brug dette forslag</button>
+    </div>
     <label for="newShopReviewRating">Vurdering (fx 4.9)</label>
     <input type="number" id="newShopReviewRating" min="1" max="5" step="0.1">
     <label for="newShopReviewCount">Antal anmeldelser</label>
@@ -323,6 +327,8 @@ function resetShopForm(){
   document.getElementById('newShopReviewSource').value = '';
   document.getElementById('newShopReviewUrl').value = '';
   document.getElementById('newShopReviewVisible').checked = true;
+  document.getElementById('reviewSuggestionBox').style.display = 'none';
+  currentSuggestion = null;
   buildHoursRows(null);
   buildWhyRows(null);
   document.getElementById('shopBoxTitle').textContent = 'Opret ny butik';
@@ -363,6 +369,17 @@ function openEditBox(id){
   document.getElementById('newShopReviewSource').value = shop.review_source || '';
   document.getElementById('newShopReviewUrl').value = shop.review_url || '';
   document.getElementById('newShopReviewVisible').checked = shop.review_visible !== false;
+
+  currentSuggestion = shop.review_suggestion || null;
+  const suggBox = document.getElementById('reviewSuggestionBox');
+  if (currentSuggestion && currentSuggestion.rating && currentSuggestion.count) {
+    document.getElementById('reviewSuggestionText').textContent =
+      `${shop.name} har foreslået: ⭐ ${currentSuggestion.rating} (${currentSuggestion.count}${currentSuggestion.source ? ' på ' + currentSuggestion.source : ''})`;
+    suggBox.style.display = 'block';
+  } else {
+    suggBox.style.display = 'none';
+  }
+
   buildHoursRows(shop.opening_hours);
   buildWhyRows(shop.why_choose_us);
   document.getElementById('shopBoxTitle').textContent = 'Rediger ' + shop.name;
@@ -470,6 +487,25 @@ async function saveShop(){
 }
 
 let currentShops = [];
+let currentSuggestion = null;
+
+function useReviewSuggestion(){
+  if (!currentSuggestion) return;
+  document.getElementById('newShopReviewRating').value = currentSuggestion.rating || '';
+  document.getElementById('newShopReviewCount').value = currentSuggestion.count || '';
+  document.getElementById('newShopReviewSource').value = currentSuggestion.source || '';
+  document.getElementById('newShopReviewUrl').value = currentSuggestion.url || '';
+  document.getElementById('newShopReviewVisible').checked = true;
+  document.getElementById('reviewSuggestionBox').style.display = 'none';
+
+  const id = document.getElementById('editingShopId').value;
+  if (id) {
+    db.from('shops').update({ review_suggestion: null }).eq('id', id).then(({ error }) => {
+      if (error) console.error('Kunne ikke rydde forslaget', error);
+    });
+  }
+  currentSuggestion = null;
+}
 
 async function deleteShop(id, name){
   if (!confirm(`Slet "${name}"? Det kan ikke fortrydes.`)) return;
@@ -494,7 +530,7 @@ async function loadDashboard(){
   } else {
     shopsTable.innerHTML = shops.length ? shops.map(s => `
       <tr>
-        <td>${s.name}</td>
+        <td>${s.name}${(s.review_suggestion && s.review_suggestion.rating) ? ' <span class="badge" style="background:#FFFBF2; color:var(--gold-dark); border:1px solid var(--gold);" title="Har foreslået anmeldelsestal">💬 Forslag</span>' : ''}</td>
         <td>${s.city}</td>
         <td><span class="badge ${s.tier}">${s.tier}</span></td>
         <td>${s.discount ? s.discount + '%' : '–'}</td>

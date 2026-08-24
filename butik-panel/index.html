@@ -89,7 +89,8 @@
     <div class="status-box">
       <p><strong>Verificeret:</strong> <span id="statusVerificeret" class="badge"></span></p>
       <p><strong>Synlig på bilpleje.dk:</strong> <span id="statusGodkendt" class="badge"></span></p>
-      <p class="hint">Disse to felter sættes af bilpleje.dk og kan ikke ændres herfra. Kontakt os, hvis noget skal opdateres.</p>
+      <p><strong>Anmeldelse vist på profilen:</strong> <span id="statusReview"></span></p>
+      <p class="hint">Disse felter sættes af bilpleje.dk og kan ikke ændres herfra. Kontakt os, hvis noget skal opdateres.</p>
     </div>
 
     <div class="edit-box">
@@ -121,6 +122,18 @@
       <div class="field-section">Hvorfor vælge os?</div>
       <div id="whyRows"></div>
       <p class="field-hint">Op til 4 korte punkter, fx "Specialister i keramisk coating".</p>
+
+      <div class="field-section">Anmeldelser <span style="font-size:12px; font-weight:400; color:#6B7280;">— foreslå jeres tal fra Google eller Trustpilot</span></div>
+      <p class="field-hint">Vises først offentligt, når bilpleje.dk har bekræftet tallene — I sender bare et forslag.</p>
+      <label for="myReviewRating">Vurdering (fx 4.7)</label>
+      <input type="number" id="myReviewRating" min="1" max="5" step="0.1">
+      <label for="myReviewCount">Antal anmeldelser</label>
+      <input type="number" id="myReviewCount" min="0">
+      <label for="myReviewSource">Kilde</label>
+      <input type="text" id="myReviewSource" placeholder="Fx Trustpilot eller Google">
+      <label for="myReviewUrl">Link til anmeldelserne</label>
+      <input type="text" id="myReviewUrl" placeholder="https://...">
+      <p class="field-hint" id="reviewSuggestionStatus"></p>
 
       <div class="field-section">Sociale medier</div>
       <label for="myInstagram">Instagram</label>
@@ -281,6 +294,9 @@ async function loadMyShop(){
   document.getElementById('shopHeading').textContent = myShop.name;
   document.getElementById('statusVerificeret').outerHTML = '<span id="statusVerificeret" class="badge ' + (myShop.verificeret ? 'yes' : 'no') + '">' + (myShop.verificeret ? 'Ja' : 'Nej, endnu ikke') + '</span>';
   document.getElementById('statusGodkendt').outerHTML = '<span id="statusGodkendt" class="badge ' + (myShop.godkendt ? 'yes' : 'no') + '">' + (myShop.godkendt ? 'Ja' : 'Nej, endnu ikke') + '</span>';
+  document.getElementById('statusReview').textContent = (myShop.review_rating && myShop.review_count)
+    ? `⭐ ${myShop.review_rating} (${myShop.review_count}${myShop.review_source ? ' på ' + myShop.review_source : ''})`
+    : 'Ingen endnu';
 
   document.querySelectorAll('.service-check').forEach(c => { c.checked = myShop.services.includes(c.value); });
   document.getElementById('myPrice').value = myShop.price_from || '';
@@ -300,6 +316,15 @@ async function loadMyShop(){
   buildWhyRows(myShop.why_choose_us);
   document.getElementById('myInstagram').value = myShop.instagram || '';
   document.getElementById('myFacebook').value = myShop.facebook || '';
+
+  const suggestion = myShop.review_suggestion || {};
+  document.getElementById('myReviewRating').value = suggestion.rating || '';
+  document.getElementById('myReviewCount').value = suggestion.count || '';
+  document.getElementById('myReviewSource').value = suggestion.source || '';
+  document.getElementById('myReviewUrl').value = suggestion.url || '';
+  document.getElementById('reviewSuggestionStatus').textContent = (suggestion.rating && suggestion.count)
+    ? 'I har et forslag liggende, som endnu ikke er bekræftet.'
+    : '';
 }
 
 async function saveMyShop(){
@@ -333,13 +358,23 @@ async function saveMyShop(){
   });
   const whyChooseUs = Array.from(document.querySelectorAll('.why-input')).map(i => i.value.trim()).filter(v => v);
 
+  const reviewRatingRaw = document.getElementById('myReviewRating').value.trim();
+  const reviewCountRaw = document.getElementById('myReviewCount').value.trim();
+  const reviewSource = document.getElementById('myReviewSource').value.trim();
+  const reviewUrl = document.getElementById('myReviewUrl').value.trim();
+  const reviewSuggestion = (reviewRatingRaw && reviewCountRaw) ? {
+    rating: parseFloat(reviewRatingRaw), count: parseInt(reviewCountRaw, 10),
+    source: reviewSource || null, url: reviewUrl || null
+  } : null;
+
   const { error } = await db.from('shops').update({
     services, price_from: priceFrom, discount,
     contact_person: contactPerson, phone, email,
     hero_image_url: heroImageUrl, tagline, description,
     address, coverage_areas: coverageAreas,
     opening_hours: openingHours, why_choose_us: whyChooseUs,
-    instagram, facebook
+    instagram, facebook,
+    review_suggestion: reviewSuggestion
   }).eq('id', myShop.id);
 
   if (error) {
