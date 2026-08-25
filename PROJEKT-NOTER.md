@@ -1,5 +1,17 @@
 # Bilpleje.dk — Projektoverblik
 
+## 🔍 SEO: sider var stadig `noindex`, sitemap aldrig indsendt (25. aug 2026)
+Daniel ville have en samlet statistik-side i admin-panelet (GA4, Google Ads, Search Console, Netlify Forms). Et hurtigt tjek af Search Console undervejs viste kun **1 indekseret side og 1 klik i alt** på de sidste 10 dage — og at der aldrig var indsendt noget sitemap ("0 af 0").
+
+**Root cause:** Den oprindelige plan fra 15. aug (se "Næste skridt" i "SEO-motor"-sektionen nedenfor) havde 3 trin. Kun trin 1 var gjort (rigtige butikker erstattede testdata). Trin 2 og 3 var aldrig udført, så `bilpleje/by.html` og `bilpleje/profil.html` (de nuværende dynamiske skabeloner, som senere erstattede de 14 statiske testsider omtalt i "SEO-motor"-sektionen) havde stadig `<meta name="robots" content="noindex">` fra testdata-perioden. Det forhindrede Google i at indeksere dem, uanset sitemap.
+
+**Rettet:**
+- Fjernet `noindex` fra `bilpleje/by.html` og `bilpleje/profil.html`
+- Tilføjet `<meta name="description">` til begge — fandtes ikke før — sat dynamisk pr. by/butik i JS (samme mønster som `document.title`): butiksprofiler bruger `tagline` hvis den findes, ellers en genereret sætning ud fra navn/ydelser/by
+- Sitemap indsendt til Google Search Console
+
+**Bemærk:** Google genindekserer ikke øjeblikkeligt — det kan tage dage/uger før flere sider end forsiden dukker op i "Indeksering"-rapporten.
+
 ## 📝 Profilen udvidet: tagline, om-tekst, åbningstider m.m. (19. aug 2026)
 Efter en større spec fra Daniel om at forbedre virksomhedsportalen blev omfanget bevidst skåret ned til det, der var "let at implementere og gav værdi" — ingen billed-upload (Daniel lægger selv billeder op og indsætter et link), ingen FAQ-builder, ingen pris-pr-ydelse endnu (alle vurderet for store/risikable til en hurtig runde, se den fulde analyse tidligere i samtalen).
 
@@ -161,6 +173,7 @@ Ren HTML/CSS/JS, intet build-step.
 - `sitemap.xml`, `robots.txt` — se "SEO-motor" nedenfor
 
 ## SEO-motor: by/ydelse/virksomheds-sider (bygget 11. aug 2026, pushet live 14. aug 2026 — TESTDATA, ikke søge-klar)
+**OBS (25. aug 2026):** Denne sektion beskriver den oprindelige arkitektur (14 individuelle statiske filer). Den er siden erstattet af to fælles, database-drevne skabeloner (`bilpleje/by.html` + `bilpleje/profil.html`, se `_redirects`) — historikken herunder er stadig retvisende for dengang, men matcher ikke filstrukturen i dag. `noindex`/Search Console-status er opdateret, se øverste log-entry.
 **Status:** Alle filer er pushet til GitHub og ligger nu offentligt på `bilpleje-dk.netlify.app` (commit `7209e5e`). "Offentligt tilgængelig" ≠ "indekseret" — alle 14 nye sider er stadig `noindex`, så Google viser dem ikke i søgeresultater, selvom de kan besøges direkte via URL.
 Fuld lokal-SEO-struktur bygget efter Daniels detaljerede spec (inspireret af et dokument om "FindBilpleje.dk" — det navn/de tre rigtige virksomheder i dokumentet, Shine Wash/CH CarCare/GG AutoCare, er **bevidst IKKE brugt**. Kun de eksisterende 4 testbutikker fra `shops`-arrayet indgår).
 

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Opdateret 19. aug 2026. Afspejler de rigtige, bekræftede butikker.
-  Alle sider har stadig <meta name="robots" content="noindex"> — denne
-  sitemap er IKKE indsendt til Search Console endnu. Fjern noindex fra
-  siderne, og indsend først derefter denne sitemap.
+  Opdateret 25. aug 2026. Afspejler de rigtige, bekræftede butikker.
+  noindex er fjernet fra by.html/profil.html, og sitemappet er indsendt
+  til Google Search Console samme dag.
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://bilpleje-dk.netlify.app/</loc></url>

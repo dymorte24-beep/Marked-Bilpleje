@@ -13,7 +13,7 @@
   gtag('config', 'G-KTK6266STG');
 </script>
 <title>Bilpleje | Bilpleje.dk</title>
-<meta name="robots" content="noindex">
+<meta name="description" content="Find og sammenlign bilpleje-butikker i din by. Se priser, ydelser og få tilbud direkte — gratis for kunder." id="metaDescription">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
@@ -69,6 +69,7 @@ async function loadCity(){
 
   const cityName = shops[0].city;
   document.title = 'Bilpleje i ' + cityName + ' | Bilpleje.dk';
+  document.getElementById('metaDescription').setAttribute('content', `Find og sammenlign bilpleje-butikker i ${cityName}. Se priser, ydelser og få tilbud direkte — gratis for kunder.`);
   breadcrumb.innerHTML = `<a href="/index.html">Forside</a><span class="sep">/</span>Bilpleje<span class="sep">/</span>${cityName}`;
 
   const cards = shops.map(s => `

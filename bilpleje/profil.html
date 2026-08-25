@@ -13,7 +13,7 @@
   gtag('config', 'G-KTK6266STG');
 </script>
 <title>Bilpleje-butik | Bilpleje.dk</title>
-<meta name="robots" content="noindex">
+<meta name="description" content="Se priser, ydelser og få tilbud direkte fra denne bilpleje-butik." id="metaDescription">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
@@ -103,6 +103,8 @@ async function loadShop(){
   });
 
   document.title = shop.name + ' | Bilpleje.dk';
+  const metaDesc = shop.tagline || `${shop.name} tilbyder ${(shop.services || []).slice(0, 3).join(', ')} i ${shop.city}. Se priser og få tilbud direkte.`;
+  document.getElementById('metaDescription').setAttribute('content', metaDesc);
   breadcrumb.innerHTML = `
     <a href="/index.html">Forside</a><span class="sep">/</span>
     <a href="/bilpleje/${shop.city_key}/">${shop.city}</a><span class="sep">/</span>${shop.name}
