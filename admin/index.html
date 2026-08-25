@@ -198,7 +198,10 @@
     <tbody id="shopsTable"><tr class="empty-row"><td colspan="7">Henter…</td></tr></tbody>
   </table>
 
-  <div class="section-title">Statistik pr. butik (seneste 30 dage) <span style="font-size:12px; font-weight:400; color:#6B7280;">— opdateres automatisk</span></div>
+  <div class="section-title" style="display:flex; align-items:center; justify-content:space-between;">
+    <span>Statistik pr. butik (seneste 30 dage) <span style="font-size:12px; font-weight:400; color:#6B7280;">— opdateres automatisk</span></span>
+    <button class="delete-btn" onclick="resetClickStats()">Nulstil statistik</button>
+  </div>
   <table>
     <thead><tr><th>Butik</th><th>Klik på profil</th><th>Klik på "Få tilbud"</th></tr></thead>
     <tbody id="clicksTable"><tr class="empty-row"><td colspan="3">Henter…</td></tr></tbody>
@@ -594,6 +597,19 @@ async function loadClickStats(){
   const names = currentShops.length ? currentShops.map(s => s.name) : Object.keys({ ...viewCounts, ...clickCounts });
   const rows = names.map(name => ({ name, views: viewCounts[name] || 0, clicks: clickCounts[name] || 0 })).sort((a, b) => b.clicks - a.clicks);
   clicksTable.innerHTML = rows.length ? rows.map(r => `<tr><td>${r.name}</td><td>${r.views}</td><td>${r.clicks}</td></tr>`).join('') : '<tr class="empty-row"><td colspan="3">Ingen butikker endnu.</td></tr>';
+}
+
+async function resetClickStats(){
+  if (!confirm('Nulstil al statistik (klik og profilvisninger)? Det kan ikke fortrydes.')) return;
+  const [{ error: viewsError }, { error: clicksError }] = await Promise.all([
+    db.from('profil_visninger').delete().gte('created_at', '1970-01-01'),
+    db.from('butik_klik').delete().gte('created_at', '1970-01-01')
+  ]);
+  if (viewsError || clicksError) {
+    alert('Kunne ikke nulstille statistikken. Prøv igen.');
+    return;
+  }
+  loadClickStats();
 }
 
 let clickStatsInterval = null;
