@@ -201,6 +201,19 @@ section.search{
   background:var(--white);
 }
 .card-link-overlay{position:absolute; inset:0; z-index:1;}
+.card-thumb{
+  position:absolute;
+  top:14px; right:14px;
+  width:40px; height:40px;
+  border-radius:6px;
+  object-fit:cover;
+  border:1px solid var(--chrome-line);
+  background:var(--white);
+  pointer-events:none;
+}
+.card-body-thumb-pad{
+  padding-right:52px;
+}
 .card.premium{border:1.5px solid var(--gold); background:#FFFBF2;}
 .card-name{font-weight:600; font-size:15px; margin-bottom:3px;}
 .card-meta{font-size:13px; color:#6B7280; margin-bottom:8px;}

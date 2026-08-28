@@ -33,7 +33,8 @@ async function loadShops(){
     reviewRating: row.review_rating,
     reviewCount: row.review_count,
     reviewSource: row.review_source,
-    reviewVisible: row.review_visible
+    reviewVisible: row.review_visible,
+    heroImageUrl: row.hero_image_url
   }));
   renderShops();
 }
@@ -45,7 +46,8 @@ function renderShops(){
   grid.innerHTML = list.map(shop => `
     <div class="card" data-city="${shop.city}" data-services="${shop.services.join(',').toLowerCase()}">
       ${shop.profileUrl ? `<a class="card-link-overlay" href="${shop.profileUrl}" aria-label="Se profil for ${shop.name}"></a>` : ''}
-      <div>
+      ${shop.heroImageUrl ? `<img class="card-thumb" src="${shop.heroImageUrl}" alt="">` : ''}
+      <div${shop.heroImageUrl ? ' class="card-body-thumb-pad"' : ''}>
         <div class="card-name">${shop.name}</div>
         <div class="card-meta">${shop.city} · ${shop.services.join(', ')}</div>
         <div class="card-tags">

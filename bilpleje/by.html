@@ -75,7 +75,8 @@ async function loadCity(){
   const cards = shops.map(s => `
     <div class="card">
       ${s.profile_url ? `<a class="card-link-overlay" href="/${s.profile_url}" aria-label="Se profil for ${s.name}"></a>` : ''}
-      <div>
+      ${s.hero_image_url ? `<img class="card-thumb" src="${s.hero_image_url}" alt="">` : ''}
+      <div${s.hero_image_url ? ' class="card-body-thumb-pad"' : ''}>
         <div class="card-name">${s.name}</div>
         <div class="card-meta">${s.city} · ${s.services.join(', ')}</div>
         <div class="card-tags">
