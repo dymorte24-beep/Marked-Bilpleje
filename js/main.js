@@ -140,8 +140,8 @@ function initWizard(){
     `<button class="wizard-option" onclick="wizardChoosePriority('${p.replace(/'/g, "\\'")}')">${p}</button>`
   ).join('');
 
-  modal.classList.add('open');
   sessionStorage.setItem('wizardShown', '1');
+  setTimeout(() => modal.classList.add('open'), 600);
 }
 
 function wizardGoToStep(step){
