@@ -43,8 +43,12 @@ function renderShops(){
   const grid = document.getElementById('resultsGrid');
   if (!grid) return;
   const list = wizardAnswers ? scoredShopOrder() : shops;
-  grid.innerHTML = list.map(shop => `
-    <div class="card" data-city="${shop.city}" data-services="${shop.services.join(',').toLowerCase()}">
+  if (list.length === 0) {
+    grid.innerHTML = '<p class="empty-state">Ingen butikker fundet endnu — vi udvider løbende med flere byer og butikker.</p>';
+    return;
+  }
+  grid.innerHTML = list.map((shop, i) => `
+    <div class="card" style="animation-delay:${Math.min(i, 8) * 40}ms" data-city="${shop.city}" data-services="${shop.services.join(',').toLowerCase()}">
       ${shop.profileUrl ? `<a class="card-link-overlay" href="${shop.profileUrl}" aria-label="Se profil for ${shop.name}"></a>` : ''}
       ${shop.heroImageUrl ? `<img class="card-thumb" src="${shop.heroImageUrl}" alt="">` : ''}
       <div${shop.heroImageUrl ? ' class="card-body-thumb-pad"' : ''}>
@@ -100,6 +104,8 @@ function filterCards(){
     card.style.display = visible ? 'flex' : 'none';
     if (visible) visibleCount++;
   });
+  const noResults = document.getElementById('noResults');
+  if (noResults) noResults.style.display = visibleCount === 0 ? 'block' : 'none';
   track('search', { search_term: city, service, results_count: visibleCount });
 }
 

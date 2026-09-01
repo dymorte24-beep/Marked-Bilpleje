@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Butik-panel – Bilpleje.dk</title>
+<title>Butik-panel – FindBilpleje.dk</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -54,14 +54,14 @@
 
 <nav>
   <div class="wrap">
-    <a href="../index.html" class="logo">bilpleje<span>.dk</span></a>
+    <a href="../index.html" class="logo"><span class="logo-prefix">find</span>bilpleje<span class="logo-suffix">.dk</span></a>
   </div>
 </nav>
 
 <div id="loginView" class="panel-wrap" style="display:none;">
   <div class="login-box">
     <h2>Butik-login</h2>
-    <p class="sub">Log ind for at redigere din profil på bilpleje.dk.</p>
+    <p class="sub">Log ind for at redigere din profil på findbilpleje.dk.</p>
     <input type="email" id="loginEmail" placeholder="Mail" autocomplete="username">
     <input type="password" id="loginPassword" placeholder="Adgangskode" autocomplete="current-password">
     <button class="btn-primary" style="width:100%;" onclick="login()">Log ind</button>
@@ -82,15 +82,15 @@
   </div>
 
   <div id="noShopBox" class="no-shop-box" style="display:none;">
-    Din konto er endnu ikke koblet til en bestemt butik på bilpleje.dk. Kontakt os, så ordner vi det.
+    Din konto er endnu ikke koblet til en bestemt butik på findbilpleje.dk. Kontakt os, så ordner vi det.
   </div>
 
   <div id="shopContent" style="display:none;">
     <div class="status-box">
       <p><strong>Verificeret:</strong> <span id="statusVerificeret" class="badge"></span></p>
-      <p><strong>Synlig på bilpleje.dk:</strong> <span id="statusGodkendt" class="badge"></span></p>
+      <p><strong>Synlig på findbilpleje.dk:</strong> <span id="statusGodkendt" class="badge"></span></p>
       <p><strong>Anmeldelse vist på profilen:</strong> <span id="statusReview"></span></p>
-      <p class="hint">Disse felter sættes af bilpleje.dk og kan ikke ændres herfra. Kontakt os, hvis noget skal opdateres.</p>
+      <p class="hint">Disse felter sættes af findbilpleje.dk og kan ikke ændres herfra. Kontakt os, hvis noget skal opdateres.</p>
     </div>
 
     <div class="edit-box">
@@ -124,7 +124,7 @@
       <p class="field-hint">Op til 4 korte punkter, fx "Specialister i keramisk coating".</p>
 
       <div class="field-section">Anmeldelser <span style="font-size:12px; font-weight:400; color:#6B7280;">— foreslå jeres tal fra Google eller Trustpilot</span></div>
-      <p class="field-hint">Vises først offentligt, når bilpleje.dk har bekræftet tallene — I sender bare et forslag.</p>
+      <p class="field-hint">Vises først offentligt, når findbilpleje.dk har bekræftet tallene — I sender bare et forslag.</p>
       <label for="myReviewRating">Vurdering (fx 4.7)</label>
       <input type="number" id="myReviewRating" min="1" max="5" step="0.1">
       <label for="myReviewCount">Antal anmeldelser</label>

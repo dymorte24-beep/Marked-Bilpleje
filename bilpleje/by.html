@@ -12,7 +12,7 @@
   gtag('config', 'AW-18378049298');
   gtag('config', 'G-KTK6266STG');
 </script>
-<title>Bilpleje | Bilpleje.dk</title>
+<title>Bilpleje | FindBilpleje.dk</title>
 <meta name="description" content="Find og sammenlign bilpleje-butikker i din by. Se priser, ydelser og få tilbud direkte — gratis for kunder." id="metaDescription">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,7 +23,7 @@
 
 <nav>
   <div class="wrap">
-    <a href="/index.html" class="logo">bilpleje<span>.dk</span></a>
+    <a href="/index.html" class="logo"><span class="logo-prefix">find</span>bilpleje<span class="logo-suffix">.dk</span></a>
     <div class="nav-links">
       <a href="/index.html#search">Find en butik</a>
       <a href="/index.html#shops">For butikker</a>
@@ -45,7 +45,7 @@
 </section>
 
 <footer>
-  <a href="/privatlivspolitik.html">Privatlivspolitik</a> · bilpleje.dk — prototype
+  <a href="/privatlivspolitik.html">Privatlivspolitik</a> · findbilpleje.dk
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -68,12 +68,12 @@ async function loadCity(){
   }
 
   const cityName = shops[0].city;
-  document.title = 'Bilpleje i ' + cityName + ' | Bilpleje.dk';
+  document.title = 'Bilpleje i ' + cityName + ' | FindBilpleje.dk';
   document.getElementById('metaDescription').setAttribute('content', `Find og sammenlign bilpleje-butikker i ${cityName}. Se priser, ydelser og få tilbud direkte — gratis for kunder.`);
   breadcrumb.innerHTML = `<a href="/index.html">Forside</a><span class="sep">/</span>Bilpleje<span class="sep">/</span>${cityName}`;
 
-  const cards = shops.map(s => `
-    <div class="card">
+  const cards = shops.map((s, i) => `
+    <div class="card" style="animation-delay:${Math.min(i, 8) * 40}ms">
       ${s.profile_url ? `<a class="card-link-overlay" href="/${s.profile_url}" aria-label="Se profil for ${s.name}"></a>` : ''}
       ${s.hero_image_url ? `<img class="card-thumb" src="${s.hero_image_url}" alt="">` : ''}
       <div${s.hero_image_url ? ' class="card-body-thumb-pad"' : ''}>

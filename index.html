@@ -12,9 +12,9 @@
   gtag('config', 'AW-18378049298');
   gtag('config', 'G-KTK6266STG');
 </script>
-<title>Bilpleje.dk — Find den rette bilpleje-butik</title>
+<title>FindBilpleje.dk — Find den rette bilpleje-butik</title>
 <meta name="description" content="Find og sammenlign bilpleje-butikker i hele Danmark — keramisk coating, polering, folie og indvendig rens. Gratis for kunder, book direkte.">
-<meta property="og:title" content="Bilpleje.dk — Find den rette bilpleje-butik">
+<meta property="og:title" content="FindBilpleje.dk — Find den rette bilpleje-butik">
 <meta property="og:description" content="Søg blandt keramisk coating, polering, folie og indvendig rens — sammenlign lokale bilpleje-butikker og book direkte.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,7 +26,7 @@
 
 <nav>
   <div class="wrap">
-    <div class="logo">bilpleje<span>.dk</span></div>
+    <div class="logo"><span class="logo-prefix">find</span>bilpleje<span class="logo-suffix">.dk</span></div>
     <div class="nav-links">
       <a href="#search">Find en butik</a>
       <a href="#shops">For butikker</a>
@@ -82,6 +82,7 @@
       <button onclick="filterCards()">Søg</button>
     </div>
     <div class="results" id="resultsGrid"></div>
+    <p class="empty-state" id="noResults" style="display:none;">Ingen butikker matcher lige nu — prøv en anden by eller ydelse. Vi udvider løbende med flere byer.</p>
   </div>
 </section>
 
@@ -131,7 +132,7 @@
 </section>
 
 <footer>
-  <a href="privatlivspolitik.html">Privatlivspolitik</a> · bilpleje.dk — prototype · <a href="butik-panel/">Butik-login</a> · <a href="admin/">Admin</a>
+  <a href="privatlivspolitik.html">Privatlivspolitik</a> · findbilpleje.dk · <a href="butik-panel/">Butik-login</a>
 </footer>
 
 <div class="modal-overlay" id="leadModal" onclick="if(event.target===this) closeLeadModal()">
