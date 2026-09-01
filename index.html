@@ -38,21 +38,43 @@
 <header class="hero">
   <div class="wrap hero-grid">
     <div>
-      <div class="hero-eyebrow">Bilpleje-guide for hele Danmark</div>
-      <h1>Find den <em>bilpleje-butik</em> der matcher dine behov</h1>
-      <p>Søg blandt keramisk coating, polering, folie og indvendig rens — sammenlign lokale butikker og book direkte. Gratis for kunder.</p>
+      <div class="hero-eyebrow">100% gratis for privatkunder</div>
+      <h1>Find den rigtige bilplejer <em>uden at gætte</em></h1>
+      <p>Vi samler rigtige bilpleje-butikker i din by med priser, ydelser og anmeldelser — så du kan sammenligne og vælge trygt. Gratis, ingen binding.</p>
       <div class="hero-actions">
         <button class="btn-primary" onclick="document.getElementById('search').scrollIntoView({behavior:'smooth'})">Find en butik</button>
         <a href="#shops"><button class="btn-ghost">Jeg driver en bilpleje-butik</button></a>
       </div>
     </div>
     <div>
-      <div class="slider-box" id="sliderBox">
-        <div class="layer-dull"></div>
-        <div class="layer-shine"></div>
-        <div class="handle" id="handle"></div>
+      <div class="hiw-box" id="heroHiw">
+        <div class="hiw-label">Sådan virker findbilpleje.dk</div>
+        <div class="hiw-stage">
+          <div class="hiw-step is-active" data-step="1">
+            <svg class="hiw-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6"/><path d="M20 20l-5.5-5.5"/></svg>
+            <div class="hiw-step-num">01</div>
+            <h3>Søg din by</h3>
+            <p>Indtast by eller postnummer, og vælg hvilken ydelse du mangler.</p>
+          </div>
+          <div class="hiw-step" data-step="2">
+            <svg class="hiw-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>
+            <div class="hiw-step-num">02</div>
+            <h3>Sammenlign butikker</h3>
+            <p>Se priser, anmeldelser og hvad hver butik er specialiseret i.</p>
+          </div>
+          <div class="hiw-step" data-step="3">
+            <svg class="hiw-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>
+            <div class="hiw-step-num">03</div>
+            <h3>Book direkte</h3>
+            <p>Vi sender din forespørgsel videre til butikken — ingen gebyrer for dig.</p>
+          </div>
+        </div>
+        <div class="hiw-dots" role="tablist" aria-label="Trin">
+          <button class="hiw-dot is-active" data-goto="0" aria-label="Trin 1"></button>
+          <button class="hiw-dot" data-goto="1" aria-label="Trin 2"></button>
+          <button class="hiw-dot" data-goto="2" aria-label="Trin 3"></button>
+        </div>
       </div>
-      <div class="hero-caption">Træk for at se forskellen — sådan finder kunder det, de leder efter</div>
     </div>
   </div>
 </header>

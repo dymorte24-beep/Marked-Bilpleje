@@ -125,46 +125,82 @@ header.hero{
 .btn-ghost:hover{background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.5);}
 .btn-ghost:active{transform:scale(0.97);}
 
-/* SLIDER (signature element) */
-.slider-box{
-  position:relative;
+/* HERO "HOW IT WORKS" STEPPER (signature element) */
+.hiw-box{
+  background:var(--navy-light);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px;
+  padding:28px;
   width:100%;
   aspect-ratio:4/3;
-  border-radius:12px;
-  overflow:hidden;
-  cursor:ew-resize;
-  background:var(--navy);
+  display:flex;
+  flex-direction:column;
+  position:relative;
 }
-.layer-dull, .layer-shine{
+.hiw-label{
+  color:var(--gold);
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  margin-bottom:24px;
+}
+.hiw-stage{
+  position:relative;
+  flex:1;
+}
+.hiw-step{
   position:absolute; inset:0;
-  background-image:url('../hero-car-photo.jpg');
-  background-size:cover;
-  background-position:center;
-}
-.layer-dull{filter:grayscale(75%) brightness(0.7) contrast(0.9);}
-.layer-shine{clip-path:inset(0 50% 0 0);}
-.handle{
-  position:absolute; top:0; bottom:0; left:50%;
-  width:3px; background:var(--gold);
-  transform:translateX(-50%);
+  display:flex; flex-direction:column;
+  opacity:0;
+  transform:translateX(14px);
+  transition:opacity 400ms var(--ease-in-out), transform 400ms var(--ease-in-out);
   pointer-events:none;
 }
-.handle::after{
-  content:'';
-  position:absolute; top:50%; left:50%;
-  width:38px; height:38px;
-  background:var(--gold);
-  border-radius:50%;
-  transform:translate(-50%,-50%);
+.hiw-step.is-active{
+  opacity:1;
+  transform:translateX(0);
+  pointer-events:auto;
 }
-.handle::before{
-  content:'⇔';
-  position:absolute; top:50%; left:50%;
-  transform:translate(-50%,-55%);
-  color:var(--navy); font-weight:700; font-size:16px; z-index:2;
+.hiw-icon{
+  width:32px; height:32px;
+  color:var(--gold);
+  margin-bottom:18px;
+  flex-shrink:0;
 }
-.hero-caption{
-  text-align:center; color:var(--chrome); font-size:12px; margin-top:10px;
+.hiw-step-num{
+  font-family:'JetBrains Mono', monospace;
+  color:var(--chrome);
+  font-size:12px;
+  margin-bottom:8px;
+}
+.hiw-step h3{
+  color:var(--white);
+  font-family:'Oswald', sans-serif;
+  text-transform:uppercase;
+  font-size:19px;
+  letter-spacing:0.02em;
+  margin-bottom:10px;
+}
+.hiw-step p{
+  color:var(--chrome);
+  font-size:14px;
+  line-height:1.5;
+  max-width:320px;
+}
+.hiw-dots{
+  display:flex; gap:8px; margin-top:16px;
+}
+.hiw-dot{
+  width:8px; height:8px; border-radius:50%;
+  background:rgba(255,255,255,0.2);
+  border:none; padding:0; cursor:pointer;
+  transition:background 200ms var(--ease-out), transform 200ms var(--ease-out);
+}
+.hiw-dot.is-active{background:var(--gold); transform:scale(1.3);}
+.hiw-dot:hover{background:rgba(255,255,255,0.4);}
+@media (prefers-reduced-motion: reduce){
+  .hiw-step{transition:opacity 1ms linear;}
 }
 
 /* SEARCH */

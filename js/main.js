@@ -67,26 +67,39 @@ function renderShops(){
 }
 loadShops();
 
-// Before/after slider (kun til stede på forsiden)
-const box = document.getElementById('sliderBox');
-if (box) {
-  const shine = document.querySelector('.layer-shine');
-  const handle = document.getElementById('handle');
-  let dragging = false;
+// Hero "sådan virker det" stepper (kun til stede på forsiden)
+function initHeroHiw(){
+  const box = document.getElementById('heroHiw');
+  if (!box) return;
+  const steps = box.querySelectorAll('.hiw-step');
+  const dots = box.querySelectorAll('.hiw-dot');
+  let current = 0;
+  let timer = null;
 
-  const setPos = (clientX) => {
-    const rect = box.getBoundingClientRect();
-    let pct = ((clientX - rect.left) / rect.width) * 100;
-    pct = Math.max(4, Math.min(96, pct));
-    shine.style.clipPath = `inset(0 ${100-pct}% 0 0)`;
-    handle.style.left = pct + '%';
-  };
-  box.addEventListener('mousedown', e => { dragging = true; setPos(e.clientX); });
-  window.addEventListener('mousemove', e => { if(dragging) setPos(e.clientX); });
-  window.addEventListener('mouseup', () => dragging = false);
-  box.addEventListener('touchstart', e => setPos(e.touches[0].clientX));
-  box.addEventListener('touchmove', e => setPos(e.touches[0].clientX));
+  function show(i){
+    steps[current].classList.remove('is-active');
+    dots[current].classList.remove('is-active');
+    current = i;
+    steps[current].classList.add('is-active');
+    dots[current].classList.add('is-active');
+  }
+  function next(){ show((current + 1) % steps.length); }
+  function stop(){ if (timer) clearInterval(timer); timer = null; }
+  function start(){
+    stop();
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    timer = setInterval(next, 3200);
+  }
+
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => { show(i); start(); });
+  });
+  box.addEventListener('mouseenter', stop);
+  box.addEventListener('mouseleave', start);
+
+  start();
 }
+initHeroHiw();
 
 // City/service filter
 function normalizeCity(str){
