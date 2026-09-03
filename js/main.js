@@ -14,6 +14,12 @@ function track(name, params){
 let shops = [];
 let wizardAnswers = null;
 
+function formatServicesPreview(services, max = 3){
+  const shown = services.slice(0, max);
+  const remaining = services.length - shown.length;
+  return shown.join(', ') + (remaining > 0 ? ` +${remaining} flere` : '');
+}
+
 async function loadShops(){
   if (!document.getElementById('resultsGrid')) return;
   const { data, error } = await db.from('shops').select('*').eq('godkendt', true).order('name');
@@ -54,7 +60,7 @@ function renderShops(){
       ${shop.heroImageUrl ? `<img class="card-media" src="${shop.heroImageUrl}" alt="">` : fallbackIcon}
       <div class="card-body">
         <div class="card-name">${shop.name}</div>
-        <div class="card-meta">${shop.city} · ${shop.services.join(', ')}</div>
+        <div class="card-meta">${shop.city} · ${formatServicesPreview(shop.services)}</div>
         <div class="card-tags">
           ${(shop.reviewRating && shop.reviewCount && shop.reviewVisible !== false) ? `<span class="pill">⭐ ${shop.reviewRating} (${shop.reviewCount}${shop.reviewSource ? ' på ' + shop.reviewSource : ''})</span>` : ''}
           ${shop.verificeret ? `<span class="pill verified">Verificeret</span>` : ''}

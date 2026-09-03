@@ -54,6 +54,12 @@ const SUPABASE_URL = 'https://xeosltdpvkcaudiijtge.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_iG0iWu8szH_7-uwErdxN9g_pE9YGFWd';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+function formatServicesPreview(services, max = 3){
+  const shown = services.slice(0, max);
+  const remaining = services.length - shown.length;
+  return shown.join(', ') + (remaining > 0 ? ` +${remaining} flere` : '');
+}
+
 async function loadCity(){
   const parts = window.location.pathname.replace(/^\/|\/$/g, '').split('/');
   const cityKey = parts[parts.length - 1];
@@ -79,7 +85,7 @@ async function loadCity(){
       ${s.hero_image_url ? `<img class="card-media" src="${s.hero_image_url}" alt="">` : fallbackIcon}
       <div class="card-body">
         <div class="card-name">${s.name}</div>
-        <div class="card-meta">${s.city} · ${s.services.join(', ')}</div>
+        <div class="card-meta">${s.city} · ${formatServicesPreview(s.services)}</div>
         <div class="card-tags">
           ${(s.review_rating && s.review_count && s.review_visible !== false) ? `<span class="pill">⭐ ${s.review_rating} (${s.review_count}${s.review_source ? ' på ' + s.review_source : ''})</span>` : ''}
           ${s.verificeret ? '<span class="pill verified">Verificeret</span>' : ''}
