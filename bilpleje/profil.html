@@ -19,17 +19,99 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../../css/style.css">
 <style>
-  .profile-header{display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start; justify-content:space-between;}
-  .profile-header-text{flex:1; min-width:240px;}
-  .hero-img{width:260px; height:260px; object-fit:cover; border-radius:10px; flex-shrink:0; border:1px solid var(--chrome-line);}
-  .tagline{color:#3A4150; font-size:17px; margin:6px 0 0;}
+  body.has-sticky-cta{padding-bottom:0;}
+  .pf-wrap{max-width:640px; margin:0 auto;}
+
+  /* HERO */
+  .pf-hero{text-align:center; padding:8px 0 24px;}
+  .pf-hero-img{width:100%; max-width:480px; aspect-ratio:4/3; object-fit:cover; border-radius:16px; border:1px solid var(--chrome-line); margin:0 auto 20px; display:block; background:var(--fog);}
+  .pf-hero-fallback{width:100%; max-width:480px; aspect-ratio:4/3; border-radius:16px; margin:0 auto 20px; background:var(--navy); display:flex; align-items:center; justify-content:center;}
+  .pf-hero-fallback svg{width:64px; height:64px; color:var(--gold); opacity:0.8;}
+  .pf-name{font-size:28px; margin-bottom:4px;}
+  .pf-location{color:var(--text-muted); font-size:15px; margin-bottom:12px;}
+  .pf-rating-row{display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+  .pf-stars{color:var(--gold); font-size:16px; letter-spacing:1px;}
+  .pf-rating-text{color:var(--text-muted); font-size:14px;}
+  .pf-tagline{color:var(--text-muted); font-size:16px; font-style:italic; margin-bottom:18px;}
+
+  /* CTA */
+  .pf-cta-primary{width:100%; max-width:360px; margin:0 auto 16px; display:block; font-size:16px; padding:16px;}
+  .pf-secondary-actions{display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-bottom:8px;}
+  .pf-secondary-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--white); border:1px solid var(--chrome-line); color:var(--navy);
+    padding:9px 16px; border-radius:24px; font-size:13px; font-weight:600;
+    transition:border-color 160ms var(--ease-out), background 160ms var(--ease-out);
+  }
+  .pf-secondary-btn:hover{border-color:var(--gold); background:var(--gold-light);}
+  .pf-secondary-btn svg{width:15px; height:15px;}
+
+  /* STICKY MOBILE CTA */
+  .pf-sticky-cta{display:none;}
+  @media (max-width:760px){
+    .pf-sticky-cta{
+      display:block; position:fixed; left:0; right:0; bottom:0; z-index:500;
+      background:var(--white); border-top:1px solid var(--chrome-line);
+      padding:12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+      box-shadow:0 -4px 16px rgba(16,24,40,0.10);
+    }
+    .pf-sticky-cta button{width:100%; margin:0;}
+    body.has-sticky-cta{padding-bottom:78px;}
+  }
+
+  /* QUICK FACTS */
+  .pf-facts{display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:28px 0;}
+  @media (min-width:600px){.pf-facts{grid-template-columns:repeat(4,1fr);}}
+  .pf-fact{background:var(--white); border:1px solid var(--chrome-line); border-radius:12px; padding:14px 10px; text-align:center;}
+  .pf-fact-icon{font-size:19px; margin-bottom:6px;}
+  .pf-fact-label{font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:3px;}
+  .pf-fact-value{
+    font-size:13px; font-weight:600; color:var(--navy); line-height:1.3;
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+  }
+
+  /* SECTIONS */
   .profile-section{margin-top:32px; padding-top:24px; border-top:1px solid var(--chrome-line);}
-  .profile-section h2{font-size:18px; margin-bottom:10px;}
-  .why-list{list-style:none; padding:0;}
-  .why-list li{padding:4px 0; color:#3A4150;}
+  .profile-section h2{font-size:18px; margin-bottom:14px;}
+
+  /* ABOUT */
+  .pf-about-text{color:var(--text-muted); line-height:1.6;}
+  .pf-about-text.is-clamped{display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden;}
+  .pf-readmore{color:var(--gold-dark); font-weight:600; font-size:14px; cursor:pointer; margin-top:8px; display:inline-block; background:none; border:none; padding:0; font-family:inherit;}
+
+  /* SERVICES */
+  .pf-services{display:flex; flex-wrap:wrap; gap:10px;}
+  .pf-service-chip{background:var(--white); border:1px solid var(--chrome-line); padding:10px 16px; border-radius:24px; font-size:14px; font-weight:500; color:var(--navy);}
+
+  /* PRICING */
+  .pf-price-card{background:var(--navy); color:var(--white); border-radius:16px; padding:26px; text-align:center; max-width:280px;}
+  .pf-price-label{font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); margin-bottom:10px;}
+  .pf-price-value{font-size:34px; font-weight:700; font-family:'Oswald',sans-serif; line-height:1.1;}
+  .pf-price-value span{font-size:16px; font-weight:500; font-family:'Inter',sans-serif;}
+  .pf-price-discount{display:inline-block; margin-top:14px; background:var(--gold); color:var(--navy); padding:5px 14px; border-radius:20px; font-size:12px; font-weight:700;}
+
+  /* REVIEWS */
+  .pf-review-card{display:flex; align-items:center; gap:18px; background:var(--white); border:1px solid var(--chrome-line); border-radius:14px; padding:20px;}
+  .pf-review-score{font-size:36px; font-weight:700; color:var(--navy); font-family:'Oswald',sans-serif; flex-shrink:0;}
+  .pf-review-meta p{margin:0;}
+  .pf-review-meta .pf-stars{font-size:15px;}
+  .pf-review-meta a{color:var(--gold-dark); font-weight:600; text-decoration:underline; font-size:13px;}
+
+  /* HOURS */
   .hours-list{max-width:280px;}
   .hours-item{display:flex; justify-content:space-between; padding:4px 0; font-size:14px; border-bottom:1px solid var(--chrome-line);}
   .hours-item:last-child{border-bottom:none;}
+  .hours-item.is-today{font-weight:700; color:var(--navy);}
+
+  /* ENTRANCE ANIMATION */
+  .pf-hero, .profile-section{
+    opacity:0; transform:translateY(10px);
+    animation:profile-enter 420ms var(--ease-out) forwards;
+  }
+  @keyframes profile-enter{to{opacity:1; transform:translateY(0);}}
+  @media (prefers-reduced-motion: reduce){
+    .pf-hero, .profile-section{animation:none; opacity:1; transform:none;}
+  }
 </style>
 </head>
 <body>
@@ -46,7 +128,7 @@
 </nav>
 
 <section class="seo-page">
-  <div class="wrap">
+  <div class="wrap pf-wrap">
     <div class="breadcrumb" id="breadcrumb">
       <a href="../../../index.html">Forside</a><span class="sep">/</span>Bilpleje
     </div>
@@ -56,6 +138,10 @@
     </div>
   </div>
 </section>
+
+<div class="pf-sticky-cta" id="stickyCta" style="display:none;">
+  <button class="btn-primary" id="stickyCtaBtn">Få tilbud</button>
+</div>
 
 <footer>
   <a href="../../../privatlivspolitik.html">Privatlivspolitik</a> · findbilpleje.dk
@@ -85,6 +171,13 @@
 <script src="../../../js/main.js"></script>
 <script>
 const DAYS_ORDER = [['mandag','Mandag'],['tirsdag','Tirsdag'],['onsdag','Onsdag'],['torsdag','Torsdag'],['fredag','Fredag'],['lørdag','Lørdag'],['søndag','Søndag']];
+const JS_DAY_TO_KEY = ['søndag','mandag','tirsdag','onsdag','torsdag','fredag','lørdag'];
+
+function toggleAbout(btn){
+  const p = btn.previousElementSibling;
+  const collapsed = p.classList.toggle('is-clamped') === false;
+  btn.textContent = collapsed ? 'Vis mindre' : 'Læs mere';
+}
 
 async function loadShop(){
   const path = window.location.pathname.replace(/^\//, '');
@@ -110,67 +203,138 @@ async function loadShop(){
     <a href="/bilpleje/${shop.city_key}/">${shop.city}</a><span class="sep">/</span>${shop.name}
   `;
 
+  const hasReview = shop.review_rating && shop.review_count && shop.review_visible !== false;
+
+  // ---- HERO ----
+  const heroImgHtml = shop.hero_image_url
+    ? `<img src="${shop.hero_image_url}" alt="${shop.name}" class="pf-hero-img">`
+    : `<div class="pf-hero-fallback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6"/><path d="M20 20l-5.5-5.5"/></svg></div>`;
+  const starsHtml = hasReview ? '★★★★★'.slice(0, Math.round(shop.review_rating)) + '☆☆☆☆☆'.slice(0, 5 - Math.round(shop.review_rating)) : '';
+  const heroHtml = `
+    <div class="pf-hero">
+      ${heroImgHtml}
+      <h1 class="pf-name">${shop.name}</h1>
+      <p class="pf-location">${shop.city}${shop.address ? ' · ' + shop.address : ''}</p>
+      ${hasReview ? `<div class="pf-rating-row"><span class="pf-stars">${starsHtml}</span><span class="pf-rating-text">${shop.review_rating} (${shop.review_count}${shop.review_source ? ' på ' + shop.review_source : ''})</span></div>` : ''}
+      ${shop.tagline ? `<p class="pf-tagline">${shop.tagline}</p>` : ''}
+      <button class="btn-primary pf-cta-primary" onclick="openLeadModal('${shop.name.replace(/'/g, "\\'")}')">Få tilbud fra ${shop.name}</button>
+      <div class="pf-secondary-actions">
+        ${shop.phone ? `<a class="pf-secondary-btn" href="tel:${shop.phone.replace(/\s/g,'')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Ring</a>` : ''}
+        ${shop.email ? `<a class="pf-secondary-btn" href="mailto:${shop.email}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>E-mail</a>` : ''}
+        ${shop.instagram ? `<a class="pf-secondary-btn" href="${shop.instagram}" target="_blank" rel="noopener">Instagram</a>` : ''}
+        ${shop.facebook ? `<a class="pf-secondary-btn" href="${shop.facebook}" target="_blank" rel="noopener">Facebook</a>` : ''}
+      </div>
+    </div>
+  `;
+
+  // ---- QUICK FACTS ----
   const hours = shop.opening_hours || {};
+  const todayKey = JS_DAY_TO_KEY[new Date().getDay()];
+  const todayLabel = DAYS_ORDER.find(([key]) => key === todayKey)?.[1];
+  const todayHours = hours[todayKey];
+
+  const facts = [];
+  if (shop.coverage_areas) facts.push({ icon: '📍', label: 'Område', value: shop.coverage_areas });
+  if (todayHours) facts.push({ icon: '🕒', label: 'Åbent i dag', value: todayHours });
+  if (hasReview) facts.push({ icon: '⭐', label: 'Anmeldelser', value: `${shop.review_rating} (${shop.review_count})` });
+  if (shop.price_from) facts.push({ icon: '💰', label: 'Startpris', value: `Fra ${shop.price_from} kr.` });
+  const factsHtml = facts.length ? `
+    <div class="pf-facts">
+      ${facts.map(f => `<div class="pf-fact"><div class="pf-fact-icon">${f.icon}</div><div class="pf-fact-label">${f.label}</div><div class="pf-fact-value">${f.value}</div></div>`).join('')}
+    </div>
+  ` : '';
+
+  // ---- OM ----
+  const aboutHtml = shop.description ? `
+    <div class="profile-section">
+      <h2>Om ${shop.name}</h2>
+      <p class="pf-about-text is-clamped">${shop.description}</p>
+      <button class="pf-readmore" onclick="toggleAbout(this)">Læs mere</button>
+    </div>
+  ` : '';
+
+  // ---- YDELSER ----
+  const servicesHtml = `
+    <div class="profile-section">
+      <h2>Det tilbyder vi</h2>
+      <div class="pf-services">${shop.services.map(s => `<span class="pf-service-chip">${s}</span>`).join('')}</div>
+    </div>
+  `;
+
+  // ---- PRISER ----
+  const pricingHtml = shop.price_from ? `
+    <div class="profile-section">
+      <h2>Pris</h2>
+      <div class="pf-price-card">
+        <div class="pf-price-label">Startpris</div>
+        <div class="pf-price-value">${shop.price_from} <span>kr.</span></div>
+        ${shop.discount ? `<div class="pf-price-discount">${shop.discount}% rabat lige nu</div>` : ''}
+      </div>
+    </div>
+  ` : '';
+
+  // ---- ANMELDELSER ----
+  const reviewsHtml = hasReview ? `
+    <div class="profile-section">
+      <h2>Anmeldelser</h2>
+      <div class="pf-review-card">
+        <div class="pf-review-score">${shop.review_rating}</div>
+        <div class="pf-review-meta">
+          <p class="pf-stars">${starsHtml}</p>
+          <p>${shop.review_count} anmeldelser${shop.review_source ? ' på ' + shop.review_source : ''}</p>
+          ${shop.review_url ? `<a href="${shop.review_url}" target="_blank" rel="noopener">Se anmeldelser</a>` : ''}
+        </div>
+      </div>
+    </div>
+  ` : '';
+
+  // ---- HVORFOR VÆLGE OS ----
+  const why = shop.why_choose_us || [];
+  const checkSvg = '<svg class="why-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;flex-shrink:0;margin-top:1px;color:var(--gold);"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>';
+  const whyHtml = why.length ? `
+    <div class="profile-section">
+      <h2>Hvorfor vælge os?</h2>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px 24px;">
+        ${why.map(item => `<div style="display:flex; align-items:flex-start; gap:10px; color:var(--text-muted); font-size:14px; line-height:1.5;">${checkSvg}<span>${item}</span></div>`).join('')}
+      </div>
+    </div>
+  ` : '';
+
+  // ---- OMRÅDER ----
+  const areasHtml = shop.coverage_areas ? `<div class="profile-section"><h2>Dækker</h2><p>${shop.coverage_areas}</p></div>` : '';
+
+  // ---- ÅBNINGSTIDER (fuld uge) ----
   const hoursEntries = DAYS_ORDER.filter(([key]) => hours[key]);
   const hoursHtml = hoursEntries.length ? `
     <div class="profile-section">
       <h2>Åbningstider</h2>
       <div class="hours-list">
-        ${hoursEntries.map(([key, label]) => `<div class="hours-item"><span>${label}</span><span>${hours[key]}</span></div>`).join('')}
+        ${hoursEntries.map(([key, label]) => `<div class="hours-item${key === todayKey ? ' is-today' : ''}"><span>${label}</span><span>${hours[key]}</span></div>`).join('')}
       </div>
     </div>
   ` : '';
 
-  const why = shop.why_choose_us || [];
-  const whyHtml = why.length ? `
-    <div class="profile-section">
-      <h2>Hvorfor vælge os?</h2>
-      <ul class="why-list">${why.map(item => `<li>✓ ${item}</li>`).join('')}</ul>
-    </div>
-  ` : '';
-
-  const hasReview = shop.review_rating && shop.review_count && shop.review_visible !== false;
-  const reviewLabel = hasReview ? `⭐ ${shop.review_rating} (${shop.review_count}${shop.review_source ? ' på ' + shop.review_source : ''})` : '';
-  const reviewHtml = hasReview
-    ? (shop.review_url
-        ? `<a href="${shop.review_url}" target="_blank" rel="noopener" class="pill" style="text-decoration:none;">${reviewLabel}</a>`
-        : `<span class="pill">${reviewLabel}</span>`)
-    : '';
-
-  const socialLinks = [];
-  if (shop.instagram) socialLinks.push(`<a href="${shop.instagram}" target="_blank" rel="noopener">Instagram</a>`);
-  if (shop.facebook) socialLinks.push(`<a href="${shop.facebook}" target="_blank" rel="noopener">Facebook</a>`);
-  const socialHtml = socialLinks.length ? `<div class="profile-section"><h2>Følg os</h2><p>${socialLinks.join(' · ')}</p></div>` : '';
-
-  content.innerHTML = `
-    <div class="profile-header">
-      <div class="profile-header-text">
-        <h1>${shop.name}</h1>
-        <p class="intro">${shop.city}${shop.address ? ' · ' + shop.address : ''}</p>
-        ${shop.tagline ? `<p class="tagline">${shop.tagline}</p>` : ''}
-        <div class="card-tags" style="margin:16px 0 20px;">
-          ${reviewHtml}
-          ${shop.verificeret ? `<span class="pill verified">Verificeret</span>` : ''}
-          ${shop.price_from ? `<span class="pill">Fra ${shop.price_from} kr.</span>` : ''}
-          ${shop.discount ? `<span class="pill discount">${shop.discount}% rabat</span>` : ''}
-        </div>
-        <button class="btn-primary" onclick="openLeadModal('${shop.name.replace(/'/g, "\\'")}')">Få tilbud fra ${shop.name}</button>
+  // ---- KONTAKT (afsluttende) ----
+  const contactHtml = `
+    <div class="profile-section" style="text-align:center;">
+      <h2>Klar til at komme i gang?</h2>
+      <p style="color:var(--text-muted); margin-bottom:16px;">Send en uforpligtende forespørgsel til ${shop.name} — det tager under et minut.</p>
+      <button class="btn-primary pf-cta-primary" onclick="openLeadModal('${shop.name.replace(/'/g, "\\'")}')">Få tilbud fra ${shop.name}</button>
+      <div class="pf-secondary-actions">
+        ${shop.phone ? `<a class="pf-secondary-btn" href="tel:${shop.phone.replace(/\s/g,'')}">Ring til ${shop.name}</a>` : ''}
       </div>
-      ${shop.hero_image_url ? `<img src="${shop.hero_image_url}" alt="${shop.name}" class="hero-img">` : ''}
     </div>
-
-    ${shop.description ? `<div class="profile-section"><h2>Om ${shop.name}</h2><p>${shop.description}</p></div>` : ''}
-
-    <div class="profile-section">
-      <h2>Ydelser</h2>
-      <p>${shop.services.join(', ')}</p>
-    </div>
-
-    ${whyHtml}
-    ${shop.coverage_areas ? `<div class="profile-section"><h2>Område</h2><p>${shop.coverage_areas}</p></div>` : ''}
-    ${hoursHtml}
-    ${socialHtml}
   `;
+
+  content.innerHTML = heroHtml + factsHtml + aboutHtml + servicesHtml + pricingHtml + reviewsHtml + whyHtml + areasHtml + hoursHtml + contactHtml;
+
+  // Sticky mobile CTA
+  const stickyCta = document.getElementById('stickyCta');
+  const stickyCtaBtn = document.getElementById('stickyCtaBtn');
+  stickyCtaBtn.textContent = 'Få tilbud fra ' + shop.name;
+  stickyCtaBtn.onclick = () => openLeadModal(shop.name);
+  stickyCta.style.display = '';
+  document.body.classList.add('has-sticky-cta');
 }
 loadShop();
 </script>
