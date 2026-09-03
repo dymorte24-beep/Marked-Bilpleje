@@ -47,11 +47,12 @@ function renderShops(){
     grid.innerHTML = '<p class="empty-state">Ingen butikker fundet endnu — vi udvider løbende med flere byer og butikker.</p>';
     return;
   }
+  const fallbackIcon = '<div class="card-media-fallback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6"/><path d="M20 20l-5.5-5.5"/></svg></div>';
   grid.innerHTML = list.map((shop, i) => `
     <div class="card" style="animation-delay:${Math.min(i, 8) * 40}ms" data-city="${shop.city}" data-services="${shop.services.join(',').toLowerCase()}">
       ${shop.profileUrl ? `<a class="card-link-overlay" href="${shop.profileUrl}" aria-label="Se profil for ${shop.name}"></a>` : ''}
-      ${shop.heroImageUrl ? `<img class="card-thumb" src="${shop.heroImageUrl}" alt="">` : ''}
-      <div${shop.heroImageUrl ? ' class="card-body-thumb-pad"' : ''}>
+      ${shop.heroImageUrl ? `<img class="card-media" src="${shop.heroImageUrl}" alt="">` : fallbackIcon}
+      <div class="card-body">
         <div class="card-name">${shop.name}</div>
         <div class="card-meta">${shop.city} · ${shop.services.join(', ')}</div>
         <div class="card-tags">
@@ -60,7 +61,9 @@ function renderShops(){
           ${shop.priceFrom ? `<span class="pill">Fra ${shop.priceFrom} kr.</span>` : ''}
           ${shop.discount ? `<span class="pill discount">${shop.discount}% rabat</span>` : ''}
         </div>
-        <button class="card-cta" onclick="openLeadModal('${shop.name.replace(/'/g, "\\'")}')">Få tilbud</button>
+        <div class="card-actions">
+          ${shop.profileUrl ? `<a class="card-see-more" href="${shop.profileUrl}">Se mere</a>` : ''}
+        </div>
       </div>
     </div>
   `).join('');
