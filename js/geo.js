@@ -57,12 +57,63 @@ function geoResolve(text){
   return key && _geoByKey.has(key) ? _geoByKey.get(key) : null;
 }
 
-function geoDistanceKm(a, b){
+function haversineKm(a, b){
   const R = 6371;
   const dLat = (b.lat - a.lat) * Math.PI / 180;
   const dLng = (b.lng - a.lng) * Math.PI / 180;
   const lat1 = a.lat * Math.PI / 180;
   const lat2 = b.lat * Math.PI / 180;
   const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
-  return Math.round(R * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h)));
+  return R * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+}
+
+// Danmark er delt af vand — en lige linje "hen over havet" undervurderer kraftigt
+// hvor langt der reelt er mellem fx Sjælland og Jylland (ingen bro går den vej).
+// Klassificeres via postnummer-intervaller (officiel, fast inddeling):
+// 1000-4999 Sjælland/Lolland-Falster/Møn, 3700-3799 Bornholm (undtagelse i intervallet),
+// 5000-5999 Fyn, 6000-9999 Jylland.
+function landmassFromNr(nr){
+  const n = parseInt(nr, 10);
+  if (!n) return 'ukendt';
+  if (n >= 3700 && n <= 3799) return 'bornholm';
+  if (n >= 1000 && n <= 4999) return 'sjaelland';
+  if (n >= 5000 && n <= 5999) return 'fyn';
+  if (n >= 6000 && n <= 9999) return 'jylland';
+  return 'ukendt';
+}
+
+// Broernes ca. landingspunkter på hver side, brugt som "gennemgangspunkt"
+// når to punkter ligger på hver sin landsdel.
+const DK_STOREBAELT = { sjaelland: { lat: 55.326, lng: 11.089 }, fyn: { lat: 55.317, lng: 10.807 } };
+const DK_LILLEBAELT = { fyn: { lat: 55.505, lng: 9.738 }, jylland: { lat: 55.566, lng: 9.751 } };
+
+// Reel afstand via de rigtige broer i stedet for lige hen over havet, når to
+// punkter ligger på hver sin landsdel (Sjælland/Fyn/Jylland). Bornholm og
+// ukendte postnumre har ingen bro at regne via og falder tilbage til luftlinje.
+function geoDistanceKm(a, b){
+  const landA = landmassFromNr(a.nr);
+  const landB = landmassFromNr(b.nr);
+
+  if (landA === landB || landA === 'ukendt' || landB === 'ukendt' || landA === 'bornholm' || landB === 'bornholm') {
+    return Math.round(haversineKm(a, b));
+  }
+
+  const sjael = landA === 'sjaelland' ? a : (landB === 'sjaelland' ? b : null);
+  const jyl = landA === 'jylland' ? a : (landB === 'jylland' ? b : null);
+  const fynPt = landA === 'fyn' ? a : (landB === 'fyn' ? b : null);
+
+  if (sjael && fynPt) {
+    return Math.round(haversineKm(sjael, DK_STOREBAELT.sjaelland) + haversineKm(DK_STOREBAELT.fyn, fynPt));
+  }
+  if (fynPt && jyl) {
+    return Math.round(haversineKm(fynPt, DK_LILLEBAELT.fyn) + haversineKm(DK_LILLEBAELT.jylland, jyl));
+  }
+  if (sjael && jyl) {
+    return Math.round(
+      haversineKm(sjael, DK_STOREBAELT.sjaelland) +
+      haversineKm(DK_STOREBAELT.fyn, DK_LILLEBAELT.fyn) +
+      haversineKm(DK_LILLEBAELT.jylland, jyl)
+    );
+  }
+  return Math.round(haversineKm(a, b));
 }
