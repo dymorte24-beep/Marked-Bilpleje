@@ -22,6 +22,7 @@ function formatServicesPreview(services, max = 3){
 
 async function loadShops(){
   if (!document.getElementById('resultsGrid')) return;
+  loadGeoData();
   const { data, error } = await db.from('shops').select('*').eq('godkendt', true).order('name');
   if (error) {
     console.error('Kunne ikke hente butikker fra databasen', error);
@@ -40,27 +41,29 @@ async function loadShops(){
     reviewCount: row.review_count,
     reviewSource: row.review_source,
     reviewVisible: row.review_visible,
-    heroImageUrl: row.hero_image_url
+    heroImageUrl: row.hero_image_url,
+    coverageAreas: row.coverage_areas
   }));
   renderShops();
 }
 
-function renderShops(){
+function renderShops(list, originName){
   const grid = document.getElementById('resultsGrid');
   if (!grid) return;
-  const list = wizardAnswers ? scoredShopOrder() : shops;
+  if (!list) list = wizardAnswers ? scoredShopOrder() : shops;
   if (list.length === 0) {
     grid.innerHTML = '<p class="empty-state">Ingen butikker fundet endnu — vi udvider løbende med flere byer og butikker.</p>';
     return;
   }
   const fallbackIcon = '<div class="card-media-fallback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6"/><path d="M20 20l-5.5-5.5"/></svg></div>';
   grid.innerHTML = list.map((shop, i) => `
-    <div class="card" style="animation-delay:${Math.min(i, 8) * 40}ms" data-city="${shop.city}" data-services="${shop.services.join(',').toLowerCase()}">
+    <div class="card" style="animation-delay:${Math.min(i, 8) * 40}ms">
       ${shop.profileUrl ? `<a class="card-link-overlay" href="${shop.profileUrl}" aria-label="Se profil for ${shop.name}"></a>` : ''}
       ${shop.heroImageUrl ? `<img class="card-media" src="${shop.heroImageUrl}" alt="">` : fallbackIcon}
       <div class="card-body">
         <div class="card-name">${shop.name}</div>
         <div class="card-meta">${shop.city} · ${formatServicesPreview(shop.services)}</div>
+        ${shop._distanceKm != null ? `<div class="card-distance">${shop._distanceKm} km fra ${originName}${(shop.coverageAreas && shop._distanceKm > 10 && shop.coverageAreas.length <= 40) ? ' · Dækker ' + shop.coverageAreas : ''}</div>` : ''}
         <div class="card-tags">
           ${(shop.reviewRating && shop.reviewCount && shop.reviewVisible !== false) ? `<span class="pill">⭐ ${shop.reviewRating} (${shop.reviewCount}${shop.reviewSource ? ' på ' + shop.reviewSource : ''})</span>` : ''}
           ${shop.verificeret ? `<span class="pill verified">Verificeret</span>` : ''}
@@ -115,20 +118,42 @@ function normalizeCity(str){
   return str.toLowerCase().replace(/æ/g,'e').replace(/ø/g,'o').replace(/å/g,'a');
 }
 
-function filterCards(){
-  const city = normalizeCity(document.getElementById('citySearch').value.trim());
+async function filterCards(){
+  const cityRaw = document.getElementById('citySearch').value.trim();
   const service = document.getElementById('serviceSearch').value.trim().toLowerCase();
-  let visibleCount = 0;
-  document.querySelectorAll('.card').forEach(card => {
-    const cityMatch = !city || normalizeCity(card.dataset.city).includes(city);
-    const serviceMatch = service === 'alle ydelser' || (card.dataset.services || '').includes(service);
-    const visible = cityMatch && serviceMatch;
-    card.style.display = visible ? 'flex' : 'none';
-    if (visible) visibleCount++;
-  });
+  const grid = document.getElementById('resultsGrid');
+
+  let list = shops.filter(shop => service === 'alle ydelser' || shop.services.some(s => s.toLowerCase().includes(service)));
+  let originName = '';
+
+  if (cityRaw) {
+    await loadGeoData();
+    const origin = geoResolve(cityRaw);
+    if (origin) {
+      // Ægte km-afstand: viser altid de nærmeste butikker, også uden for søgt by
+      // (fx en butik der dækker "hele Nordjylland" ved søgning på en anden Nordjylland-by).
+      originName = origin.navn;
+      list = list
+        .map(shop => {
+          const shopPoint = geoResolve(shop.city);
+          return { ...shop, _distanceKm: shopPoint ? geoDistanceKm(origin, shopPoint) : null };
+        })
+        .sort((a, b) => (a._distanceKm ?? Infinity) - (b._distanceKm ?? Infinity));
+    } else {
+      // Ukendt by/postnummer — falder tilbage til simpelt tekst-match på bynavn.
+      const cityNorm = normalizeCity(cityRaw);
+      list = list.filter(shop => normalizeCity(shop.city).includes(cityNorm));
+    }
+  }
+
+  if (list.length === 0) {
+    if (grid) grid.innerHTML = '';
+  } else {
+    renderShops(list, originName);
+  }
   const noResults = document.getElementById('noResults');
-  if (noResults) noResults.style.display = visibleCount === 0 ? 'block' : 'none';
-  track('search', { search_term: city, service, results_count: visibleCount });
+  if (noResults) noResults.style.display = list.length === 0 ? 'block' : 'none';
+  track('search', { search_term: cityRaw, service, results_count: list.length });
 }
 
 // Onboarding-wizard (popup ved landing) — sorterer eksisterende butiksdata,

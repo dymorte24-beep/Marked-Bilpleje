@@ -49,6 +49,7 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/js/geo.js"></script>
 <script>
 const SUPABASE_URL = 'https://xeosltdpvkcaudiijtge.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_iG0iWu8szH_7-uwErdxN9g_pE9YGFWd';
@@ -63,29 +64,60 @@ function formatServicesPreview(services, max = 3){
 async function loadCity(){
   const parts = window.location.pathname.replace(/^\/|\/$/g, '').split('/');
   const cityKey = parts[parts.length - 1];
-  const { data: shops, error } = await db.from('shops').select('*').eq('city_key', cityKey).eq('godkendt', true).order('name');
+
+  const [, { data: allShops, error }] = await Promise.all([
+    loadGeoData(),
+    db.from('shops').select('*').eq('godkendt', true).order('name')
+  ]);
 
   const content = document.getElementById('cityContent');
   const breadcrumb = document.getElementById('breadcrumb');
 
-  if (error || !shops || shops.length === 0) {
-    content.innerHTML = '<h1>Bilpleje</h1><p class="intro">Ingen butikker fundet i denne by endnu.</p>';
+  if (error || !allShops) {
+    content.innerHTML = '<h1>Bilpleje</h1><p class="intro">Kunne ikke hente butikker lige nu.</p>';
     return;
   }
 
-  const cityName = shops[0].city;
+  // Byens navn: brug en lokal butiks eget bynavn hvis vi har en, ellers det
+  // officielle postnummer-navn (så fx "skagen" i URL'en bliver til "Skagen").
+  const origin = geoResolve(cityKey);
+  const localMatch = allShops.find(s => s.city_key === cityKey);
+  const cityName = localMatch ? localMatch.city : (origin ? origin.navn : cityKey.charAt(0).toUpperCase() + cityKey.slice(1));
+
   document.title = 'Bilpleje i ' + cityName + ' | FindBilpleje.dk';
   document.getElementById('metaDescription').setAttribute('content', `Find og sammenlign bilpleje-butikker i ${cityName}. Se priser, ydelser og få tilbud direkte — gratis for kunder.`);
   breadcrumb.innerHTML = `<a href="/index.html">Forside</a><span class="sep">/</span>Bilpleje<span class="sep">/</span>${cityName}`;
 
+  // Ægte km-afstand fra søgt by til hver butiks by — viser altid de nærmeste
+  // butikker (fx en butik der dækker "hele Nordjylland"), også når ingen
+  // butik har adresse i selve byen.
+  let list = allShops;
+  let originName = '';
+  if (origin) {
+    originName = origin.navn;
+    list = allShops
+      .map(s => {
+        const shopPoint = geoResolve(s.city);
+        return { ...s, _distanceKm: shopPoint ? geoDistanceKm(origin, shopPoint) : null };
+      })
+      .sort((a, b) => (a._distanceKm ?? Infinity) - (b._distanceKm ?? Infinity))
+      .slice(0, 12);
+  }
+
+  if (list.length === 0) {
+    content.innerHTML = `<h1>Bilpleje i ${cityName}</h1><p class="intro">Ingen butikker fundet endnu.</p>`;
+    return;
+  }
+
   const fallbackIcon = '<div class="card-media-fallback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6"/><path d="M20 20l-5.5-5.5"/></svg></div>';
-  const cards = shops.map((s, i) => `
+  const cards = list.map((s, i) => `
     <div class="card" style="animation-delay:${Math.min(i, 8) * 40}ms">
       ${s.profile_url ? `<a class="card-link-overlay" href="/${s.profile_url}" aria-label="Se profil for ${s.name}"></a>` : ''}
       ${s.hero_image_url ? `<img class="card-media" src="${s.hero_image_url}" alt="">` : fallbackIcon}
       <div class="card-body">
         <div class="card-name">${s.name}</div>
         <div class="card-meta">${s.city} · ${formatServicesPreview(s.services)}</div>
+        ${s._distanceKm != null ? `<div class="card-distance">${s._distanceKm} km fra ${originName}${(s.coverage_areas && s._distanceKm > 10 && s.coverage_areas.length <= 40) ? ' · Dækker ' + s.coverage_areas : ''}</div>` : ''}
         <div class="card-tags">
           ${(s.review_rating && s.review_count && s.review_visible !== false) ? `<span class="pill">⭐ ${s.review_rating} (${s.review_count}${s.review_source ? ' på ' + s.review_source : ''})</span>` : ''}
           ${s.verificeret ? '<span class="pill verified">Verificeret</span>' : ''}
