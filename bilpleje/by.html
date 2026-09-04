@@ -115,9 +115,12 @@ async function loadCity(){
       ${s.profile_url ? `<a class="card-link-overlay" href="/${s.profile_url}" aria-label="Se profil for ${s.name}"></a>` : ''}
       ${s.hero_image_url ? `<img class="card-media" src="${s.hero_image_url}" alt="">` : fallbackIcon}
       <div class="card-body">
-        <div class="card-name">${s.name}</div>
+        <div class="card-title-row">
+          <div class="card-name">${s.name}</div>
+          ${s._distanceKm != null ? `<div class="card-distance">${s._distanceKm} km fra ${originName}</div>` : ''}
+        </div>
         <div class="card-meta">${s.city} · ${formatServicesPreview(s.services)}</div>
-        ${s._distanceKm != null ? `<div class="card-distance">${s._distanceKm} km fra ${originName}${(s.coverage_areas && s._distanceKm > 10 && s.coverage_areas.length <= 40) ? ' · Dækker ' + s.coverage_areas : ''}</div>` : ''}
+        ${(s._distanceKm > 10 && s.coverage_areas && s.coverage_areas.length <= 40) ? `<div class="card-coverage-note">Dækker ${s.coverage_areas}</div>` : ''}
         <div class="card-tags">
           ${(s.review_rating && s.review_count && s.review_visible !== false) ? `<span class="pill">⭐ ${s.review_rating} (${s.review_count}${s.review_source ? ' på ' + s.review_source : ''})</span>` : ''}
           ${s.verificeret ? '<span class="pill verified">Verificeret</span>' : ''}

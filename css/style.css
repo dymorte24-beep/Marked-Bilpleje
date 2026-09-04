@@ -282,9 +282,11 @@ section.search{
 .card-media-fallback svg{width:26px; height:26px; color:var(--gold);}
 .card-body{flex:1; min-width:0;}
 .card.premium{border:1.5px solid var(--gold); background:var(--gold-light);}
-.card-name{font-weight:600; font-size:16px; margin-bottom:3px;}
+.card-title-row{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 10px;}
+.card-name{font-weight:600; font-size:16px; margin-bottom:3px; min-width:0;}
 .card-meta{font-size:13px; color:var(--text-muted); margin-bottom:8px;}
-.card-distance{font-size:12px; color:var(--gold-dark); margin:-4px 0 8px;}
+.card-distance{font-size:12px; color:var(--gold-dark); white-space:nowrap; flex-shrink:0; margin-left:auto;}
+.card-coverage-note{font-size:12px; color:var(--text-muted); margin:-4px 0 8px;}
 .card-tags{display:flex; gap:6px; flex-wrap:wrap;}
 .card-review{
   font-size:12px; font-style:italic; color:var(--text-muted);

@@ -61,9 +61,12 @@ function renderShops(list, originName){
       ${shop.profileUrl ? `<a class="card-link-overlay" href="${shop.profileUrl}" aria-label="Se profil for ${shop.name}"></a>` : ''}
       ${shop.heroImageUrl ? `<img class="card-media" src="${shop.heroImageUrl}" alt="">` : fallbackIcon}
       <div class="card-body">
-        <div class="card-name">${shop.name}</div>
+        <div class="card-title-row">
+          <div class="card-name">${shop.name}</div>
+          ${shop._distanceKm != null ? `<div class="card-distance">${shop._distanceKm} km fra ${originName}</div>` : ''}
+        </div>
         <div class="card-meta">${shop.city} · ${formatServicesPreview(shop.services)}</div>
-        ${shop._distanceKm != null ? `<div class="card-distance">${shop._distanceKm} km fra ${originName}${(shop.coverageAreas && shop._distanceKm > 10 && shop.coverageAreas.length <= 40) ? ' · Dækker ' + shop.coverageAreas : ''}</div>` : ''}
+        ${(shop._distanceKm > 10 && shop.coverageAreas && shop.coverageAreas.length <= 40) ? `<div class="card-coverage-note">Dækker ${shop.coverageAreas}</div>` : ''}
         <div class="card-tags">
           ${(shop.reviewRating && shop.reviewCount && shop.reviewVisible !== false) ? `<span class="pill">⭐ ${shop.reviewRating} (${shop.reviewCount}${shop.reviewSource ? ' på ' + shop.reviewSource : ''})</span>` : ''}
           ${shop.verificeret ? `<span class="pill verified">Verificeret</span>` : ''}
