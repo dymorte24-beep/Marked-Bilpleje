@@ -42,6 +42,7 @@ async function loadShops(){
     reviewSource: row.review_source,
     reviewVisible: row.review_visible,
     heroImageUrl: row.hero_image_url,
+    cardImageUrl: row.card_image_url,
     coverageAreas: row.coverage_areas
   }));
   renderShops();
@@ -59,7 +60,7 @@ function renderShops(list, originName){
   grid.innerHTML = list.map((shop, i) => `
     <div class="card" style="animation-delay:${Math.min(i, 8) * 40}ms">
       ${shop.profileUrl ? `<a class="card-link-overlay" href="${shop.profileUrl}" aria-label="Se profil for ${shop.name}"></a>` : ''}
-      ${shop.heroImageUrl ? `<img class="card-media" src="${shop.heroImageUrl}" alt="">` : fallbackIcon}
+      ${(shop.cardImageUrl || shop.heroImageUrl) ? `<img class="card-media" src="${shop.cardImageUrl || shop.heroImageUrl}" alt="">` : fallbackIcon}
       <div class="card-body">
         <div class="card-title-row">
           <div class="card-name">${shop.name}</div>

@@ -103,6 +103,9 @@
     <label for="newShopHeroImage">Hovedbillede — billed-link</label>
     <input type="text" id="newShopHeroImage" placeholder="https://...">
 
+    <label for="newShopCardImage">Kort-billede — billed-link (valgfri, kun til søgekort/lister, falder tilbage til hovedbillede hvis tom)</label>
+    <input type="text" id="newShopCardImage" placeholder="https://...">
+
     <label for="newShopTagline">Tagline</label>
     <input type="text" id="newShopTagline" maxlength="120">
 
@@ -319,6 +322,7 @@ function resetShopForm(){
   document.getElementById('newShopTier').value = 'gratis';
   document.getElementById('newShopVerified').checked = false;
   document.getElementById('newShopHeroImage').value = '';
+  document.getElementById('newShopCardImage').value = '';
   document.getElementById('newShopTagline').value = '';
   document.getElementById('newShopDescription').value = '';
   document.getElementById('newShopAddress').value = '';
@@ -361,6 +365,7 @@ function openEditBox(id){
   document.getElementById('newShopTier').value = shop.tier;
   document.getElementById('newShopVerified').checked = shop.verificeret;
   document.getElementById('newShopHeroImage').value = shop.hero_image_url || '';
+  document.getElementById('newShopCardImage').value = shop.card_image_url || '';
   document.getElementById('newShopTagline').value = shop.tagline || '';
   document.getElementById('newShopDescription').value = shop.description || '';
   document.getElementById('newShopAddress').value = shop.address || '';
@@ -428,6 +433,7 @@ async function saveShop(){
   const errEl = document.getElementById('shopError');
 
   const heroImageUrl = document.getElementById('newShopHeroImage').value.trim() || null;
+  const cardImageUrl = document.getElementById('newShopCardImage').value.trim() || null;
   const tagline = document.getElementById('newShopTagline').value.trim() || null;
   const description = document.getElementById('newShopDescription').value.trim() || null;
   const address = document.getElementById('newShopAddress').value.trim() || null;
@@ -458,7 +464,7 @@ async function saveShop(){
     name, city, city_key: cityKey, services, price_from: priceFrom,
     discount, contact_person: contactPerson, phone, email,
     tier, verificeret,
-    hero_image_url: heroImageUrl, tagline, description,
+    hero_image_url: heroImageUrl, card_image_url: cardImageUrl, tagline, description,
     address, coverage_areas: coverageAreas,
     opening_hours: openingHours, why_choose_us: whyChooseUs,
     instagram, facebook,

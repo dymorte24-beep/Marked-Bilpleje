@@ -113,7 +113,7 @@ async function loadCity(){
   const cards = list.map((s, i) => `
     <div class="card" style="animation-delay:${Math.min(i, 8) * 40}ms">
       ${s.profile_url ? `<a class="card-link-overlay" href="/${s.profile_url}" aria-label="Se profil for ${s.name}"></a>` : ''}
-      ${s.hero_image_url ? `<img class="card-media" src="${s.hero_image_url}" alt="">` : fallbackIcon}
+      ${(s.card_image_url || s.hero_image_url) ? `<img class="card-media" src="${s.card_image_url || s.hero_image_url}" alt="">` : fallbackIcon}
       <div class="card-body">
         <div class="card-title-row">
           <div class="card-name">${s.name}</div>
