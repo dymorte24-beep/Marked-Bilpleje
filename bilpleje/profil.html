@@ -12,7 +12,7 @@
   gtag('config', 'AW-18378049298');
   gtag('config', 'G-KTK6266STG');
 </script>
-<title>Bilpleje-butik | FindBilpleje.dk</title>
+<title>Bilpleje-butik | FindBilplejere.dk</title>
 <meta name="description" content="Se priser, ydelser og få tilbud direkte fra denne bilpleje-butik." id="metaDescription">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -118,7 +118,7 @@
 
 <nav>
   <div class="wrap">
-    <a href="../../../index.html" class="logo"><span class="logo-prefix">find</span>bilpleje<span class="logo-suffix">.dk</span></a>
+    <a href="../../../index.html" class="logo"><span class="logo-prefix">find</span>bilplejere<span class="logo-suffix">.dk</span></a>
     <div class="nav-links">
       <a href="../../../index.html#search">Find en butik</a>
       <a href="../../../index.html#shops">For butikker</a>
@@ -144,7 +144,7 @@
 </div>
 
 <footer>
-  <a href="../../../privatlivspolitik.html">Privatlivspolitik</a> · findbilpleje.dk
+  <a href="../../../privatlivspolitik.html">Privatlivspolitik</a> · findbilplejere.dk
 </footer>
 
 <div class="modal-overlay" id="leadModal" onclick="if(event.target===this) closeLeadModal()">
@@ -195,7 +195,7 @@ async function loadShop(){
     if (error) console.error('Kunne ikke logge profilvisning', error);
   });
 
-  document.title = shop.name + ' | FindBilpleje.dk';
+  document.title = shop.name + ' | FindBilplejere.dk';
   const metaDesc = shop.tagline || `${shop.name} tilbyder ${(shop.services || []).slice(0, 3).join(', ')} i ${shop.city}. Se priser og få tilbud direkte.`;
   document.getElementById('metaDescription').setAttribute('content', metaDesc);
   breadcrumb.innerHTML = `

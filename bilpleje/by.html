@@ -12,7 +12,7 @@
   gtag('config', 'AW-18378049298');
   gtag('config', 'G-KTK6266STG');
 </script>
-<title>Bilpleje | FindBilpleje.dk</title>
+<title>Bilpleje | FindBilplejere.dk</title>
 <meta name="description" content="Find og sammenlign bilpleje-butikker i din by. Se priser, ydelser og få tilbud direkte — gratis for kunder." id="metaDescription">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,7 +23,7 @@
 
 <nav>
   <div class="wrap">
-    <a href="/index.html" class="logo"><span class="logo-prefix">find</span>bilpleje<span class="logo-suffix">.dk</span></a>
+    <a href="/index.html" class="logo"><span class="logo-prefix">find</span>bilplejere<span class="logo-suffix">.dk</span></a>
     <div class="nav-links">
       <a href="/index.html#search">Find en butik</a>
       <a href="/index.html#shops">For butikker</a>
@@ -45,7 +45,7 @@
 </section>
 
 <footer>
-  <a href="/privatlivspolitik.html">Privatlivspolitik</a> · findbilpleje.dk
+  <a href="/privatlivspolitik.html">Privatlivspolitik</a> · findbilplejere.dk
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -84,7 +84,7 @@ async function loadCity(){
   const localMatch = allShops.find(s => s.city_key === cityKey);
   const cityName = localMatch ? localMatch.city : (origin ? origin.navn : cityKey.charAt(0).toUpperCase() + cityKey.slice(1));
 
-  document.title = 'Bilpleje i ' + cityName + ' | FindBilpleje.dk';
+  document.title = 'Bilpleje i ' + cityName + ' | FindBilplejere.dk';
   document.getElementById('metaDescription').setAttribute('content', `Find og sammenlign bilpleje-butikker i ${cityName}. Se priser, ydelser og få tilbud direkte — gratis for kunder.`);
   breadcrumb.innerHTML = `<a href="/index.html">Forside</a><span class="sep">/</span>Bilpleje<span class="sep">/</span>${cityName}`;
 
