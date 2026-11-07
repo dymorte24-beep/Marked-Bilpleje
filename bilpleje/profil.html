@@ -141,6 +141,12 @@
   /* PRICING */
   .pf-price-line{font-size:18px; color:var(--navy); display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
   .pf-price-amount{font-family:'Oswald',sans-serif; font-size:28px; font-weight:600; color:var(--gold-dark);}
+  .pf-price-list{margin-top:18px;}
+  .pf-price-cat-title{
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--gold-dark); margin:16px 0 4px;
+  }
+  .pf-price-cat:first-child .pf-price-cat-title{margin-top:0;}
 
   /* REVIEWS */
   .pf-review{display:flex; align-items:center; gap:20px;}
@@ -242,6 +248,33 @@ function extractLeadSentence(description, limit = 160){
 function infoRow(label, value, extraClass){
   if (!value) return '';
   return `<div class="pf-info-row${extraClass ? ' ' + extraClass : ''}"><span class="pf-info-label">${label}</span><span class="pf-info-value">${value}</span></div>`;
+}
+
+function priceListHtml(categories){
+  if (!categories || !categories.length) return '';
+  const catBlock = cat => `
+    <div class="pf-price-cat">
+      <p class="pf-price-cat-title">${cat.title}</p>
+      ${(cat.items || []).map(i => `<div class="pf-info-row"><span class="pf-info-label">${i.label}</span><span class="pf-info-value">${i.price}</span></div>`).join('')}
+    </div>
+  `;
+  const [first, ...rest] = categories;
+  if (!rest.length) return `<div class="pf-price-list">${catBlock(first)}</div>`;
+  const moreLabel = `Se alle priser (${rest.length} flere kategorier)`;
+  return `
+    <div class="pf-price-list">
+      ${catBlock(first)}
+      <div class="pf-price-more" style="display:none;">${rest.map(catBlock).join('')}</div>
+      <button class="pf-readmore" data-more-label="${moreLabel}" onclick="togglePriceList(this)">${moreLabel}</button>
+    </div>
+  `;
+}
+
+function togglePriceList(btn){
+  const extra = btn.previousElementSibling;
+  const willShow = extra.style.display === 'none';
+  extra.style.display = willShow ? '' : 'none';
+  btn.textContent = willShow ? 'Vis færre priser' : btn.dataset.moreLabel;
 }
 
 async function loadShop(){
@@ -350,6 +383,7 @@ async function loadShop(){
           ${shop.price_from ? `Fra <span class="pf-price-amount">${shop.price_from} kr.</span>` : 'Pris fås ved henvendelse'}
           ${shop.discount ? `<span class="pill discount">${shop.discount}% rabat</span>` : ''}
         </p>
+        ${shop.price_list_verified ? priceListHtml(shop.price_list) : ''}
       </div>
     </div>
   `;

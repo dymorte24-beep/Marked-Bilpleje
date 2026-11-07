@@ -174,6 +174,20 @@
     <label for="newShopDiscount">Rabat (%) — valgfri, vises kun hvis udfyldt</label>
     <input type="number" id="newShopDiscount" min="0" max="100">
 
+    <div class="field-section">Detaljeret prisliste <span style="font-size:12px; font-weight:400; color:#6B7280;">— indtastes af Claude ud fra tilsendt research, redigeres ikke direkte her</span></div>
+    <div id="priceListPreview" style="font-size:13px; color:var(--navy); background:#F7F7F5; border:1px solid #E5E5E0; border-radius:8px; padding:10px 12px; margin-bottom:10px;">Ingen prisliste gemt.</div>
+
+    <label for="newShopPriceSource">Pris-kilde (url) — valgfri</label>
+    <input type="text" id="newShopPriceSource">
+
+    <label for="newShopPriceCheckedAt">Senest kontrolleret (dato) — valgfri</label>
+    <input type="date" id="newShopPriceCheckedAt">
+
+    <div class="inline-check">
+      <input type="checkbox" id="newShopPriceListVerified">
+      <label for="newShopPriceListVerified">Detaljeret prisliste bekræftet og offentlig (slå kun til, når du selv har godkendt tallene — se research-grundlaget ovenfor)</label>
+    </div>
+
     <label for="newShopContactPerson">Kontaktperson — valgfri, kun synlig i panelet</label>
     <input type="text" id="newShopContactPerson">
 
@@ -272,6 +286,17 @@ function buildWhyRows(items){
   }).join('');
 }
 
+function renderPriceListPreview(list){
+  const box = document.getElementById('priceListPreview');
+  if (!list || !list.length) {
+    box.textContent = 'Ingen prisliste gemt.';
+    return;
+  }
+  const totalItems = list.reduce((sum, cat) => sum + (cat.items ? cat.items.length : 0), 0);
+  const titles = list.map(cat => cat.title).join(', ');
+  box.textContent = `${list.length} kategorier, ${totalItems} priser — ${titles}`;
+}
+
 function togglePwBox(){
   const box = document.getElementById('pwBox');
   box.style.display = box.style.display === 'block' ? 'none' : 'block';
@@ -317,6 +342,10 @@ function resetShopForm(){
   document.querySelectorAll('.service-check').forEach(c => c.checked = false);
   document.getElementById('newShopPrice').value = '';
   document.getElementById('newShopDiscount').value = '';
+  document.getElementById('newShopPriceSource').value = '';
+  document.getElementById('newShopPriceCheckedAt').value = '';
+  document.getElementById('newShopPriceListVerified').checked = false;
+  renderPriceListPreview(null);
   document.getElementById('newShopContactPerson').value = '';
   document.getElementById('newShopPhone').value = '';
   document.getElementById('newShopEmail').value = '';
@@ -360,6 +389,10 @@ function openEditBox(id){
   document.querySelectorAll('.service-check').forEach(c => { c.checked = shop.services.includes(c.value); });
   document.getElementById('newShopPrice').value = shop.price_from || '';
   document.getElementById('newShopDiscount').value = shop.discount || '';
+  document.getElementById('newShopPriceSource').value = shop.price_list_source || '';
+  document.getElementById('newShopPriceCheckedAt').value = shop.price_list_checked_at || '';
+  document.getElementById('newShopPriceListVerified').checked = !!shop.price_list_verified;
+  renderPriceListPreview(shop.price_list);
   document.getElementById('newShopContactPerson').value = shop.contact_person || '';
   document.getElementById('newShopPhone').value = shop.phone || '';
   document.getElementById('newShopEmail').value = shop.email || '';
@@ -454,6 +487,9 @@ async function saveShop(){
   const reviewSource = document.getElementById('newShopReviewSource').value.trim() || null;
   const reviewUrl = document.getElementById('newShopReviewUrl').value.trim() || null;
   const reviewVisible = document.getElementById('newShopReviewVisible').checked;
+  const priceListSource = document.getElementById('newShopPriceSource').value.trim() || null;
+  const priceListCheckedAt = document.getElementById('newShopPriceCheckedAt').value || null;
+  const priceListVerified = document.getElementById('newShopPriceListVerified').checked;
 
   if (!name || !city || !cityKey || services.length === 0) {
     errEl.style.color = '#B3261E';
@@ -471,7 +507,9 @@ async function saveShop(){
     instagram, facebook,
     review_rating: reviewRating, review_count: reviewCount,
     review_source: reviewSource, review_url: reviewUrl,
-    review_visible: reviewVisible
+    review_visible: reviewVisible,
+    price_list_source: priceListSource, price_list_checked_at: priceListCheckedAt,
+    price_list_verified: priceListVerified
   };
 
   let error;
