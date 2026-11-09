@@ -135,6 +135,7 @@ async function loadCity(){
           ${(s.review_rating && s.review_count && s.review_visible !== false) ? `<span class="pill">⭐ ${s.review_rating} (${s.review_count}${s.review_source ? ' på ' + s.review_source : ''})</span>` : ''}
           ${s._ad ? '<span class="pill annonce">Annonce</span>' : ''}
           ${s.verificeret ? '<span class="pill verified">Verificeret</span>' : ''}
+          ${s.price_level ? `<span class="pill">${priceLevelHtml(s.price_level)} ${PRICE_LEVEL_NAMES[s.price_level]}</span>` : ''}
         </div>
         <div class="card-actions">
           ${s.profile_url ? `<a class="card-see-more" href="/${s.profile_url}">Se mere</a>` : ''}

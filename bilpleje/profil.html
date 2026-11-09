@@ -148,6 +148,10 @@
   .pf-quote{background:var(--navy); color:var(--white); border-radius:20px; padding:40px 48px; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap;}
   .pf-quote h2{color:var(--gold); margin:0 0 8px;}
   .pf-quote p{color:rgba(255,255,255,0.8); margin:0; max-width:560px; line-height:1.6; font-size:15px;}
+  .pf-quote .pf-quote-level{color:var(--white); font-size:16px; margin:0 0 10px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .pf-quote .price-level{font-size:20px;}
+  .pf-quote .price-level-off{color:rgba(255,255,255,0.25);}
+  .pf-quote-level-name{background:rgba(182,139,72,0.18); color:var(--gold); border-radius:999px; padding:3px 12px; font-size:13px; font-weight:600;}
   .pf-quote-actions{display:flex; gap:10px; flex-wrap:wrap;}
   .pf-quote-btn{display:inline-flex; align-items:center; gap:8px; background:var(--gold); color:var(--navy); padding:12px 20px; border-radius:10px; font-weight:600; font-size:14px; text-decoration:none;}
   .pf-quote-btn:hover{filter:brightness(1.07);}
@@ -362,6 +366,7 @@ async function loadShop(){
     <div class="profile-section pf-quote">
       <div>
         <h2>Få en pris</h2>
+        ${shop.price_level ? `<p class="pf-quote-level">Prisniveau: ${priceLevelHtml(shop.price_level)} <span class="pf-quote-level-name">${PRICE_LEVEL_NAMES[shop.price_level]}</span></p>` : ''}
         <p>Prisen afhænger af bilen og behandlingen. Kontakt ${shop.name} direkte og få en pris på lige netop din bil.</p>
       </div>
       <div class="pf-quote-actions">

@@ -173,7 +173,15 @@
     <label for="newShopPrice">Pris fra (kr.) — valgfri, hvis ikke oplyst</label>
     <input type="number" id="newShopPrice" min="0">
 
-    <label for="newShopDiscount">Rabat (%) — valgfri, vises kun hvis udfyldt</label>
+    <label for="newShopPriceLevel">Prisniveau — vises på sitet i stedet for priser</label>
+    <select id="newShopPriceLevel">
+      <option value="">Ikke sat (vises ikke)</option>
+      <option value="1">kr — Budget</option>
+      <option value="2">kr kr — Mellem</option>
+      <option value="3">kr kr kr — Premium</option>
+    </select>
+
+    <label for="newShopDiscount">Rabat (%) — gemmes kun internt, vises ikke på sitet</label>
     <input type="number" id="newShopDiscount" min="0" max="100">
 
     <div class="field-section">Detaljeret prisliste <span style="font-size:12px; font-weight:400; color:#6B7280;">— indtastes af Claude ud fra tilsendt research, redigeres ikke direkte her</span></div>
@@ -214,7 +222,7 @@
     <p class="error-msg" id="shopError"></p>
   </div>
   <table>
-    <thead><tr><th>Navn</th><th>By</th><th>Profil</th><th>Annonce</th><th>Rabat</th><th>Verificeret</th><th>Godkendt</th><th></th></tr></thead>
+    <thead><tr><th>Navn</th><th>By</th><th>Profil</th><th>Annonce</th><th>Prisniveau</th><th>Verificeret</th><th>Godkendt</th><th></th></tr></thead>
     <tbody id="shopsTable"><tr class="empty-row"><td colspan="8">Henter…</td></tr></tbody>
   </table>
 
@@ -236,6 +244,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
+function priceLevelText(level){ return ({1:"kr · Budget",2:"kr kr · Mellem",3:"kr kr kr · Premium"})[level] || ""; }
 const SUPABASE_URL = 'https://xeosltdpvkcaudiijtge.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_iG0iWu8szH_7-uwErdxN9g_pE9YGFWd';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -344,6 +353,7 @@ function resetShopForm(){
   document.querySelectorAll('.service-check').forEach(c => c.checked = false);
   document.getElementById('newShopPrice').value = '';
   document.getElementById('newShopDiscount').value = '';
+  document.getElementById('newShopPriceLevel').value = '';
   document.getElementById('newShopPriceSource').value = '';
   document.getElementById('newShopPriceCheckedAt').value = '';
   document.getElementById('newShopPriceListVerified').checked = false;
@@ -392,6 +402,7 @@ function openEditBox(id){
   document.querySelectorAll('.service-check').forEach(c => { c.checked = shop.services.includes(c.value); });
   document.getElementById('newShopPrice').value = shop.price_from || '';
   document.getElementById('newShopDiscount').value = shop.discount || '';
+  document.getElementById('newShopPriceLevel').value = shop.price_level || '';
   document.getElementById('newShopPriceSource').value = shop.price_list_source || '';
   document.getElementById('newShopPriceCheckedAt').value = shop.price_list_checked_at || '';
   document.getElementById('newShopPriceListVerified').checked = !!shop.price_list_verified;
@@ -461,6 +472,8 @@ async function saveShop(){
   const services = Array.from(document.querySelectorAll('.service-check:checked')).map(c => c.value);
   const priceRaw = document.getElementById('newShopPrice').value.trim();
   const priceFrom = priceRaw ? parseInt(priceRaw, 10) : null;
+  const priceLevelRaw = document.getElementById('newShopPriceLevel').value;
+  const priceLevel = priceLevelRaw ? parseInt(priceLevelRaw, 10) : null;
   const discountRaw = document.getElementById('newShopDiscount').value.trim();
   const discount = discountRaw ? parseInt(discountRaw, 10) : null;
   const contactPerson = document.getElementById('newShopContactPerson').value.trim() || null;
@@ -504,7 +517,7 @@ async function saveShop(){
 
   const shopData = {
     name, city, city_key: cityKey, services, price_from: priceFrom,
-    discount, contact_person: contactPerson, phone, email,
+    discount, price_level: priceLevel, contact_person: contactPerson, phone, email,
     tier, verificeret,
     hero_image_url: heroImageUrl, card_image_url: cardImageUrl, tagline, description,
     address, coverage_areas: coverageAreas,
@@ -643,7 +656,7 @@ async function loadDashboard(){
           <button class="action-btn" onclick="toggleAd('${s.id}')">${s.ad_active ? 'Slå fra' : 'Slå til'}</button>
           <button class="action-btn" onclick="editAdCities('${s.id}')">Byer</button>
           <div style="font-size:12px; color:#6B7280; margin-top:4px;">${(s.ad_cities || []).length ? s.ad_cities.join(', ') : 'Ingen byer valgt'}</div></td>
-        <td>${s.discount ? s.discount + '%' : '–'}</td>
+        <td>${priceLevelText(s.price_level) || '–'}</td>
         <td>${yesNoBadge(s.verificeret)}</td>
         <td>${yesNoBadge(s.godkendt)}</td>
         <td class="actions-cell">
