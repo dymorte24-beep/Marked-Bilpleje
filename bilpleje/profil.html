@@ -80,6 +80,9 @@
   }
 
   /* STICKY MOBILE CTA */
+  .pf-upgrade{font-size:14px; color:#4B5563;}
+  .pf-upgrade p{margin:0 0 8px;}
+  .pf-upgrade a{color:var(--navy); font-weight:600;}
   .pf-sticky-cta{display:none;}
   @media (max-width:760px){
     .pf-sticky-cta{
@@ -208,6 +211,7 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/js/profil-niveau.js"></script>
 <script src="../../../js/main.js"></script>
 <script>
 const DAYS_ORDER = [['mandag','Mandag'],['tirsdag','Tirsdag'],['onsdag','Onsdag'],['torsdag','Torsdag'],['fredag','Fredag'],['lørdag','Lørdag'],['søndag','Søndag']];
@@ -259,15 +263,17 @@ function togglePriceList(btn){
 
 async function loadShop(){
   const path = window.location.pathname.replace(/^\//, '');
-  const { data: shop, error } = await db.from('shops').select('*').eq('profile_url', path).eq('godkendt', true).maybeSingle();
+  const { data: rawShop, error } = await db.from('shops').select('*').eq('profile_url', path).eq('godkendt', true).maybeSingle();
 
   const content = document.getElementById('shopContent');
   const breadcrumb = document.getElementById('breadcrumb');
 
-  if (error || !shop) {
+  if (error || !rawShop) {
     content.innerHTML = '<p class="intro">Denne butiksprofil findes ikke (længere).</p>';
     return;
   }
+  const komplet = isKomplet(rawShop);
+  const shop = toBasisView(rawShop);
 
   db.from('profil_visninger').insert({ butik: shop.name }).then(({ error }) => {
     if (error) console.error('Kunne ikke logge profilvisning', error);
@@ -306,7 +312,7 @@ async function loadShop(){
     <div class="pf-hero">
       <div class="pf-split pf-hero-grid">
         <div class="pf-hero-main">
-          <p class="pf-eyebrow">Virksomhedsprofil</p>
+          <p class="pf-eyebrow">Virksomhedsprofil${komplet ? ' · <span class="pill komplet">Komplet profil</span>' : ''}</p>
           <h1 class="pf-name">${shop.name}</h1>
           <p class="pf-location">${shop.city}${shop.address ? ' · ' + shop.address : ''}</p>
           ${hasReview ? `<p class="pf-stars-row"><span class="pf-stars" role="img" aria-label="${shop.review_rating} ud af 5 stjerner">${starsGlyphs}</span></p>` : ''}
@@ -353,7 +359,7 @@ async function loadShop(){
   ` : '';
 
   let aboutStatsHtml = '';
-  if (aboutInner || statsInner) {
+  if (komplet && (aboutInner || statsInner)) {
     aboutStatsHtml = `
       <div class="profile-section pf-card">
         ${aboutInner}
@@ -434,7 +440,15 @@ async function loadShop(){
     reviewsInfoHtml = `<div class="profile-section pf-card">${reviewsInner}${infoInner}</div>`;
   }
 
-  content.innerHTML = heroHtml + aboutStatsHtml + servicesAndPriceHtml + whyHtml + reviewsInfoHtml;
+  // Basisprofil: lille, diskret boks til butiksejeren om at opgradere.
+  const upgradeHtml = komplet ? '' : `
+    <div class="profile-section pf-card pf-upgrade">
+      <p><strong>Er det din virksomhed?</strong> Med en komplet profil kan I vise billeder, priser, åbningstider og en beskrivelse, og I bliver vist højere i søgningen.</p>
+      <a href="/butik-panel/">Log ind og se mulighederne</a>
+    </div>
+  `;
+
+  content.innerHTML = heroHtml + aboutStatsHtml + servicesAndPriceHtml + whyHtml + reviewsInfoHtml + upgradeHtml;
 
   // Sticky mobile CTA
   const stickyCta = document.getElementById('stickyCta');

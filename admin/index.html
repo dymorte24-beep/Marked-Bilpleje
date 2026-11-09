@@ -125,6 +125,8 @@
     <label>Hvorfor vælge os?</label>
     <div id="whyRows"></div>
 
+    <label for="newShopWebsite">Hjemmeside</label>
+    <input type="text" id="newShopWebsite" placeholder="fx finalshine.dk">
     <label for="newShopInstagram">Instagram</label>
     <input type="text" id="newShopInstagram">
     <label for="newShopFacebook">Facebook</label>
@@ -197,10 +199,10 @@
     <label for="newShopEmail">Mail — valgfri, kun synlig i panelet</label>
     <input type="email" id="newShopEmail">
 
-    <label for="newShopTier">Tier</label>
+    <label for="newShopTier">Profilniveau</label>
     <select id="newShopTier">
-      <option value="gratis">Gratis</option>
-      <option value="betalt">Betalt</option>
+      <option value="gratis">Basis (gratis) — navn, by, ydelser og kontakt</option>
+      <option value="betalt">Komplet (299 kr/md) — alt vises + højere placering</option>
     </select>
 
     <div class="inline-check">
@@ -212,7 +214,7 @@
     <p class="error-msg" id="shopError"></p>
   </div>
   <table>
-    <thead><tr><th>Navn</th><th>By</th><th>Tier</th><th>Rabat</th><th>Verificeret</th><th>Godkendt</th><th></th></tr></thead>
+    <thead><tr><th>Navn</th><th>By</th><th>Profil</th><th>Rabat</th><th>Verificeret</th><th>Godkendt</th><th></th></tr></thead>
     <tbody id="shopsTable"><tr class="empty-row"><td colspan="7">Henter…</td></tr></tbody>
   </table>
 
@@ -357,6 +359,7 @@ function resetShopForm(){
   document.getElementById('newShopDescription').value = '';
   document.getElementById('newShopAddress').value = '';
   document.getElementById('newShopCoverageAreas').value = '';
+  document.getElementById('newShopWebsite').value = '';
   document.getElementById('newShopInstagram').value = '';
   document.getElementById('newShopFacebook').value = '';
   document.getElementById('newShopReviewRating').value = '';
@@ -404,6 +407,7 @@ function openEditBox(id){
   document.getElementById('newShopDescription').value = shop.description || '';
   document.getElementById('newShopAddress').value = shop.address || '';
   document.getElementById('newShopCoverageAreas').value = shop.coverage_areas || '';
+  document.getElementById('newShopWebsite').value = shop.website || '';
   document.getElementById('newShopInstagram').value = shop.instagram || '';
   document.getElementById('newShopFacebook').value = shop.facebook || '';
   document.getElementById('newShopReviewRating').value = shop.review_rating || '';
@@ -472,6 +476,7 @@ async function saveShop(){
   const description = document.getElementById('newShopDescription').value.trim() || null;
   const address = document.getElementById('newShopAddress').value.trim() || null;
   const coverageAreas = document.getElementById('newShopCoverageAreas').value.trim() || null;
+  const website = document.getElementById('newShopWebsite').value.trim() || null;
   const instagram = document.getElementById('newShopInstagram').value.trim() || null;
   const facebook = document.getElementById('newShopFacebook').value.trim() || null;
   const openingHours = {};
@@ -504,7 +509,7 @@ async function saveShop(){
     hero_image_url: heroImageUrl, card_image_url: cardImageUrl, tagline, description,
     address, coverage_areas: coverageAreas,
     opening_hours: openingHours, why_choose_us: whyChooseUs,
-    instagram, facebook,
+    website, instagram, facebook,
     review_rating: reviewRating, review_count: reviewCount,
     review_source: reviewSource, review_url: reviewUrl,
     review_visible: reviewVisible,
@@ -565,6 +570,17 @@ async function deleteShop(id, name){
   loadDashboard();
 }
 
+// Skifter en butik mellem basis- og komplet profil med ét klik (ingen betaling koblet på endnu).
+async function toggleTier(id, current){
+  const next = current === 'betalt' ? 'gratis' : 'betalt';
+  const { error } = await db.from('shops').update({ tier: next }).eq('id', id);
+  if (error) {
+    alert('Kunne ikke skifte profilniveau. Prøv igen.');
+    return;
+  }
+  loadDashboard();
+}
+
 function yesNoBadge(value){
   return value ? '<span class="badge yes">Ja</span>' : '<span class="badge no">Nej</span>';
 }
@@ -580,7 +596,8 @@ async function loadDashboard(){
       <tr>
         <td>${s.name}${(s.review_suggestion && s.review_suggestion.rating) ? ' <span class="badge" style="background:#FFFBF2; color:var(--gold-dark); border:1px solid var(--gold);" title="Har foreslået anmeldelsestal">💬 Forslag</span>' : ''}</td>
         <td>${s.city}</td>
-        <td><span class="badge ${s.tier}">${s.tier}</span></td>
+        <td><span class="badge ${s.tier}">${s.tier === 'betalt' ? 'Komplet' : 'Basis'}</span>
+          <button class="action-btn" onclick="toggleTier('${s.id}', '${s.tier}')">${s.tier === 'betalt' ? 'Gør til basis' : 'Gør komplet'}</button></td>
         <td>${s.discount ? s.discount + '%' : '–'}</td>
         <td>${yesNoBadge(s.verificeret)}</td>
         <td>${yesNoBadge(s.godkendt)}</td>

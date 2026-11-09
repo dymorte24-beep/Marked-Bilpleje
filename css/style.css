@@ -489,3 +489,6 @@ footer{
   .hero h1{font-size:30px;}
   .nav-links{display:none;}
 }
+
+/* Komplet profil-mærke (betalt niveau) */
+.pill.komplet{background:var(--navy); color:var(--white); border-color:var(--navy);}
