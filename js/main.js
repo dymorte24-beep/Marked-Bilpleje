@@ -142,6 +142,10 @@ async function filterCards(){
   const noResults = document.getElementById('noResults');
   if (noResults) noResults.style.display = list.length === 0 ? 'block' : 'none';
   track('search', { search_term: cityRaw, service, place: onlyMobile ? 'mobil' : 'alle', results_count: list.length });
+  // Gemmes også i egen tabel, så statistik-appen kan vise hvilke byer folk søger i.
+  db.from('soegninger').insert({ by: cityRaw.slice(0, 80) || null, ydelse: service.slice(0, 80) || null, antal_resultater: list.length }).then(({ error }) => {
+    if (error) console.error('Kunne ikke logge søgning', error);
+  });
 }
 
 // Søgning fra toppen: filtrér og rul ned til resultaterne.
@@ -236,7 +240,7 @@ initWizard();
 // i statistikken, hvor mange kunder siden har sendt videre til dem.
 function trackContact(shopName, method){
   track('contact_click', { shop_name: shopName, method });
-  db.from('butik_klik').insert({ butik: shopName }).then(({ error }) => {
+  db.from('butik_klik').insert({ butik: shopName, metode: method || null }).then(({ error }) => {
     if (error) console.error('Kunne ikke logge klik', error);
   });
 }
