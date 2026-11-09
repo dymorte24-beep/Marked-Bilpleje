@@ -13,7 +13,7 @@
   gtag('config', 'G-KTK6266STG');
 </script>
 <title>Bilpleje-butik | FindBilplejere.dk</title>
-<meta name="description" content="Se priser og ydelser, og kontakt denne bilpleje-butik direkte." id="metaDescription">
+<meta name="description" content="Se ydelser og kontakt denne bilpleje-butik direkte." id="metaDescription">
 <meta property="og:image" content="https://findbilplejere.dk/og-image.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png">
@@ -144,15 +144,15 @@
   .pf-why-item svg{width:18px; height:18px; flex-shrink:0; margin-top:1px; color:var(--gold);}
   @media (max-width:600px){ .pf-why{grid-template-columns:1fr;} }
 
-  /* PRICING */
-  .pf-price-line{font-size:18px; color:var(--navy); display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
-  .pf-price-amount{font-family:'Oswald',sans-serif; font-size:28px; font-weight:600; color:var(--gold-dark);}
-  .pf-price-list{margin-top:18px;}
-  .pf-price-cat-title{
-    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.08em;
-    text-transform:uppercase; color:var(--gold-dark); margin:16px 0 4px;
-  }
-  .pf-price-cat:first-child .pf-price-cat-title{margin-top:0;}
+  /* FÅ EN PRIS */
+  .pf-quote{background:var(--navy); color:var(--white); border-radius:20px; padding:40px 48px; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap;}
+  .pf-quote h2{color:var(--gold); margin:0 0 8px;}
+  .pf-quote p{color:rgba(255,255,255,0.8); margin:0; max-width:560px; line-height:1.6; font-size:15px;}
+  .pf-quote-actions{display:flex; gap:10px; flex-wrap:wrap;}
+  .pf-quote-btn{display:inline-flex; align-items:center; gap:8px; background:var(--gold); color:var(--navy); padding:12px 20px; border-radius:10px; font-weight:600; font-size:14px; text-decoration:none;}
+  .pf-quote-btn:hover{filter:brightness(1.07);}
+  .pf-quote-btn svg{width:16px; height:16px;}
+  @media (max-width:760px){ .pf-quote{padding:28px 24px;} .pf-quote-actions{width:100%;} .pf-quote-btn{flex:1; justify-content:center;} }
 
   /* REVIEWS */
   .pf-review{display:flex; align-items:center; gap:20px;}
@@ -272,33 +272,6 @@ function infoRow(label, value, extraClass){
   return `<div class="pf-info-row${extraClass ? ' ' + extraClass : ''}"><span class="pf-info-label">${label}</span><span class="pf-info-value">${value}</span></div>`;
 }
 
-function priceListHtml(categories){
-  if (!categories || !categories.length) return '';
-  const catBlock = cat => `
-    <div class="pf-price-cat">
-      <p class="pf-price-cat-title">${cat.title}</p>
-      ${(cat.items || []).map(i => `<div class="pf-info-row"><span class="pf-info-label">${i.label}</span><span class="pf-info-value">${i.price}</span></div>`).join('')}
-    </div>
-  `;
-  const [first, ...rest] = categories;
-  if (!rest.length) return `<div class="pf-price-list">${catBlock(first)}</div>`;
-  const moreLabel = `Se alle priser (${rest.length} flere kategorier)`;
-  return `
-    <div class="pf-price-list">
-      ${catBlock(first)}
-      <div class="pf-price-more" style="display:none;">${rest.map(catBlock).join('')}</div>
-      <button class="pf-readmore" data-more-label="${moreLabel}" onclick="togglePriceList(this)">${moreLabel}</button>
-    </div>
-  `;
-}
-
-function togglePriceList(btn){
-  const extra = btn.previousElementSibling;
-  const willShow = extra.style.display === 'none';
-  extra.style.display = willShow ? '' : 'none';
-  btn.textContent = willShow ? 'Vis færre priser' : btn.dataset.moreLabel;
-}
-
 async function loadShop(){
   const path = window.location.pathname.replace(/^\//, '');
   const { data: rawShop, error } = await db.from('shops').select('*').eq('profile_url', path).eq('godkendt', true).maybeSingle();
@@ -318,7 +291,7 @@ async function loadShop(){
   });
 
   document.title = shop.name + ' | FindBilplejere.dk';
-  const metaDesc = shop.tagline || `${shop.name} tilbyder ${(shop.services || []).slice(0, 3).join(', ')} i ${shop.city}. Se priser og kontakt dem direkte.`;
+  const metaDesc = shop.tagline || `${shop.name} tilbyder ${(shop.services || []).slice(0, 3).join(', ')} i ${shop.city}. Kontakt dem direkte.`;
   document.getElementById('metaDescription').setAttribute('content', metaDesc);
   breadcrumb.innerHTML = `
     <a href="/index.html">Forside</a><span class="sep">/</span>
@@ -376,23 +349,26 @@ async function loadShop(){
     </div>
   ` : '';
 
-  // ---- 3. YDELSER + PRISER ----
-  const servicesAndPriceHtml = `
-    <div class="profile-section pf-card pf-split pf-split-top">
+  // ---- 3. YDELSER ----
+  const servicesHtml = (shop.services && shop.services.length) ? `
+    <div class="profile-section pf-card">
+      <h2>Ydelser</h2>
+      <ul class="pf-chips">${shop.services.map(s => `<li class="pf-chip">${s}</li>`).join('')}</ul>
+    </div>
+  ` : '';
+
+  // ---- 4. FÅ EN PRIS (vi viser bevidst ingen priser på sitet) ----
+  const quoteHtml = contacts.length ? `
+    <div class="profile-section pf-quote">
       <div>
-        <h2>Ydelser</h2>
-        <ul class="pf-chips">${(shop.services || []).map(s => `<li class="pf-chip">${s}</li>`).join('')}</ul>
+        <h2>Få en pris</h2>
+        <p>Prisen afhænger af bilen og behandlingen. Kontakt ${shop.name} direkte og få en pris på lige netop din bil.</p>
       </div>
-      <div>
-        <h2>Priser</h2>
-        <p class="pf-price-line">
-          ${shop.price_from ? `Fra <span class="pf-price-amount">${shop.price_from} kr.</span>` : 'Pris fås ved henvendelse'}
-          ${shop.discount ? `<span class="pill discount">${shop.discount}% rabat</span>` : ''}
-        </p>
-        ${shop.price_list_verified ? priceListHtml(shop.price_list) : ''}
+      <div class="pf-quote-actions">
+        ${contacts.map(c => `<a class="pf-quote-btn" href="${c.href}"${c.external ? ' target="_blank" rel="noopener"' : ''} onclick="trackContact(${safeNameJs}, '${c.method}')">${c.icon}${c.short}</a>`).join('')}
       </div>
     </div>
-  `;
+  ` : '';
 
   // ---- 5. HVORFOR VÆLGE OS ----
   const why = shop.why_choose_us || [];
@@ -454,7 +430,7 @@ async function loadShop(){
     </div>
   `;
 
-  content.innerHTML = heroHtml + aboutHtml + servicesAndPriceHtml + whyHtml + reviewsInfoHtml + upgradeHtml;
+  content.innerHTML = heroHtml + aboutHtml + servicesHtml + quoteHtml + whyHtml + reviewsInfoHtml + upgradeHtml;
 
   // Sticky mobile CTA
   const stickyCta = document.getElementById('stickyCta');

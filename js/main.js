@@ -80,10 +80,7 @@ function renderShops(list, originName, ads){
         <div class="card-tags">
           ${(shop.reviewRating && shop.reviewCount && shop.reviewVisible !== false) ? `<span class="pill">⭐ ${shop.reviewRating} (${shop.reviewCount}${shop.reviewSource ? ' på ' + shop.reviewSource : ''})</span>` : ''}
           ${shop._ad ? `<span class="pill annonce">Annonce</span>` : ''}
-          ${shop.komplet ? `<span class="pill komplet">Komplet profil</span>` : ''}
           ${shop.verificeret ? `<span class="pill verified">Verificeret</span>` : ''}
-          ${shop.priceFrom ? `<span class="pill">Fra ${shop.priceFrom} kr.</span>` : ''}
-          ${shop.discount ? `<span class="pill discount">${shop.discount}% rabat</span>` : ''}
         </div>
         <div class="card-actions">
           ${shop.profileUrl ? `<a class="card-see-more" href="${shop.profileUrl}">Se mere</a>` : ''}
