@@ -492,3 +492,7 @@ footer{
 
 /* Komplet profil-mærke (betalt niveau) */
 .pill.komplet{background:var(--navy); color:var(--white); border-color:var(--navy);}
+
+/* Annonce (betalt topplacering) — tydeligt mærket, jf. markedsføringsloven */
+.pill.annonce{background:var(--gold-light); color:var(--gold-dark); border:1px solid var(--gold); font-weight:600;}
+.card.card-ad{box-shadow:0 0 0 2px var(--gold);}

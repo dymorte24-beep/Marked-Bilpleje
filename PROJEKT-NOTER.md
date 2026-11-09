@@ -1,5 +1,14 @@
 # Bilpleje.dk — Projektoverblik
 
+## 📣 Annonce-tilkøb (9. nov 2026)
+Betalt topplacering pr. by. Nye kolonner på `shops`: `ad_active` (bool) og `ad_cities` (text[]) — kun admin kan ændre dem (tilføjet til triggerfunktionen `protect_admin_only_shop_fields`).
+
+- Ved søgning på en by (forside) og på bysiden vises op til **3** annoncører øverst med guld-ramme og mærket **"Annonce"** (markedsføringsloven kræver tydelig mærkning), i tilfældig rækkefølge. Kun butikker højst **50 km** fra den søgte by, og kun hvis byen står i deres `ad_cities` (matcher på første ord, så "Odense S"/"5000" rammer "Odense"). Annoncøren fjernes fra den almindelige liste, så den ikke står to gange
+- Ingen annoncer i standardlisten uden søgning
+- Admin: kolonnen "Annonce" med **Slå til/Slå fra** og **Byer**. Slås en annonce til uden byer, spørges der først om byer. Admin blokerer, hvis en by allerede har 3 aktive annoncer
+- GA-hændelse `ad_impression` ved visning (søgning) — kan bruges som dokumentation over for annoncører
+- Logik: `pickAds()` i `js/profil-niveau.js`. Pris (forslag 299–999 kr/md pr. by) er ikke bygget ind — betaling afventer CVR
+
 ## 🏷️ Basis- og komplet profil (9. nov 2026)
 To profilniveauer, styret af den eksisterende `tier`-kolonne: `gratis` = **basisprofil**, `betalt` = **komplet profil** (299 kr/md, ingen binding — betaling ikke bygget endnu, afventer CVR + MobilePay).
 
