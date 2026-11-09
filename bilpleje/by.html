@@ -13,7 +13,7 @@
   gtag('config', 'G-KTK6266STG');
 </script>
 <title>Bilpleje | FindBilplejere.dk</title>
-<meta name="description" content="Find og sammenlign bilpleje-butikker i din by. Se priser, ydelser og få tilbud direkte — gratis for kunder." id="metaDescription">
+<meta name="description" content="Find og sammenlign bilpleje-butikker i din by. Se priser og ydelser, og kontakt dem direkte — gratis for kunder." id="metaDescription">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -88,7 +88,7 @@ async function loadCity(){
   const cityName = localMatch ? localMatch.city : (origin ? origin.navn : cityKey.charAt(0).toUpperCase() + cityKey.slice(1));
 
   document.title = 'Bilpleje i ' + cityName + ' | FindBilplejere.dk';
-  document.getElementById('metaDescription').setAttribute('content', `Find og sammenlign bilpleje-butikker i ${cityName}. Se priser, ydelser og få tilbud direkte — gratis for kunder.`);
+  document.getElementById('metaDescription').setAttribute('content', `Find og sammenlign bilpleje-butikker i ${cityName}. Se priser og ydelser, og kontakt dem direkte — gratis for kunder.`);
   breadcrumb.innerHTML = `<a href="/index.html">Forside</a><span class="sep">/</span>Bilpleje<span class="sep">/</span>${cityName}`;
 
   // Ægte km-afstand fra søgt by til hver butiks by — viser altid de nærmeste

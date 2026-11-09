@@ -1,5 +1,20 @@
 # Bilpleje.dk — Projektoverblik
 
+## 📞 "Få tilbud" erstattet af direkte kontakt — rent katalog (9. nov 2026)
+Daniel besluttede (9. nov 2026) at FindBilplejere skal være et rent katalog: kunden finder en bilplejer på område/behov og kontakter butikken direkte. Ingen "få tilbud"/lead-mellemled. Indtjening kommer fra bilplejerne (gratis basisprofil, komplet profil 299 kr/md, annoncepladser per by, videopakker) — endnu ikke bygget.
+
+**Ændret:**
+- `bilpleje/profil.html`: "Få tilbud"-knap og -modal fjernet. Hovedknappen er nu den første tilgængelige af Ring → E-mail → Hjemmeside; de øvrige vises som sekundære knapper. Samme på den klæbende mobil-knap
+- `js/main.js`: `openLeadModal`/`handleCustomerLeadSubmit` fjernet, erstattet af `trackContact(butik, metode)` — logger i den eksisterende `butik_klik`-tabel (samme tal som admin-statistikken allerede viser) + GA-hændelsen `contact_click` med `method`
+- `index.html`: kunde-modal fjernet; "Book direkte"-trinnet hedder nu "Kontakt direkte"
+- `admin/index.html`: kolonnen hedder nu "Klik på kontakt (ring/mail/web)"
+- `privatlivspolitik.html`: "Få tilbud"-punktet fjernet, tilføjet afsnit om anonym klik-tælling
+- Profilsiden viser `shop.website` (knap + "Hjemmeside" i praktisk information), hvis feltet findes. **Kolonnen `website` findes ikke i databasen endnu** — skal tilføjes i Supabase og i admin/butik-panel, før den kan udfyldes
+
+**OBS Google Ads:** Konverteringsmålet "Kunder anmoder om et tilbud" måler besøg på `/tak.html`, som kunder ikke længere lander på. Skal erstattes af et nyt mål på GA-hændelsen `contact_click`, ellers ser kampagnen ud til at have 0 konverteringer.
+
+**Bevaret:** `tilbud_anmodninger`-tabellen og listen i admin (historiske forespørgsler), butiks-tilmeldingsformularen (`butik-lead`).
+
 ## 🔍 SEO: sider var stadig `noindex`, sitemap aldrig indsendt (25. aug 2026)
 Daniel ville have en samlet statistik-side i admin-panelet (GA4, Google Ads, Search Console, Netlify Forms). Et hurtigt tjek af Search Console undervejs viste kun **1 indekseret side og 1 klik i alt** på de sidste 10 dage — og at der aldrig var indsendt noget sitemap ("0 af 0").
 

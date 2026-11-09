@@ -239,76 +239,13 @@ function finishWizard(){
 
 initWizard();
 
-// Lead modal (customer -> shop request)
-const leadModal = document.getElementById('leadModal');
-
-function openLeadModal(shopName){
-  track('lead_cta_click', { shop_name: shopName });
+// Direkte kontakt (ring / mail / hjemmeside). FindBilplejere er et katalog, ikke mellemled:
+// kunden kontakter butikken direkte. Hvert klik logges i `butik_klik`, så butikken kan se
+// i statistikken, hvor mange kunder siden har sendt videre til dem.
+function trackContact(shopName, method){
+  track('contact_click', { shop_name: shopName, method });
   db.from('butik_klik').insert({ butik: shopName }).then(({ error }) => {
     if (error) console.error('Kunne ikke logge klik', error);
-  });
-  document.getElementById('modalShopName').textContent = 'Få tilbud fra ' + shopName;
-  document.getElementById('modalButikField').value = shopName;
-  document.querySelector('#leadModal form').reset();
-  document.getElementById('modalButikField').value = shopName;
-  const submitBtn = document.querySelector('#leadModal button[type="submit"]');
-  submitBtn.disabled = false;
-  submitBtn.textContent = 'Send forespørgsel';
-  const err = document.querySelector('#leadModal .lead-error');
-  if (err) err.remove();
-  leadModal.classList.add('open');
-}
-
-function closeLeadModal(){
-  leadModal.classList.remove('open');
-}
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeLeadModal();
-});
-
-function handleCustomerLeadSubmit(e){
-  e.preventDefault();
-  const form = e.target;
-  const submitBtn = form.querySelector('button[type="submit"]');
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Sender...';
-
-  const formData = new FormData(form);
-  const body = new URLSearchParams(formData).toString();
-
-  // Gemmes også i databasen til admin-panelet. Ventes ind sammen med mail-afsendelsen
-  // nedenfor, så siden ikke skifter væk og afbryder database-kaldet, før det er færdigt.
-  const dbInsert = db.from('tilbud_anmodninger').insert({
-    butik: formData.get('butik'),
-    navn: formData.get('navn'),
-    kontakt: formData.get('kontakt'),
-    besked: formData.get('besked')
-  }).then(({ error }) => {
-    if (error) console.error('Kunne ikke gemme forespørgslen i databasen', error);
-  });
-
-  const netlifySubmit = fetch('/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body
-  });
-
-  Promise.allSettled([dbInsert, netlifySubmit]).then(([, netlifyResult]) => {
-    if (netlifyResult.status === 'fulfilled' && netlifyResult.value.ok) {
-      track('generate_lead', { shop_name: formData.get('butik') });
-      window.location.href = '/tak.html?type=kunde';
-      return;
-    }
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Send forespørgsel';
-    let err = form.querySelector('.lead-error');
-    if (!err) {
-      err = document.createElement('p');
-      err.className = 'lead-error';
-      form.appendChild(err);
-    }
-    err.textContent = 'Der gik noget galt. Prøv igen om lidt.';
   });
 }
 
