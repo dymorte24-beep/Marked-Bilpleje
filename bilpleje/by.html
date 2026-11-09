@@ -53,6 +53,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="/js/geo.js"></script>
+<script src="/js/profil-niveau.js"></script>
 <script>
 const SUPABASE_URL = 'https://xeosltdpvkcaudiijtge.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_iG0iWu8szH_7-uwErdxN9g_pE9YGFWd';
@@ -94,16 +95,17 @@ async function loadCity(){
   // Ægte km-afstand fra søgt by til hver butiks by — viser altid de nærmeste
   // butikker (fx en butik der dækker "hele Nordjylland"), også når ingen
   // butik har adresse i selve byen.
-  let list = allShops;
+  const shopsView = allShops.map(s => ({ ...toBasisView(s), komplet: isKomplet(s) }));
+  let list = [...shopsView].sort((a, b) => (b.komplet - a.komplet) || a.name.localeCompare(b.name, 'da'));
   let originName = '';
   if (origin) {
     originName = origin.navn;
-    list = allShops
+    list = shopsView
       .map(s => {
         const shopPoint = geoResolve(s.city);
         return { ...s, _distanceKm: shopPoint ? geoDistanceKm(origin, shopPoint) : null };
       })
-      .sort((a, b) => (a._distanceKm ?? Infinity) - (b._distanceKm ?? Infinity))
+      .sort((a, b) => ((a._distanceKm ?? Infinity) - (a.komplet ? 10 : 0)) - ((b._distanceKm ?? Infinity) - (b.komplet ? 10 : 0)))
       .slice(0, 12);
   }
 
@@ -126,6 +128,7 @@ async function loadCity(){
         ${(s._distanceKm > 10 && s.coverage_areas && s.coverage_areas.length <= 40) ? `<div class="card-coverage-note">Dækker ${s.coverage_areas}</div>` : ''}
         <div class="card-tags">
           ${(s.review_rating && s.review_count && s.review_visible !== false) ? `<span class="pill">⭐ ${s.review_rating} (${s.review_count}${s.review_source ? ' på ' + s.review_source : ''})</span>` : ''}
+          ${s.komplet ? '<span class="pill komplet">Komplet profil</span>' : ''}
           ${s.verificeret ? '<span class="pill verified">Verificeret</span>' : ''}
           ${s.price_from ? `<span class="pill">Fra ${s.price_from} kr.</span>` : ''}
           ${s.discount ? `<span class="pill discount">${s.discount}% rabat</span>` : ''}
@@ -139,7 +142,7 @@ async function loadCity(){
 
   content.innerHTML = `
     <h1>Bilpleje i ${cityName}</h1>
-    <p class="intro">Find og sammenlign bilpleje-butikker i ${cityName}. Gratis at søge, book direkte hos butikken.</p>
+    <p class="intro">Find og sammenlign bilpleje-butikker i ${cityName}. Gratis at søge, og du kontakter butikken direkte.</p>
     <div class="results">${cards}</div>
   `;
 }

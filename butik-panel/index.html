@@ -91,6 +91,8 @@
       <p><strong>Verificeret:</strong> <span id="statusVerificeret" class="badge"></span></p>
       <p><strong>Synlig på findbilplejere.dk:</strong> <span id="statusGodkendt" class="badge"></span></p>
       <p><strong>Anmeldelse vist på profilen:</strong> <span id="statusReview"></span></p>
+      <p><strong>Profilniveau:</strong> <span id="statusTier" class="badge"></span></p>
+      <p class="hint" id="tierHint" style="display:none;">I har en <strong>basisprofil</strong>: kunderne ser jeres navn, by, ydelser, telefon og mail. Billeder, beskrivelse, priser, åbningstider, hjemmeside og sociale medier bliver gemt herunder, men vises først, når I har en <strong>komplet profil</strong> (299 kr/md). Den giver også en højere placering i søgningen. <a href="mailto:dymorte24@gmail.com?subject=Komplet%20profil">Skriv til os</a>, hvis I vil opgradere.</p>
       <p class="hint">Disse felter sættes af findbilplejere.dk og kan ikke ændres herfra. Kontakt os, hvis noget skal opdateres.</p>
     </div>
 
@@ -137,6 +139,8 @@
       <p class="field-hint" id="reviewSuggestionStatus"></p>
 
       <div class="field-section">Sociale medier</div>
+      <label for="myWebsite">Hjemmeside</label>
+      <input type="text" id="myWebsite" placeholder="fx minbilpleje.dk">
       <label for="myInstagram">Instagram</label>
       <input type="text" id="myInstagram" placeholder="https://instagram.com/...">
       <label for="myFacebook">Facebook</label>
@@ -295,6 +299,11 @@ async function loadMyShop(){
   document.getElementById('shopHeading').textContent = myShop.name;
   document.getElementById('statusVerificeret').outerHTML = '<span id="statusVerificeret" class="badge ' + (myShop.verificeret ? 'yes' : 'no') + '">' + (myShop.verificeret ? 'Ja' : 'Nej, endnu ikke') + '</span>';
   document.getElementById('statusGodkendt').outerHTML = '<span id="statusGodkendt" class="badge ' + (myShop.godkendt ? 'yes' : 'no') + '">' + (myShop.godkendt ? 'Ja' : 'Nej, endnu ikke') + '</span>';
+  const komplet = myShop.tier === 'betalt';
+  const tierEl = document.getElementById('statusTier');
+  tierEl.textContent = komplet ? 'Komplet profil' : 'Basisprofil';
+  tierEl.className = 'badge ' + (komplet ? 'yes' : 'no');
+  document.getElementById('tierHint').style.display = komplet ? 'none' : '';
   document.getElementById('statusReview').textContent = (myShop.review_rating && myShop.review_count)
     ? `⭐ ${myShop.review_rating} (${myShop.review_count}${myShop.review_source ? ' på ' + myShop.review_source : ''})`
     : 'Ingen endnu';
@@ -315,6 +324,7 @@ async function loadMyShop(){
   document.getElementById('myCoverageAreas').value = myShop.coverage_areas || '';
   buildHoursRows(myShop.opening_hours);
   buildWhyRows(myShop.why_choose_us);
+  document.getElementById('myWebsite').value = myShop.website || '';
   document.getElementById('myInstagram').value = myShop.instagram || '';
   document.getElementById('myFacebook').value = myShop.facebook || '';
 
@@ -349,6 +359,7 @@ async function saveMyShop(){
   const description = document.getElementById('myDescription').value.trim() || null;
   const address = document.getElementById('myAddress').value.trim() || null;
   const coverageAreas = document.getElementById('myCoverageAreas').value.trim() || null;
+  const website = document.getElementById('myWebsite').value.trim() || null;
   const instagram = document.getElementById('myInstagram').value.trim() || null;
   const facebook = document.getElementById('myFacebook').value.trim() || null;
 
@@ -374,7 +385,7 @@ async function saveMyShop(){
     hero_image_url: heroImageUrl, tagline, description,
     address, coverage_areas: coverageAreas,
     opening_hours: openingHours, why_choose_us: whyChooseUs,
-    instagram, facebook,
+    website, instagram, facebook,
     review_suggestion: reviewSuggestion
   }).eq('id', myShop.id);
 

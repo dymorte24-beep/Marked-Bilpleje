@@ -12,6 +12,7 @@ function track(name, params){
 }
 
 let shops = [];
+
 let wizardAnswers = null;
 
 function formatServicesPreview(services, max = 3){
@@ -28,8 +29,9 @@ async function loadShops(){
     console.error('Kunne ikke hente butikker fra databasen', error);
     return;
   }
-  shops = data.map(row => ({
+  shops = data.map(toBasisView).map(row => ({
     name: row.name,
+    komplet: isKomplet(row),
     city: row.city,
     cityKey: row.city_key,
     services: row.services,
@@ -51,7 +53,7 @@ async function loadShops(){
 function renderShops(list, originName){
   const grid = document.getElementById('resultsGrid');
   if (!grid) return;
-  if (!list) list = wizardAnswers ? scoredShopOrder() : shops;
+  if (!list) list = wizardAnswers ? scoredShopOrder() : [...shops].sort((a, b) => (b.komplet - a.komplet) || a.name.localeCompare(b.name, 'da'));
   if (list.length === 0) {
     grid.innerHTML = '<p class="empty-state">Ingen butikker fundet endnu — vi udvider løbende med flere byer og butikker.</p>';
     return;
@@ -70,6 +72,7 @@ function renderShops(list, originName){
         ${(shop._distanceKm > 10 && shop.coverageAreas && shop.coverageAreas.length <= 40) ? `<div class="card-coverage-note">Dækker ${shop.coverageAreas}</div>` : ''}
         <div class="card-tags">
           ${(shop.reviewRating && shop.reviewCount && shop.reviewVisible !== false) ? `<span class="pill">⭐ ${shop.reviewRating} (${shop.reviewCount}${shop.reviewSource ? ' på ' + shop.reviewSource : ''})</span>` : ''}
+          ${shop.komplet ? `<span class="pill komplet">Komplet profil</span>` : ''}
           ${shop.verificeret ? `<span class="pill verified">Verificeret</span>` : ''}
           ${shop.priceFrom ? `<span class="pill">Fra ${shop.priceFrom} kr.</span>` : ''}
           ${shop.discount ? `<span class="pill discount">${shop.discount}% rabat</span>` : ''}
@@ -142,7 +145,9 @@ async function filterCards(){
           const shopPoint = geoResolve(shop.city);
           return { ...shop, _distanceKm: shopPoint ? geoDistanceKm(origin, shopPoint) : null };
         })
-        .sort((a, b) => (a._distanceKm ?? Infinity) - (b._distanceKm ?? Infinity));
+        // Komplette profiler rykkes op i forhold til basisprofiler i nogenlunde samme afstand
+        // (10 km forspring), men en butik langt væk slår aldrig en, der ligger lige ved siden af.
+        .sort((a, b) => ((a._distanceKm ?? Infinity) - (a.komplet ? 10 : 0)) - ((b._distanceKm ?? Infinity) - (b.komplet ? 10 : 0)));
     } else {
       // Ukendt by/postnummer — falder tilbage til simpelt tekst-match på bynavn.
       const cityNorm = normalizeCity(cityRaw);
@@ -181,6 +186,7 @@ function scoredShopOrder(){
     if (priority === 'Placering' && cityMatch) s += 300;
     if (priority === 'Rabat' && shop.discount) s += shop.discount * 20;
     if (priority === 'Kvalitet') s += (shop.verificeret ? 200 : 0) + (shop.reviewRating ? shop.reviewRating * 50 : 0);
+    if (shop.komplet) s += 150;
     return s;
   };
   return [...shops].sort((a, b) => score(b) - score(a));

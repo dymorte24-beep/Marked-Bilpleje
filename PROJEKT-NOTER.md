@@ -1,5 +1,14 @@
 # Bilpleje.dk — Projektoverblik
 
+## 🏷️ Basis- og komplet profil (9. nov 2026)
+To profilniveauer, styret af den eksisterende `tier`-kolonne: `gratis` = **basisprofil**, `betalt` = **komplet profil** (299 kr/md, ingen binding — betaling ikke bygget endnu, afventer CVR + MobilePay).
+
+- **Basis** viser kun navn, by, ydelser, verificeret-mærke, telefon og mail. Data for billeder/beskrivelse/priser m.m. bliver liggende i databasen og vises, så snart butikken opgraderes. Profilsiden viser en lille "Er det din virksomhed?"-boks med link til butikspanelet
+- **Komplet** viser alt + "Komplet profil"-mærke + højere placering: først i standardlisten, 10 km forspring i afstandssøgning, +150 point i guiden
+- Fælles logik i `js/profil-niveau.js` (`isKomplet`, `toBasisView`), brugt af forside, byside og profilside
+- Admin: "Profilniveau"-dropdown + "Gør komplet / Gør til basis"-knap direkte i butikstabellen. Nyt felt **Hjemmeside** (`website`) i både admin og butikspanel. Butikspanelet viser niveauet og forklarer basis-begrænsningen
+- **SQL i `supabase/2026-11-09-profilniveauer.sql`** (skal køres før merge): `website`-kolonne, trigger `protect_admin_fields` så butikker ikke selv kan sætte tier/verificeret/godkendt/anmeldelsestal via API'et (det kunne de før, da UPDATE-politikken er række-baseret), og opgradering af alle nuværende butikker til komplet som gratis prøveperiode
+
 ## 📞 "Få tilbud" erstattet af direkte kontakt — rent katalog (9. nov 2026)
 Daniel besluttede (9. nov 2026) at FindBilplejere skal være et rent katalog: kunden finder en bilplejer på område/behov og kontakter butikken direkte. Ingen "få tilbud"/lead-mellemled. Indtjening kommer fra bilplejerne (gratis basisprofil, komplet profil 299 kr/md, annoncepladser per by, videopakker) — endnu ikke bygget.
 
