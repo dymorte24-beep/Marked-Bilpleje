@@ -94,40 +94,6 @@ function renderShops(list, originName, ads){
 }
 loadShops();
 
-// Hero "sådan virker det" stepper (kun til stede på forsiden)
-function initHeroHiw(){
-  const box = document.getElementById('heroHiw');
-  if (!box) return;
-  const steps = box.querySelectorAll('.hiw-step');
-  const dots = box.querySelectorAll('.hiw-dot');
-  let current = 0;
-  let timer = null;
-
-  function show(i){
-    steps[current].classList.remove('is-active');
-    dots[current].classList.remove('is-active');
-    current = i;
-    steps[current].classList.add('is-active');
-    dots[current].classList.add('is-active');
-  }
-  function next(){ show((current + 1) % steps.length); }
-  function stop(){ if (timer) clearInterval(timer); timer = null; }
-  function start(){
-    stop();
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    timer = setInterval(next, 3200);
-  }
-
-  dots.forEach((dot, i) => {
-    dot.addEventListener('click', () => { show(i); start(); });
-  });
-  box.addEventListener('mouseenter', stop);
-  box.addEventListener('mouseleave', start);
-
-  start();
-}
-initHeroHiw();
-
 // City/service filter
 function normalizeCity(str){
   return str.toLowerCase().replace(/æ/g,'e').replace(/ø/g,'o').replace(/å/g,'a');
@@ -138,7 +104,10 @@ async function filterCards(){
   const service = document.getElementById('serviceSearch').value.trim().toLowerCase();
   const grid = document.getElementById('resultsGrid');
 
+  const placeEl = document.getElementById('placeSearch');
+  const onlyMobile = placeEl && placeEl.value === 'mobil';
   let list = shops.filter(shop => service === 'alle ydelser' || shop.services.some(s => s.toLowerCase().includes(service)));
+  if (onlyMobile) list = list.filter(shop => shop.services.some(s => s.toLowerCase().includes('mobil')));
   let originName = '';
   let ads = [];
 
@@ -173,7 +142,14 @@ async function filterCards(){
   }
   const noResults = document.getElementById('noResults');
   if (noResults) noResults.style.display = list.length === 0 ? 'block' : 'none';
-  track('search', { search_term: cityRaw, service, results_count: list.length });
+  track('search', { search_term: cityRaw, service, place: onlyMobile ? 'mobil' : 'alle', results_count: list.length });
+}
+
+// Søgning fra toppen: filtrér og rul ned til resultaterne.
+async function heroSearch(){
+  await filterCards();
+  const target = document.getElementById('search');
+  if (target) target.scrollIntoView({ behavior: 'smooth' });
 }
 
 // Onboarding-wizard (popup ved landing) — sorterer eksisterende butiksdata,
