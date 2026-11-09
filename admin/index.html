@@ -60,6 +60,41 @@
   .why-row{display:flex; align-items:center; gap:8px; margin-top:8px;}
   .why-row span{color:var(--gold-dark); font-weight:700; flex-shrink:0;}
   .why-row input{flex:1; padding:8px 10px; border:1px solid var(--chrome-line); border-radius:6px; font-size:14px; box-sizing:border-box;}
+  /* Faner */
+  .admin-tabs{display:flex; gap:4px; border-bottom:2px solid var(--chrome-line); margin:8px 0 20px;}
+  .admin-tab{background:none; border:none; padding:10px 18px; font-size:15px; font-weight:600; color:#6B7280; cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px; font-family:inherit;}
+  .admin-tab.on{color:var(--navy); border-bottom-color:var(--gold);}
+  /* Statistik-fanen */
+  #tab-stat{--st-line:#E5E4DF; --st-grid:#EEEDE9; --st-muted:#6B7280;}
+  .st-bar{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:6px;}
+  .st-chip{background:#fff; color:var(--navy); border:1px solid var(--chrome-line); padding:6px 12px; border-radius:20px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;}
+  .st-chip.on{background:var(--navy); border-color:var(--navy); color:#fff;}
+  .st-updated{font-size:12px; color:var(--st-muted); margin:6px 0 14px;}
+  .st-tiles{display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:10px; margin-bottom:8px;}
+  .st-tile{background:#fff; border:1px solid var(--st-line); border-radius:12px; padding:14px 16px;}
+  .st-tile.st-accent{border-top:3px solid var(--gold);}
+  .st-lbl{font-size:12px; font-weight:600; color:#4B5563; text-transform:uppercase; letter-spacing:.04em;}
+  .st-val{font-family:Oswald, sans-serif; font-size:32px; font-weight:600; line-height:1.15; margin-top:6px; color:var(--navy); font-variant-numeric:tabular-nums;}
+  .st-sub{font-size:12px; color:var(--st-muted); margin-top:2px;}
+  .st-delta.up{color:#1A7F4E; font-weight:600;} .st-delta.down{color:#B3261E; font-weight:600;}
+  .st-grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:760px){ .st-grid2{grid-template-columns:1fr;} .st-val{font-size:26px;} }
+  .st-card{background:#fff; border:1px solid var(--st-line); border-radius:12px; padding:16px 18px; margin-bottom:16px; min-width:0;}
+  .st-card h3{font-size:15px; margin:0 0 2px; color:var(--navy);}
+  .st-hint{font-size:12px; color:var(--st-muted); margin:0 0 12px;}
+  .st-chart{position:relative;}
+  .st-chart svg{display:block; overflow:visible;}
+  .st-tip{position:absolute; pointer-events:none; background:var(--navy); color:#fff; font-size:12px; padding:6px 9px; border-radius:6px; white-space:nowrap; transform:translate(-50%, -110%); display:none; z-index:3;}
+  #tab-stat table{box-shadow:none; margin:0;}
+  #tab-stat th{background:none; color:var(--st-muted); border-bottom:1px solid var(--st-line); padding:6px 8px;}
+  #tab-stat td{padding:9px 8px; border-bottom:1px solid var(--st-grid);}
+  #tab-stat .st-num{text-align:right; font-variant-numeric:tabular-nums;}
+  .st-barrow{display:grid; grid-template-columns:minmax(90px, 140px) 1fr 44px; align-items:center; gap:10px; margin:7px 0; font-size:13px;}
+  .st-track{height:12px; background:var(--st-grid); border-radius:0 4px 4px 0;}
+  .st-fill{height:12px; background:var(--navy); border-radius:0 4px 4px 0; min-width:2px;}
+  .st-n{text-align:right; font-variant-numeric:tabular-nums; font-weight:600;}
+  .st-empty{color:var(--st-muted); font-size:13px; padding:10px 0; text-align:left !important;}
+  @media (max-width:600px){ #tab-stat .hide-sm{display:none;} #tab-stat td, #tab-stat th{padding:8px 5px;} }
 </style>
 </head>
 <body>
@@ -77,8 +112,14 @@
 <div id="dashboardView" class="admin-wrap" style="display:none;">
   <div class="admin-header">
     <h1>Admin-panel</h1>
-    <div><a class="logout-btn" href="/admin/statistik/" style="text-decoration:none; color:var(--navy); margin-right:6px;">📊 Statistik-app</a><button class="logout-btn" onclick="logout()">Log ud</button></div>
+    <button class="logout-btn" onclick="logout()">Log ud</button>
   </div>
+  <div class="admin-tabs">
+    <button class="admin-tab on" data-tab="admin" onclick="showTab('admin')">Butikker</button>
+    <button class="admin-tab" data-tab="stat" onclick="showTab('stat')">📊 Statistik</button>
+  </div>
+
+  <div id="tab-admin">
   <button class="pw-toggle" onclick="togglePwBox()">Skift adgangskode</button>
   <div class="pw-box" id="pwBox">
     <input type="password" id="newPassword" placeholder="Ny adgangskode" autocomplete="new-password">
@@ -226,20 +267,52 @@
     <tbody id="shopsTable"><tr class="empty-row"><td colspan="8">Henter…</td></tr></tbody>
   </table>
 
-  <div class="section-title" style="display:flex; align-items:center; justify-content:space-between;">
-    <span>Statistik pr. butik (seneste 30 dage) <span style="font-size:12px; font-weight:400; color:#6B7280;">— opdateres automatisk</span></span>
-    <button class="delete-btn" onclick="resetClickStats()">Nulstil statistik</button>
-  </div>
-  <table>
-    <thead><tr><th>Butik</th><th>Klik på profil</th><th>Klik på kontakt (ring/mail/web)</th></tr></thead>
-    <tbody id="clicksTable"><tr class="empty-row"><td colspan="3">Henter…</td></tr></tbody>
-  </table>
-
   <div class="section-title">Tilbudsforespørgsler</div>
   <table>
     <thead><tr><th>Dato</th><th>Butik</th><th>Navn</th><th>Kontakt</th><th>Besked</th><th>Videresendt</th></tr></thead>
     <tbody id="leadsTable"><tr class="empty-row"><td colspan="6">Henter…</td></tr></tbody>
   </table>
+  </div>
+
+  <div id="tab-stat" style="display:none;">
+    <div class="st-bar">
+      <button class="st-chip" data-days="7">7 dage</button>
+      <button class="st-chip on" data-days="30">30 dage</button>
+      <button class="st-chip" data-days="90">90 dage</button>
+      <button class="st-chip" onclick="loadStatistik()" style="margin-left:auto;">↻ Opdater</button>
+    </div>
+    <p class="st-updated" id="stUpdated">Henter tal…</p>
+    <div class="st-tiles" id="tiles"></div>
+
+    <div class="section-title">Hjemmesiden</div>
+    <div class="st-grid2">
+      <div class="st-card"><h3>Profilvisninger pr. dag</h3><p class="st-hint">Hvor mange der har åbnet en bilplejers profil</p><div class="st-chart" id="chartViews"></div></div>
+      <div class="st-card"><h3>Kontaktklik pr. dag</h3><p class="st-hint">Tryk på ring, mail, hjemmeside m.m. på en profil</p><div class="st-chart" id="chartClicks"></div></div>
+    </div>
+    <div class="st-card">
+      <h3>Bilplejere</h3>
+      <p class="st-hint">Visninger og kontaktklik i perioden. Klikrate = hvor mange af dem der så profilen, der også tog kontakt.</p>
+      <div style="overflow-x:auto"><table>
+        <thead><tr><th>Bilplejer</th><th class="hide-sm">By</th><th class="st-num">Visninger</th><th class="st-num">Klik</th><th class="st-num">Klikrate</th></tr></thead>
+        <tbody id="shopTable"></tbody>
+      </table></div>
+    </div>
+    <div class="st-grid2">
+      <div class="st-card"><h3>Hvordan tager kunderne kontakt?</h3><p class="st-hint">Kontaktklik fordelt på knap</p><div id="methodBars"></div></div>
+      <div class="st-card"><h3>Mest søgte byer</h3><p class="st-hint">Hvad folk skriver i søgefeltet på forsiden</p><div id="cityBars"></div></div>
+    </div>
+
+    <div class="section-title">TikTok <span style="font-size:13px; font-weight:500; color:#6B7280;">@findbilplejere.dk</span></div>
+    <div class="st-card"><h3>TikTok-visninger pr. dag</h3><p class="st-hint" id="tiktokHint">Hentes automatisk fra Metricool hver morgen</p><div class="st-chart" id="chartTiktok"></div></div>
+    <div class="st-card">
+      <h3>Seneste videoer</h3>
+      <div style="overflow-x:auto"><table>
+        <thead><tr><th>Video</th><th class="hide-sm">Udgivet</th><th class="st-num">Visninger</th><th class="st-num">Likes</th><th class="st-num hide-sm">Komm.</th><th class="st-num hide-sm">Delt</th></tr></thead>
+        <tbody id="videoTable"></tbody>
+      </table></div>
+    </div>
+    <p style="margin-top:24px;"><button class="delete-btn" onclick="resetClickStats()">Nulstil klik og profilvisninger</button></p>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -255,7 +328,7 @@ function showDashboard(){
   document.getElementById('loginView').style.display = 'none';
   document.getElementById('dashboardView').style.display = 'block';
   loadDashboard();
-  if (!clickStatsInterval) clickStatsInterval = setInterval(loadClickStats, 30000);
+  showTab(location.hash === '#statistik' ? 'stat' : (localStorage.getItem('adminTab') || 'admin'));
 }
 
 function showLogin(){
@@ -692,31 +765,6 @@ async function loadDashboard(){
     `).join('') : '<tr class="empty-row"><td colspan="6">Ingen forespørgsler endnu.</td></tr>';
   }
 
-  loadClickStats();
-}
-
-function countByButik(rows){
-  const counts = {};
-  (rows || []).forEach(r => { counts[r.butik] = (counts[r.butik] || 0) + 1; });
-  return counts;
-}
-
-async function loadClickStats(){
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-  const [{ data: views, error: viewsError }, { data: clicks, error: clicksError }] = await Promise.all([
-    db.from('profil_visninger').select('butik').gte('created_at', thirtyDaysAgo),
-    db.from('butik_klik').select('butik').gte('created_at', thirtyDaysAgo)
-  ]);
-  const clicksTable = document.getElementById('clicksTable');
-  if (viewsError || clicksError) {
-    clicksTable.innerHTML = `<tr class="empty-row"><td colspan="3">Kunne ikke hente statistik.</td></tr>`;
-    return;
-  }
-  const viewCounts = countByButik(views);
-  const clickCounts = countByButik(clicks);
-  const names = currentShops.length ? currentShops.map(s => s.name) : Object.keys({ ...viewCounts, ...clickCounts });
-  const rows = names.map(name => ({ name, views: viewCounts[name] || 0, clicks: clickCounts[name] || 0 })).sort((a, b) => b.clicks - a.clicks);
-  clicksTable.innerHTML = rows.length ? rows.map(r => `<tr><td>${r.name}</td><td>${r.views}</td><td>${r.clicks}</td></tr>`).join('') : '<tr class="empty-row"><td colspan="3">Ingen butikker endnu.</td></tr>';
 }
 
 async function resetClickStats(){
@@ -729,7 +777,7 @@ async function resetClickStats(){
     alert('Kunne ikke nulstille statistikken. Prøv igen.');
     return;
   }
-  loadClickStats();
+  loadStatistik();
 }
 
 let clickStatsInterval = null;
@@ -751,6 +799,7 @@ db.auth.getSession().then(({ data: { session } }) => {
   handleSession(session);
 });
 </script>
+<script src="/admin/statistik.js"></script>
 
 </body>
 </html>
