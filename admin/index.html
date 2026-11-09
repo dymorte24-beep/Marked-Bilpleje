@@ -214,8 +214,8 @@
     <p class="error-msg" id="shopError"></p>
   </div>
   <table>
-    <thead><tr><th>Navn</th><th>By</th><th>Profil</th><th>Rabat</th><th>Verificeret</th><th>Godkendt</th><th></th></tr></thead>
-    <tbody id="shopsTable"><tr class="empty-row"><td colspan="7">Henter…</td></tr></tbody>
+    <thead><tr><th>Navn</th><th>By</th><th>Profil</th><th>Annonce</th><th>Rabat</th><th>Verificeret</th><th>Godkendt</th><th></th></tr></thead>
+    <tbody id="shopsTable"><tr class="empty-row"><td colspan="8">Henter…</td></tr></tbody>
   </table>
 
   <div class="section-title" style="display:flex; align-items:center; justify-content:space-between;">
@@ -581,6 +581,47 @@ async function toggleTier(id, current){
   loadDashboard();
 }
 
+// ---- Annoncer ----
+// En butik med annonce slået til vises øverst (mærket "Annonce"), når kunder søger på en af
+// dens byer — dog kun hvis butikken ligger højst 50 km derfra. Max 3 annoncer pr. by.
+const AD_MAX_PER_CITY_ADMIN = 3;
+function adKey(city){ return slugify((city || '').trim().split(/\s+/)[0] || ''); }
+
+function fullAdCities(shopId, cities){
+  return cities.filter(c => currentShops.filter(o => o.id !== shopId && o.ad_active && (o.ad_cities || []).some(x => adKey(x) === adKey(c))).length >= AD_MAX_PER_CITY_ADMIN);
+}
+
+async function editAdCities(id, thenActivate){
+  const shop = currentShops.find(s => s.id === id);
+  if (!shop) return;
+  const input = prompt(`Hvilke byer skal ${shop.name} annonceres i? Skriv dem adskilt af komma (fx: Odense, Svendborg). Butikken vises kun i byer højst 50 km væk.`, (shop.ad_cities || []).join(', '));
+  if (input === null) return;
+  const cities = input.split(',').map(c => c.trim()).filter(Boolean);
+  const willBeActive = thenActivate || shop.ad_active;
+  if (willBeActive) {
+    const full = fullAdCities(id, cities);
+    if (full.length) { alert(`Der er allerede ${AD_MAX_PER_CITY_ADMIN} annoncer i: ${full.join(', ')}. Fjern byen eller slå en anden annonce fra først.`); return; }
+  }
+  const update = { ad_cities: cities };
+  if (thenActivate) update.ad_active = cities.length > 0;
+  const { error } = await db.from('shops').update(update).eq('id', id);
+  if (error) { alert('Kunne ikke gemme annonce-byer. Prøv igen.'); return; }
+  loadDashboard();
+}
+
+async function toggleAd(id){
+  const shop = currentShops.find(s => s.id === id);
+  if (!shop) return;
+  if (!shop.ad_active) {
+    if (!(shop.ad_cities || []).length) return editAdCities(id, true);
+    const full = fullAdCities(id, shop.ad_cities);
+    if (full.length) { alert(`Der er allerede ${AD_MAX_PER_CITY_ADMIN} annoncer i: ${full.join(', ')}. Ret butikkens byer eller slå en anden annonce fra først.`); return; }
+  }
+  const { error } = await db.from('shops').update({ ad_active: !shop.ad_active }).eq('id', id);
+  if (error) { alert('Kunne ikke slå annoncen til/fra. Prøv igen.'); return; }
+  loadDashboard();
+}
+
 function yesNoBadge(value){
   return value ? '<span class="badge yes">Ja</span>' : '<span class="badge no">Nej</span>';
 }
@@ -590,7 +631,7 @@ async function loadDashboard(){
   const shopsTable = document.getElementById('shopsTable');
   currentShops = shops || [];
   if (shopsError) {
-    shopsTable.innerHTML = `<tr class="empty-row"><td colspan="7">Kunne ikke hente butikker.</td></tr>`;
+    shopsTable.innerHTML = `<tr class="empty-row"><td colspan="8">Kunne ikke hente butikker.</td></tr>`;
   } else {
     shopsTable.innerHTML = shops.length ? shops.map(s => `
       <tr>
@@ -598,6 +639,10 @@ async function loadDashboard(){
         <td>${s.city}</td>
         <td><span class="badge ${s.tier}">${s.tier === 'betalt' ? 'Komplet' : 'Basis'}</span>
           <button class="action-btn" onclick="toggleTier('${s.id}', '${s.tier}')">${s.tier === 'betalt' ? 'Gør til basis' : 'Gør komplet'}</button></td>
+        <td>${s.ad_active ? '<span class="badge yes">Til</span>' : '<span class="badge no">Fra</span>'}
+          <button class="action-btn" onclick="toggleAd('${s.id}')">${s.ad_active ? 'Slå fra' : 'Slå til'}</button>
+          <button class="action-btn" onclick="editAdCities('${s.id}')">Byer</button>
+          <div style="font-size:12px; color:#6B7280; margin-top:4px;">${(s.ad_cities || []).length ? s.ad_cities.join(', ') : 'Ingen byer valgt'}</div></td>
         <td>${s.discount ? s.discount + '%' : '–'}</td>
         <td>${yesNoBadge(s.verificeret)}</td>
         <td>${yesNoBadge(s.godkendt)}</td>
@@ -608,9 +653,9 @@ async function loadDashboard(){
         </td>
       </tr>
       <tr class="contact-row" id="contact-${s.id}" style="display:none;">
-        <td colspan="7"><strong>Kontakt:</strong> ${s.contact_person || '–'} · ${s.phone || '–'} · ${s.email || '–'}</td>
+        <td colspan="8"><strong>Kontakt:</strong> ${s.contact_person || '–'} · ${s.phone || '–'} · ${s.email || '–'}</td>
       </tr>
-    `).join('') : '<tr class="empty-row"><td colspan="7">Ingen butikker endnu.</td></tr>';
+    `).join('') : '<tr class="empty-row"><td colspan="8">Ingen butikker endnu.</td></tr>';
   }
 
   const { data: leads, error: leadsError } = await db.from('tilbud_anmodninger').select('*').order('created_at', { ascending: false });

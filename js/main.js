@@ -32,6 +32,8 @@ async function loadShops(){
   shops = data.map(toBasisView).map(row => ({
     name: row.name,
     komplet: isKomplet(row),
+    adActive: row.ad_active,
+    adCities: row.ad_cities,
     city: row.city,
     cityKey: row.city_key,
     services: row.services,
@@ -50,17 +52,22 @@ async function loadShops(){
   renderShops();
 }
 
-function renderShops(list, originName){
+function renderShops(list, originName, ads){
   const grid = document.getElementById('resultsGrid');
   if (!grid) return;
   if (!list) list = wizardAnswers ? scoredShopOrder() : [...shops].sort((a, b) => (b.komplet - a.komplet) || a.name.localeCompare(b.name, 'da'));
+  ads = ads || [];
+  if (ads.length) {
+    const adNames = new Set(ads.map(a => a.name));
+    list = ads.concat(list.filter(s => !adNames.has(s.name)));
+  }
   if (list.length === 0) {
     grid.innerHTML = '<p class="empty-state">Ingen butikker fundet endnu — vi udvider løbende med flere byer og butikker.</p>';
     return;
   }
   const fallbackIcon = '<div class="card-media-fallback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6"/><path d="M20 20l-5.5-5.5"/></svg></div>';
   grid.innerHTML = list.map((shop, i) => `
-    <div class="card" style="animation-delay:${Math.min(i, 8) * 40}ms">
+    <div class="card${shop._ad ? ' card-ad' : ''}" style="animation-delay:${Math.min(i, 8) * 40}ms">
       ${shop.profileUrl ? `<a class="card-link-overlay" href="${shop.profileUrl}" aria-label="Se profil for ${shop.name}"></a>` : ''}
       ${(shop.cardImageUrl || shop.heroImageUrl) ? `<img class="card-media" src="${shop.cardImageUrl || shop.heroImageUrl}" alt="">` : fallbackIcon}
       <div class="card-body">
@@ -72,6 +79,7 @@ function renderShops(list, originName){
         ${(shop._distanceKm > 10 && shop.coverageAreas && shop.coverageAreas.length <= 40) ? `<div class="card-coverage-note">Dækker ${shop.coverageAreas}</div>` : ''}
         <div class="card-tags">
           ${(shop.reviewRating && shop.reviewCount && shop.reviewVisible !== false) ? `<span class="pill">⭐ ${shop.reviewRating} (${shop.reviewCount}${shop.reviewSource ? ' på ' + shop.reviewSource : ''})</span>` : ''}
+          ${shop._ad ? `<span class="pill annonce">Annonce</span>` : ''}
           ${shop.komplet ? `<span class="pill komplet">Komplet profil</span>` : ''}
           ${shop.verificeret ? `<span class="pill verified">Verificeret</span>` : ''}
           ${shop.priceFrom ? `<span class="pill">Fra ${shop.priceFrom} kr.</span>` : ''}
@@ -132,6 +140,7 @@ async function filterCards(){
 
   let list = shops.filter(shop => service === 'alle ydelser' || shop.services.some(s => s.toLowerCase().includes(service)));
   let originName = '';
+  let ads = [];
 
   if (cityRaw) {
     await loadGeoData();
@@ -140,6 +149,8 @@ async function filterCards(){
       // Ægte km-afstand: viser altid de nærmeste butikker, også uden for søgt by
       // (fx en butik der dækker "hele Nordjylland" ved søgning på en anden Nordjylland-by).
       originName = origin.navn;
+      ads = pickAds(list, origin, cityRaw);
+      if (ads.length) track('ad_impression', { search_term: cityRaw, shops: ads.map(a => a.name).join(', ') });
       list = list
         .map(shop => {
           const shopPoint = geoResolve(shop.city);
@@ -158,7 +169,7 @@ async function filterCards(){
   if (list.length === 0) {
     if (grid) grid.innerHTML = '';
   } else {
-    renderShops(list, originName);
+    renderShops(list, originName, ads);
   }
   const noResults = document.getElementById('noResults');
   if (noResults) noResults.style.display = list.length === 0 ? 'block' : 'none';
