@@ -13,7 +13,7 @@
   gtag('config', 'G-KTK6266STG');
 </script>
 <title>Bilpleje-butik | FindBilplejere.dk</title>
-<meta name="description" content="Se priser og ydelser, og kontakt denne bilpleje-butik direkte." id="metaDescription">
+<meta name="description" content="Se ydelser og kontakt denne bilpleje-butik direkte." id="metaDescription">
 <meta property="og:image" content="https://findbilplejere.dk/og-image.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png">
@@ -98,7 +98,7 @@
   /* SECTIONS — each one is a flat white card floating on the page's fog background,
      mirroring the reference's panel-on-light-background composition. */
   .profile-section{margin-top:var(--section-gap);}
-  .profile-section h2{font-size:18px; margin-bottom:14px;}
+  .profile-section h2{font-size:18px; margin:0 0 14px;}
   .pf-card{background:var(--white); border-radius:20px; padding:48px;}
   .pf-card-divider{height:1px; background:var(--chrome-line); margin:32px 0;}
   @media (max-width:760px){
@@ -135,21 +135,28 @@
   .pf-service-name{font-size:15px; color:var(--navy);}
   @media (max-width:760px){ .pf-services{columns:1;} }
 
+  .pf-chips{display:flex; flex-wrap:wrap; gap:8px; list-style:none; margin:0; padding:0;}
+  .pf-chip{background:var(--gold-light); color:var(--navy); border:1px solid rgba(182,139,72,0.35); border-radius:999px; padding:7px 14px; font-size:14px; font-weight:500;}
+
   /* HVORFOR VÆLGE OS */
   .pf-why{display:grid; grid-template-columns:1fr 1fr; gap:10px 32px;}
   .pf-why-item{display:flex; align-items:flex-start; gap:10px; color:var(--text-muted); font-size:14px; line-height:1.5;}
   .pf-why-item svg{width:18px; height:18px; flex-shrink:0; margin-top:1px; color:var(--gold);}
   @media (max-width:600px){ .pf-why{grid-template-columns:1fr;} }
 
-  /* PRICING */
-  .pf-price-line{font-size:18px; color:var(--navy); display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
-  .pf-price-amount{font-family:'Oswald',sans-serif; font-size:28px; font-weight:600; color:var(--gold-dark);}
-  .pf-price-list{margin-top:18px;}
-  .pf-price-cat-title{
-    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.08em;
-    text-transform:uppercase; color:var(--gold-dark); margin:16px 0 4px;
-  }
-  .pf-price-cat:first-child .pf-price-cat-title{margin-top:0;}
+  /* FÅ EN PRIS */
+  .pf-quote{background:var(--navy); color:var(--white); border-radius:20px; padding:40px 48px; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap;}
+  .pf-quote h2{color:var(--gold); margin:0 0 8px;}
+  .pf-quote p{color:rgba(255,255,255,0.8); margin:0; max-width:560px; line-height:1.6; font-size:15px;}
+  .pf-quote .pf-quote-level{color:var(--white); font-size:16px; margin:0 0 10px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .pf-quote .price-level{font-size:20px;}
+  .pf-quote .price-level-off{color:rgba(255,255,255,0.25);}
+  .pf-quote-level-name{background:rgba(182,139,72,0.18); color:var(--gold); border-radius:999px; padding:3px 12px; font-size:13px; font-weight:600;}
+  .pf-quote-actions{display:flex; gap:10px; flex-wrap:wrap;}
+  .pf-quote-btn{display:inline-flex; align-items:center; gap:8px; background:var(--gold); color:var(--navy); padding:12px 20px; border-radius:10px; font-weight:600; font-size:14px; text-decoration:none;}
+  .pf-quote-btn:hover{filter:brightness(1.07);}
+  .pf-quote-btn svg{width:16px; height:16px;}
+  @media (max-width:760px){ .pf-quote{padding:28px 24px;} .pf-quote-actions{width:100%;} .pf-quote-btn{flex:1; justify-content:center;} }
 
   /* REVIEWS */
   .pf-review{display:flex; align-items:center; gap:20px;}
@@ -229,36 +236,44 @@ function extractLeadSentence(description, limit = 160){
   return description.slice(0, match.index + 1).trim();
 }
 
+// Samler ens dage: "Man–tors 10:00–16:00", "Lør–søn Lukket". Er alle dage ens, vises én linje.
+function normHours(v){
+  return String(v).trim()
+    .replace(/\b(\d{1,2})(?::(\d{2}))?\s*[-–]\s*(\d{1,2})(?::(\d{2}))?\b/g,
+      (m, a, am, b, bm) => `${a.padStart(2,'0')}:${am || '00'}–${b.padStart(2,'0')}:${bm || '00'}`)
+    .replace(/^./, c => c.toUpperCase());
+}
+function groupedHours(hours){
+  const SHORT = {mandag:'Man',tirsdag:'Tirs',onsdag:'Ons',torsdag:'Tors',fredag:'Fre',lørdag:'Lør',søndag:'Søn'};
+  const days = DAYS_ORDER.filter(([k]) => hours[k]).map(([k]) => ({ key: k, value: normHours(hours[k]) }));
+  if (!days.length) return [];
+  if (days.length === 7 && days.every(d => d.value === days[0].value)) {
+    return [{ label: 'Alle dage', value: days[0].value, keys: days.map(d => d.key) }];
+  }
+  const groups = [];
+  for (const d of days) {
+    const last = groups[groups.length - 1];
+    const prevIdx = last ? DAYS_ORDER.findIndex(([k]) => k === last.keys[last.keys.length - 1]) : -2;
+    const idx = DAYS_ORDER.findIndex(([k]) => k === d.key);
+    if (last && last.value === d.value && idx === prevIdx + 1) last.keys.push(d.key);
+    else groups.push({ value: d.value, keys: [d.key] });
+  }
+  return groups.map(g => {
+    const a = SHORT[g.keys[0]], b = SHORT[g.keys[g.keys.length - 1]];
+    const label = g.keys.length === 1 ? a : `${a}–${b.toLowerCase()}`;
+    return { label, value: g.value, keys: g.keys };
+  });
+}
+
+function socialUrl(kind, v){
+  if (/^https?:\/\//.test(v)) return v;
+  const handle = v.replace(/^@/, '').replace(/^(www\.)?(instagram|facebook)\.com\//, '');
+  return `https://www.${kind}.com/${handle}`;
+}
+
 function infoRow(label, value, extraClass){
   if (!value) return '';
   return `<div class="pf-info-row${extraClass ? ' ' + extraClass : ''}"><span class="pf-info-label">${label}</span><span class="pf-info-value">${value}</span></div>`;
-}
-
-function priceListHtml(categories){
-  if (!categories || !categories.length) return '';
-  const catBlock = cat => `
-    <div class="pf-price-cat">
-      <p class="pf-price-cat-title">${cat.title}</p>
-      ${(cat.items || []).map(i => `<div class="pf-info-row"><span class="pf-info-label">${i.label}</span><span class="pf-info-value">${i.price}</span></div>`).join('')}
-    </div>
-  `;
-  const [first, ...rest] = categories;
-  if (!rest.length) return `<div class="pf-price-list">${catBlock(first)}</div>`;
-  const moreLabel = `Se alle priser (${rest.length} flere kategorier)`;
-  return `
-    <div class="pf-price-list">
-      ${catBlock(first)}
-      <div class="pf-price-more" style="display:none;">${rest.map(catBlock).join('')}</div>
-      <button class="pf-readmore" data-more-label="${moreLabel}" onclick="togglePriceList(this)">${moreLabel}</button>
-    </div>
-  `;
-}
-
-function togglePriceList(btn){
-  const extra = btn.previousElementSibling;
-  const willShow = extra.style.display === 'none';
-  extra.style.display = willShow ? '' : 'none';
-  btn.textContent = willShow ? 'Vis færre priser' : btn.dataset.moreLabel;
 }
 
 async function loadShop(){
@@ -280,7 +295,7 @@ async function loadShop(){
   });
 
   document.title = shop.name + ' | FindBilplejere.dk';
-  const metaDesc = shop.tagline || `${shop.name} tilbyder ${(shop.services || []).slice(0, 3).join(', ')} i ${shop.city}. Se priser og kontakt dem direkte.`;
+  const metaDesc = shop.tagline || `${shop.name} tilbyder ${(shop.services || []).slice(0, 3).join(', ')} i ${shop.city}. Kontakt dem direkte.`;
   document.getElementById('metaDescription').setAttribute('content', metaDesc);
   breadcrumb.innerHTML = `
     <a href="/index.html">Forside</a><span class="sep">/</span>
@@ -312,9 +327,9 @@ async function loadShop(){
     <div class="pf-hero">
       <div class="pf-split pf-hero-grid">
         <div class="pf-hero-main">
-          <p class="pf-eyebrow">Virksomhedsprofil${komplet ? ' · <span class="pill komplet">Komplet profil</span>' : ''}</p>
+          <p class="pf-eyebrow">Bilpleje i ${shop.city}</p>
           <h1 class="pf-name">${shop.name}</h1>
-          <p class="pf-location">${shop.city}${shop.address ? ' · ' + shop.address : ''}</p>
+          ${shop.address ? `<p class="pf-location">${shop.address}</p>` : ''}
           ${hasReview ? `<p class="pf-stars-row"><span class="pf-stars" role="img" aria-label="${shop.review_rating} ud af 5 stjerner">${starsGlyphs}</span></p>` : ''}
           ${shop.tagline ? `<p class="pf-tagline">${shop.tagline}</p>` : ''}
         </div>
@@ -329,63 +344,36 @@ async function loadShop(){
     </div>
   `;
 
-  // ---- 2 + 3. OM VIRKSOMHEDEN + NØGLETAL (one card, divider between when both exist — Framplates reference) ----
-  let aboutInner = '';
-  if (shop.description) {
-    const lead = extractLeadSentence(shop.description);
-    const remainder = lead ? shop.description.slice(lead.length).trim() : '';
-    const useHeadline = !!(lead && remainder.length > 20);
-    aboutInner = `
-      <div class="pf-split pf-split-top">
-        <div>
-          <h2 class="pf-eyebrow">Om virksomheden</h2>
-          ${useHeadline ? `<p class="pf-about-headline">${lead}</p>` : ''}
-        </div>
-        <div>
-          <p class="pf-about-text is-clamped">${useHeadline ? remainder : shop.description}</p>
-          <button class="pf-readmore" onclick="toggleAbout(this)">Læs mere</button>
-        </div>
-      </div>
-    `;
-  }
-
-  const stats = [];
-  if (hasReview) stats.push({ value: shop.review_rating, label: 'Rating' });
-  if (shop.price_from) stats.push({ value: `${shop.price_from} kr.`, label: 'Startpris' });
-  if (shop.services && shop.services.length) stats.push({ value: shop.services.length, label: 'Ydelser' });
-  const statsInner = stats.length ? `
-    ${!shop.description ? `<h2 class="pf-eyebrow">Nøgletal</h2>` : ''}
-    <div class="pf-stats">${stats.map(s => `<div class="pf-stat"><div class="pf-stat-value">${s.value}</div><div class="pf-stat-label">${s.label}</div></div>`).join('')}</div>
+  // ---- 2. OM OS ----
+  const aboutHtml = (komplet && shop.description) ? `
+    <div class="profile-section pf-card">
+      <h2>Om ${shop.name}</h2>
+      <p class="pf-about-text${shop.description.length > 420 ? ' is-clamped' : ''}">${shop.description}</p>
+      ${shop.description.length > 420 ? '<button class="pf-readmore" onclick="toggleAbout(this)">Læs mere</button>' : ''}
+    </div>
   ` : '';
 
-  let aboutStatsHtml = '';
-  if (komplet && (aboutInner || statsInner)) {
-    aboutStatsHtml = `
-      <div class="profile-section pf-card">
-        ${aboutInner}
-        ${aboutInner && statsInner ? '<div class="pf-card-divider"></div>' : ''}
-        ${statsInner}
-      </div>
-    `;
-  }
+  // ---- 3. YDELSER ----
+  const servicesHtml = (shop.services && shop.services.length) ? `
+    <div class="profile-section pf-card">
+      <h2>Ydelser</h2>
+      <ul class="pf-chips">${shop.services.map(s => `<li class="pf-chip">${s}</li>`).join('')}</ul>
+    </div>
+  ` : '';
 
-  // ---- 4. DET TILBYDER VI + PRIS (paired side by side on desktop) ----
-  const servicesAndPriceHtml = `
-    <div class="profile-section pf-card pf-split pf-split-top">
+  // ---- 4. FÅ EN PRIS (vi viser bevidst ingen priser på sitet) ----
+  const quoteHtml = contacts.length ? `
+    <div class="profile-section pf-quote">
       <div>
-        <h2>Det tilbyder vi</h2>
-        <ul class="pf-services">${shop.services.map(s => `<li class="pf-service-row"><span class="pf-service-name">${s}</span></li>`).join('')}</ul>
+        <h2>Få en pris</h2>
+        ${shop.price_level ? `<p class="pf-quote-level">Prisniveau: ${priceLevelHtml(shop.price_level)} <span class="pf-quote-level-name">${PRICE_LEVEL_NAMES[shop.price_level]}</span></p>` : ''}
+        <p>Prisen afhænger af bilen og behandlingen. Kontakt ${shop.name} direkte og få en pris på lige netop din bil.</p>
       </div>
-      <div>
-        <h2>Pris</h2>
-        <p class="pf-price-line">
-          ${shop.price_from ? `Fra <span class="pf-price-amount">${shop.price_from} kr.</span>` : 'Pris fås ved henvendelse'}
-          ${shop.discount ? `<span class="pill discount">${shop.discount}% rabat</span>` : ''}
-        </p>
-        ${shop.price_list_verified ? priceListHtml(shop.price_list) : ''}
+      <div class="pf-quote-actions">
+        ${contacts.map(c => `<a class="pf-quote-btn" href="${c.href}"${c.external ? ' target="_blank" rel="noopener"' : ''} onclick="trackContact(${safeNameJs}, '${c.method}')">${c.icon}${c.short}</a>`).join('')}
       </div>
     </div>
-  `;
+  ` : '';
 
   // ---- 5. HVORFOR VÆLGE OS ----
   const why = shop.why_choose_us || [];
@@ -402,9 +390,8 @@ async function loadShop(){
   // ---- 7 + 9. ANMELDELSER + PRAKTISK INFORMATION (paired side by side when both exist) ----
   const hours = shop.opening_hours || {};
   const todayKey = JS_DAY_TO_KEY[new Date().getDay()];
-  const hoursRowsHtml = DAYS_ORDER
-    .filter(([key]) => hours[key])
-    .map(([key, label]) => infoRow(label, hours[key], key === todayKey ? 'is-today' : ''))
+  const hoursRowsHtml = groupedHours(hours)
+    .map(g => infoRow(g.label, g.value, g.keys.includes(todayKey) ? 'is-today' : ''))
     .join('');
   const infoRowsHtml = [
     infoRow('Adresse', shop.address),
@@ -413,8 +400,8 @@ async function loadShop(){
     infoRow('Telefon', shop.phone),
     infoRow('E-mail', shop.email),
     infoRow('Hjemmeside', websiteUrl ? `<a href="${websiteUrl}" target="_blank" rel="noopener" onclick="trackContact(${safeNameJs}, 'website')">${shop.website.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>` : ''),
-    infoRow('Instagram', shop.instagram ? `<a href="${shop.instagram}" target="_blank" rel="noopener">Se profil</a>` : ''),
-    infoRow('Facebook', shop.facebook ? `<a href="${shop.facebook}" target="_blank" rel="noopener">Se profil</a>` : ''),
+    infoRow('Instagram', shop.instagram ? `<a href="${socialUrl('instagram', shop.instagram)}" target="_blank" rel="noopener">Se profil</a>` : ''),
+    infoRow('Facebook', shop.facebook ? `<a href="${socialUrl('facebook', shop.facebook)}" target="_blank" rel="noopener">Se profil</a>` : ''),
   ].filter(Boolean).join('');
 
   const reviewsInner = hasReview ? `
@@ -429,7 +416,7 @@ async function loadShop(){
     </div>
   ` : '';
   const infoInner = infoRowsHtml ? `
-    <h2>Praktisk information</h2>
+    <h2>Åbningstider og kontakt</h2>
     <div class="pf-info-list">${infoRowsHtml}</div>
   ` : '';
 
@@ -448,7 +435,7 @@ async function loadShop(){
     </div>
   `;
 
-  content.innerHTML = heroHtml + aboutStatsHtml + servicesAndPriceHtml + whyHtml + reviewsInfoHtml + upgradeHtml;
+  content.innerHTML = heroHtml + aboutHtml + servicesHtml + quoteHtml + whyHtml + reviewsInfoHtml + upgradeHtml;
 
   // Sticky mobile CTA
   const stickyCta = document.getElementById('stickyCta');

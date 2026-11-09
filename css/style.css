@@ -504,3 +504,8 @@ footer{
 /* Annonce (betalt topplacering) — tydeligt mærket, jf. markedsføringsloven */
 .pill.annonce{background:var(--gold-light); color:var(--gold-dark); border:1px solid var(--gold); font-weight:600;}
 .card.card-ad{box-shadow:0 0 0 2px var(--gold);}
+
+/* Prisniveau (kr / kr kr / kr kr kr) — vi viser ingen konkrete priser */
+.price-level{font-family:'JetBrains Mono',monospace; font-weight:600; letter-spacing:0.02em; white-space:nowrap;}
+.price-level-on{color:var(--gold-dark);}
+.price-level-off{color:#C9C4BA;}

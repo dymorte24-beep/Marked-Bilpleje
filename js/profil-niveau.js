@@ -37,3 +37,17 @@ function pickAds(shopList, origin, searchText){
     .sort(() => Math.random() - 0.5)
     .slice(0, AD_MAX_PER_CITY);
 }
+
+// ---- Prisniveau (vi viser bevidst ingen konkrete priser) ----
+// `price_level`: 1 = Budget, 2 = Mellem, 3 = Premium. Sættes kun af admin.
+const PRICE_LEVEL_NAMES = { 1: 'Budget', 2: 'Mellem', 3: 'Premium' };
+function priceLevelText(level){
+  return PRICE_LEVEL_NAMES[level] ? `${'kr '.repeat(level).trim()} · ${PRICE_LEVEL_NAMES[level]}` : '';
+}
+// "kr kr kr" hvor de aktive er fremhævet, fx <b>kr kr</b> kr
+function priceLevelHtml(level){
+  if (!PRICE_LEVEL_NAMES[level]) return '';
+  const on = Array(level).fill('kr').join(' ');
+  const off = Array(3 - level).fill('kr').join(' ');
+  return `<span class="price-level" title="Prisniveau: ${PRICE_LEVEL_NAMES[level]}"><span class="price-level-on">${on}</span>${off ? ` <span class="price-level-off">${off}</span>` : ''}</span>`;
+}

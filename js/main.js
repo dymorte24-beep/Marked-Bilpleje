@@ -38,6 +38,7 @@ async function loadShops(){
     cityKey: row.city_key,
     services: row.services,
     priceFrom: row.price_from,
+    priceLevel: row.price_level,
     discount: row.discount,
     verificeret: row.verificeret,
     profileUrl: row.profile_url,
@@ -80,10 +81,8 @@ function renderShops(list, originName, ads){
         <div class="card-tags">
           ${(shop.reviewRating && shop.reviewCount && shop.reviewVisible !== false) ? `<span class="pill">⭐ ${shop.reviewRating} (${shop.reviewCount}${shop.reviewSource ? ' på ' + shop.reviewSource : ''})</span>` : ''}
           ${shop._ad ? `<span class="pill annonce">Annonce</span>` : ''}
-          ${shop.komplet ? `<span class="pill komplet">Komplet profil</span>` : ''}
           ${shop.verificeret ? `<span class="pill verified">Verificeret</span>` : ''}
-          ${shop.priceFrom ? `<span class="pill">Fra ${shop.priceFrom} kr.</span>` : ''}
-          ${shop.discount ? `<span class="pill discount">${shop.discount}% rabat</span>` : ''}
+          ${shop.priceLevel ? `<span class="pill">${priceLevelHtml(shop.priceLevel)} ${PRICE_LEVEL_NAMES[shop.priceLevel]}</span>` : ''}
         </div>
         <div class="card-actions">
           ${shop.profileUrl ? `<a class="card-see-more" href="${shop.profileUrl}">Se mere</a>` : ''}
@@ -168,7 +167,7 @@ function scoredShopOrder(){
     const cityMatch = cityNorm && normalizeCity(shop.city).includes(cityNorm);
     if (cityMatch) s += 1000;
     if (mappedService && shop.services.includes(mappedService)) s += 500;
-    if (priority === 'Pris' && shop.priceFrom) s += Math.max(0, 500 - shop.priceFrom);
+    if (priority === 'Pris' && shop.priceLevel) s += (4 - shop.priceLevel) * 100;
     if (priority === 'Gode anmeldelser' && shop.reviewRating && shop.reviewVisible !== false) s += shop.reviewRating * 100 + Math.min(shop.reviewCount || 0, 100);
     if (priority === 'Placering' && cityMatch) s += 300;
     if (priority === 'Rabat' && shop.discount) s += shop.discount * 20;
