@@ -70,8 +70,8 @@
           <div class="hiw-step" data-step="3">
             <svg class="hiw-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>
             <div class="hiw-step-num">03</div>
-            <h3>Book direkte</h3>
-            <p>Vi sender din forespørgsel videre til butikken — ingen gebyrer for dig.</p>
+            <h3>Kontakt direkte</h3>
+            <p>Ring, skriv eller besøg butikkens hjemmeside — ingen mellemled og ingen gebyrer for dig.</p>
           </div>
         </div>
         <div class="hiw-dots" role="tablist" aria-label="Trin">
@@ -129,8 +129,8 @@
       </div>
       <div class="how-step">
         <div class="how-num mono">03</div>
-        <h3>Book direkte</h3>
-        <p>Vi videresender din forespørgsel til butikken hurtigst muligt — ingen gebyrer for dig.</p>
+        <h3>Kontakt direkte</h3>
+        <p>Ring, skriv eller besøg butikkens hjemmeside — ingen mellemled og ingen gebyrer for dig.</p>
       </div>
     </div>
   </div>
@@ -161,26 +161,6 @@
 <footer>
   <a href="privatlivspolitik.html">Privatlivspolitik</a> · findbilplejere.dk · <a href="butik-panel/">Butik-login</a> · <a href="admin/">Admin</a>
 </footer>
-
-<div class="modal-overlay" id="leadModal" onclick="if(event.target===this) closeLeadModal()">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeLeadModal()" aria-label="Luk">&times;</button>
-    <h3 id="modalShopName">Få tilbud</h3>
-      <form class="lead-form" name="kunde-lead" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="handleCustomerLeadSubmit(event)">
-        <input type="hidden" name="form-name" value="kunde-lead">
-        <input type="hidden" name="butik" id="modalButikField">
-        <p class="hidden-field"><label>Udfyld ikke dette felt hvis du er menneske: <input name="bot-field"></label></p>
-        <label class="mono" for="custName">Navn</label>
-        <input type="text" name="navn" id="custName" required>
-        <label class="mono" for="custContact">Telefon eller mail</label>
-        <input type="text" name="kontakt" id="custContact" required>
-        <label class="mono" for="custMsg">Hvad skal der ordnes?</label>
-        <input type="text" name="besked" id="custMsg" placeholder="Fx keramisk coating på min bil">
-        <button type="submit" class="btn-primary" style="width:100%; margin-top:6px;">Send forespørgsel</button>
-        <p class="lead-note">Vi videresender din forespørgsel direkte til butikken. Læs vores <a href="privatlivspolitik.html" style="color:inherit; text-decoration:underline;">privatlivspolitik</a>.</p>
-      </form>
-  </div>
-</div>
 
 <div class="modal-overlay" id="wizardModal" onclick="if(event.target===this) skipWizard()">
   <div class="modal-box">
