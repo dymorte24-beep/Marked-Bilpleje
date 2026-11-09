@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:540px; height:960px; overflow:hidden; background:#131D2E; font-family: "Inter","Helvetica Neue",Arial,sans-serif; color:#fff; }
+  #stage { position:relative; width:540px; height:960px; background: radial-gradient(ellipse at 50% 30%, #1d2b44 0%, #131D2E 60%, #0c1320 100%); }
+  .scene { position:absolute; inset:0; opacity:0; }
+  .kicker { position:absolute; top:70px; width:100%; text-align:center; font-size:13px; letter-spacing:4px; color:#B68B48; font-weight:700; }
+  .h1 { position:absolute; top:105px; width:100%; text-align:center; font-size:44px; font-weight:800; line-height:1.05; padding:0 30px; }
+  .sub { position:absolute; top:230px; width:100%; text-align:center; font-size:19px; color:#c9d1de; padding:0 50px; line-height:1.35; }
+  .gold { color:#B68B48; }
+  .card { position:absolute; left:30px; right:30px; top:330px; height:380px; border-radius:22px; background:#18243a; border:1px solid #2a3953; overflow:hidden; }
+  .tip { position:absolute; left:30px; right:30px; top:740px; border-radius:16px; background:#B68B48; color:#131D2E; padding:18px 22px; font-size:20px; font-weight:700; line-height:1.3; }
+  .tip small { display:block; font-size:12px; letter-spacing:3px; font-weight:800; opacity:.8; margin-bottom:6px; }
+  .num { position:absolute; top:40px; left:50%; transform:translateX(-50%); width:56px; height:56px; border-radius:50%; border:2px solid #B68B48; color:#B68B48; font-weight:800; font-size:24px; display:flex; align-items:center; justify-content:center; }
+  .brand { font-size:38px; letter-spacing:-0.5px; }
+  .brand .f { font-weight:400; color:#fff; } .brand .b { font-weight:800; color:#fff; } .brand .d { color:#B68B48; font-weight:800; }
+  .bar { position:absolute; bottom:40px; left:50%; transform:translateX(-50%); width:160px; height:4px; border-radius:2px; background:#2a3953; overflow:hidden; }
+  .bar i { display:block; height:100%; background:#B68B48; width:0; }
+</style></head>
+<body><div id="stage">
+
+<!-- Scene 0: hook -->
+<div class="scene" id="s0">
+  <div class="kicker" style="top:200px">VINTERTIP</div>
+  <div class="h1" style="top:240px;font-size:58px">3 fejl du laver,<br>når du vasker<br><span class="gold">bil om vinteren</span></div>
+  <svg id="hookcar" viewBox="0 0 540 300" style="position:absolute;top:560px;left:0;width:540px;height:300px">
+    <g id="hookcarg"></g>
+  </svg>
+</div>
+
+<!-- Scene 1 -->
+<div class="scene" id="s1">
+  <div class="num">1</div>
+  <div class="h1" style="top:115px">Du glemmer<br><span class="gold">undervognen</span></div>
+  <div class="sub">Vejsalt samler sig under bilen, hvor du ikke kan se det.</div>
+  <div class="card"><svg viewBox="0 0 480 380" width="480" height="380" id="c1"></svg></div>
+  <div class="tip"><small>GØR SÅDAN</small>Skyl undervogn og hjulkasser grundigt, især efter saltede veje.</div>
+</div>
+
+<!-- Scene 2 -->
+<div class="scene" id="s2">
+  <div class="num">2</div>
+  <div class="h1" style="top:115px">Du vasker<br><span class="gold">i frostvejr</span></div>
+  <div class="sub">Vand fryser i låse, dørlister og sprækker i lakken.</div>
+  <div class="card"><svg viewBox="0 0 480 380" width="480" height="380" id="c2"></svg></div>
+  <div class="tip"><small>GØR SÅDAN</small>Vask når det er over 0 grader, og tør dørlister af bagefter.</div>
+</div>
+
+<!-- Scene 3 -->
+<div class="scene" id="s3">
+  <div class="num">3</div>
+  <div class="h1" style="top:115px">Én spand og<br><span class="gold">en svamp</span></div>
+  <div class="sub">Grus og salt fra spanden ender som ridser i lakken.</div>
+  <div class="card"><svg viewBox="0 0 480 380" width="480" height="380" id="c3"></svg></div>
+  <div class="tip"><small>GØR SÅDAN</small>Brug to spande og en vaskehandske. Eller lad en bilplejer gøre det.</div>
+</div>
+
+<!-- Scene 4: outro -->
+<div class="scene" id="s4">
+  <div class="sub" style="top:300px;font-size:22px;color:#fff;font-weight:700">Vil du hellere slippe?</div>
+  <div class="sub" style="top:340px">Find en bilplejer på Fyn, der klarer vintervasken for dig.</div>
+  <svg viewBox="0 0 100 100" style="position:absolute;top:450px;left:225px;width:90px;height:90px">
+    <circle cx="42" cy="42" r="26" fill="none" stroke="#fff" stroke-width="7"/>
+    <line x1="61" y1="61" x2="84" y2="84" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+    <polyline id="check" points="30,43 39,52 56,33" fill="none" stroke="#B68B48" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="40" stroke-dashoffset="40"/>
+  </svg>
+  <div style="position:absolute;top:570px;width:100%;text-align:center" class="brand"><span class="f">find</span><span class="b">bilplejere</span><span class="d">.dk</span></div>
+  <div class="sub" style="top:635px;font-size:16px">Link i bio</div>
+</div>
+
+<div class="bar"><i id="prog"></i></div>
+</div>
+
+<script>
+const NS = "http://www.w3.org/2000/svg";
+const DUR = 22;
+const scenes = [[0,3.2],[3.2,8.4],[8.4,13.6],[13.6,18.8],[18.8,22]];
+function clamp(x,a=0,b=1){return Math.max(a,Math.min(b,x));}
+function ease(x){x=clamp(x);return 1-Math.pow(1-x,3);}
+function el(tag, attrs, parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+
+// simple car side view
+function car(parent, x, y, s, dirt){
+  const g = el("g",{transform:`translate(${x},${y}) scale(${s})`},parent);
+  el("path",{d:"M10 70 Q12 48 40 44 L80 40 Q105 14 150 12 L215 12 Q245 14 270 40 L305 46 Q330 50 332 70 L332 82 L10 82 Z",fill:"#0e1626",stroke:"#B68B48","stroke-width":2},g);
+  el("path",{d:"M95 42 Q115 20 150 19 L178 19 L178 42 Z",fill:"#2a3953"},g);
+  el("path",{d:"M186 19 L214 19 Q240 21 258 42 L186 42 Z",fill:"#2a3953"},g);
+  el("path",{d:"M60 52 L300 54",stroke:"#3d4e6d","stroke-width":3,fill:"none"},g);
+  for(const cx of [80,262]){el("circle",{cx,cy:82,r:24,fill:"#0a0f1a",stroke:"#B68B48","stroke-width":4},g);el("circle",{cx,cy:82,r:9,fill:"#B68B48"},g);}
+  return g;
+}
+
+// Hook scene car
+car(document.getElementById("hookcarg"), 100, 120, 1.0);
+const hookSnow = el("g",{},document.getElementById("hookcarg"));
+const flakes=[];for(let i=0;i<40;i++){flakes.push({x:Math.random()*540,y:Math.random()*300,r:1+Math.random()*2.5,v:15+Math.random()*25});}
+flakes.forEach(f=>f.e=el("circle",{r:f.r,fill:"#fff",opacity:.7},hookSnow));
+
+// Scene 1: underbody with salt
+const c1=document.getElementById("c1");
+el("rect",{x:0,y:300,width:480,height:80,fill:"#101827"},c1);
+const car1=car(c1,70,170,1.0);
+const salt1=el("g",{},c1);
+const grains=[];for(let i=0;i<70;i++){grains.push({x:90+Math.random()*300,y:255+Math.random()*20,d:Math.random()});}
+grains.forEach(g=>g.e=el("rect",{x:g.x,y:g.y,width:4,height:4,fill:"#e8e2d0",opacity:0,transform:`rotate(45 ${g.x} ${g.y})`},salt1));
+const rust=el("g",{},c1);
+const rustSpots=[];for(let i=0;i<14;i++){rustSpots.push({x:100+Math.random()*280,y:250+Math.random()*8});}
+rustSpots.forEach(r=>r.e=el("circle",{cx:r.x,cy:r.y,r:0,fill:"#a0522d",opacity:.85},rust));
+const lbl1=el("text",{x:240,y:60,"text-anchor":"middle",fill:"#B68B48","font-size":22,"font-weight":800,"font-family":"Arial"},c1); lbl1.textContent="SALT + FUGT = RUST";
+
+// Scene 2: thermometer + ice
+const c2=document.getElementById("c2");
+el("rect",{x:60,y:60,width:30,height:220,rx:15,fill:"#0e1626",stroke:"#fff","stroke-width":3},c2);
+el("circle",{cx:75,cy:300,r:28,fill:"#0e1626",stroke:"#fff","stroke-width":3},c2);
+const merc=el("rect",{x:66,y:200,width:18,height:100,rx:9,fill:"#5aa9e6"},c2);
+el("circle",{cx:75,cy:300,r:20,fill:"#5aa9e6"},c2);
+const temp=el("text",{x:75,y:40,"text-anchor":"middle",fill:"#5aa9e6","font-size":30,"font-weight":800,"font-family":"Arial"},c2);
+// door with lock
+el("rect",{x:150,y:70,width:290,height:240,rx:18,fill:"#0e1626",stroke:"#B68B48","stroke-width":2},c2);
+el("rect",{x:150,y:70,width:290,height:90,rx:18,fill:"#2a3953"},c2);
+el("rect",{x:350,y:200,width:60,height:16,rx:8,fill:"#3d4e6d"},c2);
+el("circle",{cx:330,cy:208,r:9,fill:"#3d4e6d"},c2);
+const ice=el("g",{},c2);
+const icicles=[];for(let i=0;i<9;i++){const x=165+i*32;icicles.push(el("path",{d:`M${x} 310 L${x+14} 310 L${x+7} 310 Z`,fill:"#bfe3ff",opacity:.9},ice));}
+const frost=el("rect",{x:150,y:70,width:290,height:240,rx:18,fill:"#bfe3ff",opacity:0},c2);
+const lockLbl=el("text",{x:295,y:260,"text-anchor":"middle",fill:"#fff","font-size":18,"font-weight":700,"font-family":"Arial",opacity:0},c2); lockLbl.textContent="Frosset lås";
+
+// Scene 3: bucket vs paint scratches
+const c3=document.getElementById("c3");
+// paint panel
+el("rect",{x:20,y:40,width:440,height:150,rx:14,fill:"#0e1626",stroke:"#B68B48","stroke-width":2},c3);
+el("path",{d:"M40 70 Q240 50 440 70",stroke:"#3d4e6d","stroke-width":6,fill:"none",opacity:.6},c3);
+const scratches=el("g",{},c3);
+const scr=[];for(let i=0;i<12;i++){const x=60+Math.random()*340,y=80+Math.random()*90,l=40+Math.random()*70;scr.push(el("line",{x1:x,y1:y,x2:x,y2:y+ (Math.random()*10-5),stroke:"#c9d1de","stroke-width":1.5,opacity:.85,"data-l":l},scratches));}
+const sponge=el("rect",{x:0,y:90,width:70,height:44,rx:12,fill:"#f2c94c"},c3);
+// bucket(s)
+const b1=el("g",{},c3);
+el("path",{d:"M150 230 L170 350 L250 350 L270 230 Z",fill:"#2a3953",stroke:"#fff","stroke-width":3},b1);
+el("text",{x:210,y:300,"text-anchor":"middle",fill:"#fff","font-size":16,"font-weight":700,"font-family":"Arial"},b1).textContent="SÆBE";
+const b2=el("g",{opacity:0},c3);
+el("path",{d:"M290 230 L310 350 L390 350 L410 230 Z",fill:"#2a3953",stroke:"#B68B48","stroke-width":3},b2);
+el("text",{x:350,y:300,"text-anchor":"middle",fill:"#B68B48","font-size":16,"font-weight":700,"font-family":"Arial"},b2).textContent="SKYL";
+const grit=el("g",{},c3);const gr=[];for(let i=0;i<20;i++){gr.push(el("circle",{cx:175+Math.random()*70,cy:250+Math.random()*80,r:2+Math.random()*2,fill:"#8a7a5c"},grit));}
+
+function render(t){
+  scenes.forEach(([a,b],i)=>{
+    const s=document.getElementById("s"+i);
+    const fi=ease((t-a)/0.35), fo=i===scenes.length-1?1:1-ease((t-(b-0.3))/0.3);
+    const on=t>=a-0.01&&t<b+0.01;
+    s.style.opacity=on?Math.min(fi,fo):0;
+    s.style.transform=`translateY(${(1-fi)*20}px)`;
+  });
+  document.getElementById("prog").style.width=(100*clamp(t/DUR))+"%";
+  // hook
+  flakes.forEach(f=>{f.e.setAttribute("cx",(f.x+Math.sin(t*1.5+f.y)*8)%540);f.e.setAttribute("cy",(f.y+t*f.v)%300);});
+  // scene 1
+  const l1=t-3.2;
+  grains.forEach(g=>{const p=clamp((l1-0.6-g.d*1.6)/0.3);g.e.setAttribute("opacity",p);});
+  rustSpots.forEach((r,i)=>{r.e.setAttribute("r",6*ease((l1-2.6-i*0.08)/0.5));});
+  lbl1.setAttribute("opacity",ease((l1-2.4)/0.4));
+  // scene 2
+  const l2=t-8.4;const temp_v=Math.round(4-7*ease((l2-0.4)/1.6));
+  temp.textContent=(temp_v>0?"+":"")+temp_v+"°";
+  const h=100-70*ease((l2-0.4)/1.6);merc.setAttribute("y",300-h);merc.setAttribute("height",h);
+  const ip=ease((l2-1.8)/1.2);
+  icicles.forEach((e,i)=>{const x=165+i*32;const len=(20+ (i%3)*14)*ip;e.setAttribute("d",`M${x} 310 L${x+14} 310 L${x+7} ${310+len} Z`);});
+  frost.setAttribute("opacity",0.18*ip);lockLbl.setAttribute("opacity",ease((l2-2.6)/0.4));
+  // scene 3
+  const l3=t-13.6;const sp=clamp((l3-0.5)/2.4);
+  sponge.setAttribute("x",30+sp*370);sponge.setAttribute("y",90+Math.sin(sp*12)*30);
+  scr.forEach(e=>{const x1=+e.getAttribute("x1");const reveal=clamp((30+sp*370-x1)/40);const l=+e.getAttribute("data-l");e.setAttribute("x2",x1+l*reveal);e.setAttribute("opacity",reveal>0?.85:0);});
+  b2.setAttribute("opacity",ease((l3-3.2)/0.5));
+  gr.forEach((e,i)=>{const p=ease((l3-3.4-i*0.02)/0.6);e.setAttribute("transform",`translate(${140*p},${p*30})`);});
+  // outro
+  const l4=t-18.8;document.getElementById("check").setAttribute("stroke-dashoffset",40*(1-ease((l4-0.4)/0.6)));
+}
+window.render=render;render(0);
+</script></body></html>
