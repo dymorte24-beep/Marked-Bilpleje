@@ -400,8 +400,8 @@ async function loadShop(){
     infoRow('Telefon', shop.phone),
     infoRow('E-mail', shop.email),
     infoRow('Hjemmeside', websiteUrl ? `<a href="${websiteUrl}" target="_blank" rel="noopener" onclick="trackContact(${safeNameJs}, 'website')">${shop.website.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>` : ''),
-    infoRow('Instagram', shop.instagram ? `<a href="${socialUrl('instagram', shop.instagram)}" target="_blank" rel="noopener">Se profil</a>` : ''),
-    infoRow('Facebook', shop.facebook ? `<a href="${socialUrl('facebook', shop.facebook)}" target="_blank" rel="noopener">Se profil</a>` : ''),
+    infoRow('Instagram', shop.instagram ? `<a href="${socialUrl('instagram', shop.instagram)}" target="_blank" rel="noopener" onclick="trackContact(${safeNameJs}, 'instagram')">Se profil</a>` : ''),
+    infoRow('Facebook', shop.facebook ? `<a href="${socialUrl('facebook', shop.facebook)}" target="_blank" rel="noopener" onclick="trackContact(${safeNameJs}, 'facebook')">Se profil</a>` : ''),
   ].filter(Boolean).join('');
 
   const reviewsInner = hasReview ? `

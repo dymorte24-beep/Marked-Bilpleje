@@ -344,3 +344,9 @@ Inspireret af kardet.com, men med eget brand og egne tekster. Toppen er nu: Dani
 - Profilsiden: ingen "Komplet profil"-mærke eller nøgletal, ydelser som mærker, samlede åbningstider, virkende Instagram/Facebook-links.
 - **Ingen priser på sitet** (Daniels beslutning): "Fra X kr.", prislister og rabat vises ikke længere nogen steder. Profilen har i stedet en "Få en pris"-boks med kontaktknapper.
 - **Prisniveau** i stedet: `shops.price_level` (1 = kr Budget, 2 = kr kr Mellem, 3 = kr kr kr Premium), kun admin kan ændre. Sættes i admin. Claude vurderer niveauet for hver ny butik ud fra deres egne priser (tommelfingerregel: komplet ind-/udvendig klargøring af mellemstor bil <1.000 / 1.000–2.000 / >2.000 kr.).
+
+## Statistik-fane i admin (2026-11-09)
+- Admin-panelet har nu faner i toppen: "Butikker" og "📊 Statistik" (husker sidste fane; `/admin/#statistik` åbner direkte). Logik i `admin/statistik.js`. Den gamle "Statistik pr. butik"-tabel er erstattet af fanen.
+- Viser: aktive bilplejere (godkendt), profilvisninger (`profil_visninger`), kontaktklik (`butik_klik`, nu med `metode`), søgninger (ny tabel `soegninger`, logges i `filterCards`), TikTok-tal (`tiktok_dag`, `tiktok_videoer`).
+- TikTok-tabellerne fyldes af en daglig planlagt opgave, der henter fra Metricool (brand 7988347) og skriver via Supabase. SQL: `supabase/2026-11-09-statistik.sql`.
+- Instagram/Facebook-links på profilen tæller nu også som kontaktklik.
