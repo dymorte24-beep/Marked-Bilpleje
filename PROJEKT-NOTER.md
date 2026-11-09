@@ -7,7 +7,7 @@ To profilniveauer, styret af den eksisterende `tier`-kolonne: `gratis` = **basis
 - **Komplet** viser alt + "Komplet profil"-mærke + højere placering: først i standardlisten, 10 km forspring i afstandssøgning, +150 point i guiden
 - Fælles logik i `js/profil-niveau.js` (`isKomplet`, `toBasisView`), brugt af forside, byside og profilside
 - Admin: "Profilniveau"-dropdown + "Gør komplet / Gør til basis"-knap direkte i butikstabellen. Nyt felt **Hjemmeside** (`website`) i både admin og butikspanel. Butikspanelet viser niveauet og forklarer basis-begrænsningen
-- **SQL i `supabase/2026-11-09-profilniveauer.sql`** (skal køres før merge): `website`-kolonne, trigger `protect_admin_fields` så butikker ikke selv kan sætte tier/verificeret/godkendt/anmeldelsestal via API'et (det kunne de før, da UPDATE-politikken er række-baseret), og opgradering af alle nuværende butikker til komplet som gratis prøveperiode
+- **SQL i `supabase/2026-11-09-profilniveauer.sql`** (kørt 9. nov 2026): `website`-kolonne + alle 13 nuværende butikker sat til komplet som gratis prøveperiode. Butikker kan i forvejen ikke selv ændre tier/verificeret m.m. — den eksisterende trigger `protect_admin_fields` sørger for det
 
 ## 📞 "Få tilbud" erstattet af direkte kontakt — rent katalog (9. nov 2026)
 Daniel besluttede (9. nov 2026) at FindBilplejere skal være et rent katalog: kunden finder en bilplejer på område/behov og kontakter butikken direkte. Ingen "få tilbud"/lead-mellemled. Indtjening kommer fra bilplejerne (gratis basisprofil, komplet profil 299 kr/md, annoncepladser per by, videopakker) — endnu ikke bygget.
