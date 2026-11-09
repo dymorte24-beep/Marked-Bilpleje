@@ -336,3 +336,6 @@ Efter Google Ads-suspenderingen (se nedenfor) bad Daniel om et rigtigt system: e
 - Reel butiksverificering (den grønne "Verificeret"-pille er pt. kun visuel)
 - Overvej at rette selve overskriften "Book direkte" i trin 03 (brødteksten er rettet, men overskriften antyder stadig direkte booking) — Daniel valgte at lade den stå indtil videre
 - Følge op på Google Ads-performance efter et par dage/uger og justere budget/søgeord
+
+## Ny top på forsiden (9. nov 2026)
+Inspireret af kardet.com, men med eget brand og egne tekster. Toppen er nu: Daniels eget billede (sort BMW med mikrofiberklud, `hero-bil.jpg` + `hero-bil-mobil.jpg`) med mørk navy-tone, overskriften "Find en bilplejer nær dig" (guld på "nær dig"), en hvid søgeboks med guldkant og felterne By / Ydelse / Hvor (Ligegyldigt eller "Hjemme hos mig (mobil)" — filtrerer på ydelsen "Mobil bilpleje"), og fire tillidspunkter under: Lokale bilplejere, Gratis for dig, Kontakt direkte, Ingen login eller binding. Den gamle animerede "Sådan virker det"-boks i toppen er fjernet (sektionen længere nede er beholdt). "Kun virksomheder med CVR" er bevidst IKKE vist som tillidspunkt, fordi CVR endnu ikke tjekkes. Daniel bad kun om ændringer i toppen; øvrige forslag (ydelsesgitter, populære byer, udvalgte bilplejere, FAQ) venter.
