@@ -5,14 +5,15 @@
   html,body { width:540px; height:960px; overflow:hidden; background:#131D2E; font-family: "Inter","Helvetica Neue",Arial,sans-serif; color:#fff; }
   #stage { position:relative; width:540px; height:960px; background: radial-gradient(ellipse at 50% 30%, #1d2b44 0%, #131D2E 60%, #0c1320 100%); }
   .scene { position:absolute; inset:0; opacity:0; }
-  .kicker { position:absolute; top:70px; width:100%; text-align:center; font-size:13px; letter-spacing:4px; color:#B68B48; font-weight:700; }
-  .h1 { position:absolute; top:105px; width:100%; text-align:center; font-size:44px; font-weight:800; line-height:1.05; padding:0 30px; }
-  .sub { position:absolute; top:230px; width:100%; text-align:center; font-size:19px; color:#c9d1de; padding:0 50px; line-height:1.35; }
+  .kicker { position:absolute; top:70px; left:40px; right:90px; text-align:center; font-size:13px; letter-spacing:4px; color:#B68B48; font-weight:700; }
+  .h1 { position:absolute; top:105px; left:40px; right:90px; text-align:center; font-size:38px; font-weight:800; line-height:1.05; }
+  .sub { position:absolute; top:295px; left:40px; right:90px; text-align:center; font-size:17px; color:#c9d1de; line-height:1.35; }
   .gold { color:#B68B48; }
-  .card { position:absolute; left:30px; right:30px; top:330px; height:380px; border-radius:22px; background:#18243a; border:1px solid #2a3953; overflow:hidden; }
-  .tip { position:absolute; left:30px; right:30px; top:740px; border-radius:16px; background:#B68B48; color:#131D2E; padding:18px 22px; font-size:20px; font-weight:700; line-height:1.3; }
-  .tip small { display:block; font-size:12px; letter-spacing:3px; font-weight:800; opacity:.8; margin-bottom:6px; }
-  .num { position:absolute; top:40px; left:50%; transform:translateX(-50%); width:56px; height:56px; border-radius:50%; border:2px solid #B68B48; color:#B68B48; font-weight:800; font-size:24px; display:flex; align-items:center; justify-content:center; }
+  .card { position:absolute; left:40px; right:90px; top:360px; height:195px; border-radius:22px; background:#18243a; border:1px solid #2a3953; overflow:hidden; }
+  .tip { position:absolute; left:40px; right:90px; top:565px; border-radius:14px; background:#B68B48; color:#131D2E; padding:10px 16px; font-size:15px; font-weight:700; line-height:1.3; }
+  .tip small { display:block; font-size:10px; letter-spacing:3px; font-weight:800; opacity:.8; margin-bottom:3px; }
+  .card svg { width:100%; height:100%; }
+  .num { position:absolute; top:142px; left:245px; transform:translateX(-50%); width:56px; height:56px; border-radius:50%; border:2px solid #B68B48; color:#B68B48; font-weight:800; font-size:24px; display:flex; align-items:center; justify-content:center; }
   .brand { font-size:38px; letter-spacing:-0.5px; }
   .brand .f { font-weight:400; color:#fff; } .brand .b { font-weight:800; color:#fff; } .brand .d { color:#B68B48; font-weight:800; }
   .bar { position:absolute; bottom:40px; left:50%; transform:translateX(-50%); width:160px; height:4px; border-radius:2px; background:#2a3953; overflow:hidden; }
@@ -22,9 +23,9 @@
 
 <!-- Scene 0: hook -->
 <div class="scene" id="s0">
-  <div class="kicker" style="top:200px">VINTERTIP</div>
-  <div class="h1" style="top:240px;font-size:58px">3 fejl du laver,<br>når du vasker<br><span class="gold">bil om vinteren</span></div>
-  <svg id="hookcar" viewBox="0 0 540 300" style="position:absolute;top:560px;left:0;width:540px;height:300px">
+  <div class="kicker" style="top:190px">VINTERTIP</div>
+  <div class="h1" style="top:220px;font-size:46px">3 fejl du laver,<br>når du vasker<br><span class="gold">bil om vinteren</span></div>
+  <svg id="hookcar" viewBox="0 0 540 300" style="position:absolute;top:420px;left:20px;width:420px;height:233px">
     <g id="hookcarg"></g>
   </svg>
 </div>
@@ -32,7 +33,7 @@
 <!-- Scene 1 -->
 <div class="scene" id="s1">
   <div class="num">1</div>
-  <div class="h1" style="top:115px">Du glemmer<br><span class="gold">undervognen</span></div>
+  <div class="h1" style="top:205px">Du glemmer<br><span class="gold">undervognen</span></div>
   <div class="sub">Vejsalt samler sig under bilen, hvor du ikke kan se det.</div>
   <div class="card"><svg viewBox="0 0 480 380" width="480" height="380" id="c1"></svg></div>
   <div class="tip"><small>GØR SÅDAN</small>Skyl undervogn og hjulkasser grundigt, især efter saltede veje.</div>
@@ -41,7 +42,7 @@
 <!-- Scene 2 -->
 <div class="scene" id="s2">
   <div class="num">2</div>
-  <div class="h1" style="top:115px">Du vasker<br><span class="gold">i frostvejr</span></div>
+  <div class="h1" style="top:205px">Du vasker<br><span class="gold">i frostvejr</span></div>
   <div class="sub">Vand fryser i låse, dørlister og sprækker i lakken.</div>
   <div class="card"><svg viewBox="0 0 480 380" width="480" height="380" id="c2"></svg></div>
   <div class="tip"><small>GØR SÅDAN</small>Vask når det er over 0 grader, og tør dørlister af bagefter.</div>
@@ -50,7 +51,7 @@
 <!-- Scene 3 -->
 <div class="scene" id="s3">
   <div class="num">3</div>
-  <div class="h1" style="top:115px">Én spand og<br><span class="gold">en svamp</span></div>
+  <div class="h1" style="top:205px">Én spand og<br><span class="gold">en svamp</span></div>
   <div class="sub">Grus og salt fra spanden ender som ridser i lakken.</div>
   <div class="card"><svg viewBox="0 0 480 380" width="480" height="380" id="c3"></svg></div>
   <div class="tip"><small>GØR SÅDAN</small>Brug to spande og en vaskehandske. Eller lad en bilplejer gøre det.</div>
@@ -58,15 +59,15 @@
 
 <!-- Scene 4: outro -->
 <div class="scene" id="s4">
-  <div class="sub" style="top:300px;font-size:22px;color:#fff;font-weight:700">Vil du hellere slippe?</div>
-  <div class="sub" style="top:340px">Find en bilplejer på Fyn, der klarer vintervasken for dig.</div>
-  <svg viewBox="0 0 100 100" style="position:absolute;top:450px;left:225px;width:90px;height:90px">
+  <div class="sub" style="top:250px;font-size:22px;color:#fff;font-weight:700">Vil du hellere slippe?</div>
+  <div class="sub" style="top:290px">Find en bilplejer på Fyn, der klarer vintervasken for dig.</div>
+  <svg viewBox="0 0 100 100" style="position:absolute;top:390px;left:200px;width:90px;height:90px">
     <circle cx="42" cy="42" r="26" fill="none" stroke="#fff" stroke-width="7"/>
     <line x1="61" y1="61" x2="84" y2="84" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
     <polyline id="check" points="30,43 39,52 56,33" fill="none" stroke="#B68B48" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="40" stroke-dashoffset="40"/>
   </svg>
-  <div style="position:absolute;top:570px;width:100%;text-align:center" class="brand"><span class="f">find</span><span class="b">bilplejere</span><span class="d">.dk</span></div>
-  <div class="sub" style="top:635px;font-size:16px">Link i bio</div>
+  <div style="position:absolute;top:500px;left:40px;right:90px;text-align:center" class="brand"><span class="f">find</span><span class="b">bilplejere</span><span class="d">.dk</span></div>
+  <div class="sub" style="top:560px;font-size:16px">Link i bio</div>
 </div>
 
 <div class="bar"><i id="prog"></i></div>

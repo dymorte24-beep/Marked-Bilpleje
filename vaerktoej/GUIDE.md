@@ -17,7 +17,10 @@ Brand: navy #131D2E, guld #B68B48, hvid. Wordmark: "find" (normal) + "bilplejere
 - 1080x1920 (HTML 540x960 renderet med deviceScaleFactor 2), 30 fps, 18-25 sek.
 - Animeret illustration (SVG/CSS) og/eller ægte fotos fra Unsplash (se nedenfor). Ingen genkendelige personer, ingen varemærker/logoer/nummerplader.
 - Struktur: krog (0-3 s, stor tekst) -> 3-4 korte scener -> outro med wordmark og "Link i bio".
-- Hold tekst væk fra nederste 15 % og højre kant (TikToks knapper).
+- SIKKER ZONE (Daniel 2026-11-10: tekst blev skjult af TikToks søgefelt og knapper). I 540x960-koordinater skal al tekst, tal,
+  labels og vigtige ting ligge inden for x 40-450 og y 150-640. Brug left:40px; right:90px i stedet for width:100%, og centrér
+  ting omkring x=245 (ikke 270). Top (y<140) dækkes af søgefeltet, bund (y>650) af navn/tekst, højre (x>450) af like/kommentar.
+  Tjek ALTID: bash vaerktoej/tjek-safezone.sh video.mp4 ark.jpg og se på arket: intet vigtigt må krydse de røde linjer.
 - Skabeloner: `eksempel-polering-forklaret.html` (forklarende tværsnit, foretrukket stil), `eksempel-vinterfejl.html` (kun grafik) og `eksempel-med-fotos.html` (Unsplash-fotos, læg fotos som f1.jpg.. ved siden af html-filen). window.render(t) tegner frame ved tid t.
 
 ## Ægte fotos (Unsplash-connector, tilføjet 2026-11-10)
