@@ -9,7 +9,7 @@ Videoerne skal være storytelling/undervisning, ikke reklame. Seeren skal lære 
   hvorfor vaskehal-børster laver ridser, før/efter forklaret.
 - Vis det visuelt: tværsnit, diagrammer, lys der reflekteres, trin-for-trin med nummererede scener. Se `eksempel-polering-forklaret.html`.
 - Byg det som en lille historie: spørgsmål/problem i krogen -> forklaring i 3-5 trin -> "aha"-afslutning.
-- Outro blødt: "Følg med for flere bilpleje-forklaringer" + lille logo. Højst ca. hver 3. video må nævne at man kan finde en bilplejer på findbilplejere.dk.
+- Outro (ALTID, godkendt af Daniel): "Få en professionel bilplejer til at gøre arbejdet ordentligt" -> "Find din bilplejer hos" -> findbilplejere.dk-logo -> "Link i bio"-knap. Ca. 4 sek. Resten af videoen er ren forklaring uden salg.
 - Opslagsteksten: et spørgsmål til seeren (fx "Vidste du det?") i stedet for salg.
 Brand: navy #131D2E, guld #B68B48, hvid. Wordmark: "find" (normal) + "bilplejere" (fed) + ".dk" (guld). Ikon: lup med guld flueben.
 
@@ -54,6 +54,7 @@ Alt er deterministisk i window.render(t) (ingen CSS-transitions/Math.random uden
 - Metricool createScheduledPost, blogId 7988347, network tiktok, timezone Europe/Copenhagen,
   tiktokData.title påkrævet, isAigc true, commercialContentOwnBrand true.
 - Faste dage: mandag, onsdag, lørdag kl. 19:00.
+- ALLE 3 videoer hver uge skal være forklarende i stil med `eksempel-polering-forklaret.html` (tværsnit/diagrammer/trin), evt. kombineret med Unsplash-fotos i krogen. Alt kører automatisk uden Daniels godkendelse.
 
 ## Emneideer (variér, gentag ikke emner fra `videoer/`)
 Lakkens lag og polering forklaret, vask med minimale ridser (tospandsmetoden), vinterens bedste vask, coating-myter, vinterpleje, vejsalt, fælgrens, indvendig rens (hundehår, børnebil), lakrens/polering, PPF og solfilm forklaret,
