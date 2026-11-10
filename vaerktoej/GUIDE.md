@@ -24,6 +24,16 @@ Brug fotos i mindst 2 af ugens 3 videoer (og læg mærke til i LAERING.md om fot
 
 Canva-connectoren er forbundet, men på gratis-planen er AI-billeder og AI-video ikke tilgængelige. Brug den ikke i rutinen, før Daniel evt. opgraderer.
 
+## Animationer (brug dem, se `eksempel-med-fotos.html`)
+Alt er deterministisk i window.render(t) (ingen CSS-transitions/Math.random uden seed), ellers hakker renderingen.
+- Overskrift ord for ord med "pop" (data-words, "/" = linjeskift).
+- Guld + navy wipe-overgang mellem scener.
+- Ken Burns: langsom zoom + panorering på fotos.
+- Lysstribe ("shine") der glider hen over lakken.
+- Tal-badge der drejer ind og pulserer; tip-boks der "tegnes" ind fra venstre.
+- Emne-effekter: skumbobler (vask), gnister (polering) – find på nye der passer til emnet (sne, vanddråber, støv).
+- Outro: luppen tegnes streg for streg, logo glider op, "Link i bio"-knap popper og pulserer.
+
 ## Rendering
     node vaerktoej/render.js <fil.html> frames <sekunder> 30
     ffmpeg -framerate 30 -i frames/f%05d.jpg -c:v libx264 -pix_fmt yuv420p -crf 20 -movflags +faststart videoer/<dato>-<emne>.mp4

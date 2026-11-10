@@ -1,49 +1,81 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"><style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:540px;height:960px;overflow:hidden;background:#131D2E;font-family:"Inter","Helvetica Neue",Arial,sans-serif;color:#fff}
-.sc{position:absolute;inset:0;opacity:0;overflow:hidden}
-.bg{position:absolute;inset:0;background-size:cover;background-position:center;transform-origin:50% 40%}
-.ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(19,29,46,.92) 0%,rgba(19,29,46,.55) 38%,rgba(19,29,46,.35) 55%,rgba(19,29,46,.9) 100%)}
-.k{position:absolute;top:92px;width:100%;text-align:center;font-size:14px;letter-spacing:5px;color:#B68B48;font-weight:800}
-.h{position:absolute;top:125px;width:100%;text-align:center;font-size:46px;font-weight:800;line-height:1.06;padding:0 34px;text-shadow:0 2px 18px rgba(0,0,0,.5)}
+.sc{position:absolute;inset:0;overflow:hidden;visibility:hidden}
+.bg{position:absolute;inset:-4%;background-size:cover;background-position:center;transform-origin:50% 40%}
+.ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(19,29,46,.92) 0%,rgba(19,29,46,.5) 38%,rgba(19,29,46,.3) 55%,rgba(19,29,46,.9) 100%)}
+.shine{position:absolute;top:-20%;bottom:-20%;width:160px;background:linear-gradient(90deg,transparent,rgba(255,240,210,.28),transparent);transform:skewX(-18deg);mix-blend-mode:screen}
+.k{position:absolute;width:100%;text-align:center;font-size:14px;letter-spacing:5px;color:#B68B48;font-weight:800}
+.h{position:absolute;top:135px;width:100%;text-align:center;font-size:46px;font-weight:800;line-height:1.08;padding:0 34px;text-shadow:0 2px 18px rgba(0,0,0,.55)}
+.w{display:inline-block;will-change:transform}
 .g{color:#B68B48}
-.num{position:absolute;top:60px;left:50%;margin-left:-30px;width:60px;height:60px;border-radius:50%;background:#B68B48;color:#131D2E;font-weight:900;font-size:28px;display:flex;align-items:center;justify-content:center}
-.tip{position:absolute;left:34px;right:70px;top:640px;border-left:4px solid #B68B48;background:rgba(19,29,46,.82);padding:16px 20px;font-size:21px;font-weight:600;line-height:1.32;border-radius:0 14px 14px 0}
-.cr{position:absolute;left:34px;bottom:120px;font-size:10px;color:rgba(255,255,255,.55);letter-spacing:.5px}
-.brand{font-size:40px;letter-spacing:-.5px}.brand .f{font-weight:400}.brand .b{font-weight:800}.brand .d{color:#B68B48;font-weight:800}
-.bar{position:absolute;top:30px;left:34px;right:34px;height:4px;border-radius:2px;background:rgba(255,255,255,.15);overflow:hidden}.bar i{display:block;height:100%;background:#B68B48;width:0}
+.num{position:absolute;top:62px;left:50%;margin-left:-30px;width:60px;height:60px;border-radius:50%;background:#B68B48;color:#131D2E;font-weight:900;font-size:28px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 0 rgba(182,139,72,.6)}
+.tip{position:absolute;left:34px;right:70px;top:640px;border-left:4px solid #B68B48;background:rgba(19,29,46,.84);padding:16px 20px;font-size:21px;font-weight:600;line-height:1.32;border-radius:0 14px 14px 0;clip-path:inset(0 100% 0 0)}
+.cr{position:absolute;left:34px;bottom:120px;font-size:10px;color:rgba(255,255,255,.55)}
+.wipe{position:absolute;inset:0;background:#B68B48;transform:translateX(-101%);z-index:20}
+.wipe2{position:absolute;inset:0;background:#131D2E;transform:translateX(-101%);z-index:21}
+.brand{font-size:40px;letter-spacing:-.5px;white-space:nowrap}.brand .f{font-weight:400}.brand .b{font-weight:800}.brand .d{color:#B68B48;font-weight:800}
+.bar{position:absolute;top:30px;left:34px;right:34px;height:4px;border-radius:2px;background:rgba(255,255,255,.15);overflow:hidden;z-index:30}.bar i{display:block;height:100%;background:#B68B48;width:0}
+.bub{position:absolute;border-radius:50%;border:1.5px solid rgba(255,255,255,.7);background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.55),rgba(255,255,255,.05) 60%)}
+.spark{position:absolute;width:34px;height:34px;filter:drop-shadow(0 0 6px #fff)}
+.lens{position:absolute;left:50%;top:380px;margin-left:-55px;width:110px;height:110px}
+.btn{position:absolute;top:600px;left:50%;background:#B68B48;color:#131D2E;font-weight:800;font-size:22px;padding:14px 34px;border-radius:40px;white-space:nowrap}
 </style></head><body>
-<div class="sc" id="s0"><div class="bg" style="background-image:url(f4.jpg)"></div><div class="ov"></div>
- <div class="k" style="top:250px">BILPLEJE-HEMMELIGHEDER</div>
- <div class="h" style="top:290px;font-size:54px">Derfor skinner<br>bilen mere hos<br><span class="g">en bilplejer</span></div>
+<div class="sc" id="s0"><div class="bg" style="background-image:url(f4.jpg)"></div><div class="ov"></div><div class="shine"></div>
+ <div class="k" style="top:255px">BILPLEJE-HEMMELIGHEDER</div>
+ <div class="h" style="top:290px;font-size:54px" data-words>Derfor skinner / bilen mere hos / <span class="g">en bilplejer</span></div>
  <div class="cr">Foto: Ville Kaisla / Unsplash</div></div>
-<div class="sc" id="s1"><div class="bg" style="background-image:url(f1.jpg)"></div><div class="ov"></div>
- <div class="num">1</div><div class="h">Skum <span class="g">før</span><br>svamp</div>
+<div class="sc" id="s1"><div class="bg" style="background-image:url(f1.jpg)"></div><div class="ov"></div><div class="fx"></div>
+ <div class="num">1</div><div class="h" data-words>Skum <span class="g">før</span> / svamp</div>
  <div class="tip">Skummet løsner snavset, før noget rører lakken. Det betyder færre ridser.</div>
  <div class="cr">Foto: Willian Cittadin / Unsplash</div></div>
 <div class="sc" id="s2"><div class="bg" style="background-image:url(f2.jpg)"></div><div class="ov"></div>
- <div class="num">2</div><div class="h">Fælgene får<br><span class="g">egen børste</span></div>
+ <div class="num">2</div><div class="h" data-words>Fælgene får / <span class="g">egen børste</span></div>
  <div class="tip">Bremsestøv er skarpt som sandpapir. Det må aldrig komme over på lakken.</div>
  <div class="cr">Foto: Zac Nielson / Unsplash</div></div>
-<div class="sc" id="s3"><div class="bg" style="background-image:url(f3.jpg)"></div><div class="ov"></div>
- <div class="num">3</div><div class="h">Maskin-<br><span class="g">polering</span></div>
+<div class="sc" id="s3"><div class="bg" style="background-image:url(f3.jpg)"></div><div class="ov"></div><div class="shine"></div><div class="fx"></div>
+ <div class="num">3</div><div class="h" data-words>Maskin- / <span class="g">polering</span></div>
  <div class="tip">Fjerner de fine ridser og "spindelvæv" i lakken, som ingen vask kan fjerne.</div>
  <div class="cr">Foto: Neelabh Raj / Unsplash</div></div>
-<div class="sc" id="s4"><div class="bg" style="background-image:url(f4.jpg)"></div><div class="ov" style="background:rgba(19,29,46,.82)"></div>
- <div class="h" style="top:300px;font-size:40px">Find en bilplejer<br><span class="g">tæt på dig på Fyn</span></div>
- <div style="position:absolute;top:470px;width:100%;text-align:center" class="brand"><span class="f">find</span><span class="b">bilplejere</span><span class="d">.dk</span></div>
- <div style="position:absolute;top:560px;left:50%;transform:translateX(-50%);background:#B68B48;color:#131D2E;font-weight:800;font-size:22px;padding:14px 34px;border-radius:40px">Link i bio</div>
+<div class="sc" id="s4"><div class="bg" style="background-image:url(f4.jpg)"></div><div class="ov" style="background:rgba(19,29,46,.85)"></div>
+ <div class="h" style="top:190px;font-size:40px" data-words>Find en bilplejer / <span class="g">tæt på dig på Fyn</span></div>
+ <svg class="lens" viewBox="0 0 110 110"><circle id="lc" cx="46" cy="46" r="34" fill="none" stroke="#fff" stroke-width="8" stroke-dasharray="214" stroke-dashoffset="214"/><line id="ll" x1="71" y1="71" x2="100" y2="100" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-dasharray="42" stroke-dashoffset="42"/><path id="lk" d="M31 47 L43 59 L63 36" fill="none" stroke="#B68B48" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="50" stroke-dashoffset="50"/></svg>
+ <div style="position:absolute;top:520px;width:100%;text-align:center;overflow:hidden;height:52px"><div class="brand" id="br"><span class="f">find</span><span class="b">bilplejere</span><span class="d">.dk</span></div></div>
+ <div class="btn" id="btn">Link i bio 👆</div>
  <div class="cr">Foto: Ville Kaisla / Unsplash</div></div>
+<div class="wipe"></div><div class="wipe2"></div>
 <div class="bar"><i id="bi"></i></div>
 <script>
-const S=[[0,3.6],[3.6,8.6],[8.6,13.6],[13.6,18.6],[18.6,22]],D=22;
-const ease=x=>x<0?0:x>1?1:1-Math.pow(1-x,3);
-window.render=t=>{S.forEach(([a,b],i)=>{const el=document.getElementById('s'+i);
- let o=Math.min(ease((t-a)/.35),i==S.length-1?1:ease((b-t)/.35));if(i==0&&t<a+.01)o=1;el.style.opacity=t>=a-.01&&t<=b+.01?o:0;
- const p=(t-a)/(b-a);el.querySelector('.bg').style.transform=`scale(${1+0.12*p})`;
- const h=el.querySelector('.h');if(h){const e=ease((t-a-.1)/.5);h.style.transform=`translateY(${(1-e)*30}px)`;h.style.opacity=e;}
- const tp=el.querySelector('.tip');if(tp){const e=ease((t-a-.7)/.5);tp.style.transform=`translateX(${(1-e)*-60}px)`;tp.style.opacity=e;}
- const n=el.querySelector('.num');if(n){const e=ease((t-a)/.4);n.style.transform=`scale(${e})`;}
-});document.getElementById('bi').style.width=(t/D*100)+'%';};
+const S=[[0,3.6],[3.6,8.6],[8.6,13.6],[13.6,18.6],[18.6,23]],D=23;
+const cl=x=>x<0?0:x>1?1:x, eo=x=>1-Math.pow(1-cl(x),3), eb=x=>{x=cl(x);const c=1.70158;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)}, eio=x=>{x=cl(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2};
+// split words
+document.querySelectorAll('[data-words]').forEach(h=>{const out=[];h.childNodes.forEach(n=>{const txt=n.textContent,cls=n.nodeType==1?n.className:'';txt.split(/\s+/).filter(Boolean).forEach(w=>out.push(w=='/'?'<br>':`<span class="w ${cls}">${w}</span>`))});h.innerHTML=out.join(' ').replace(/ <br> /g,'<br>')});
+// seeded random
+let sd=7;const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;
+// bubbles in s1
+const fx1=document.querySelector('#s1 .fx');const bubs=[];for(let i=0;i<22;i++){const b=document.createElement('div');b.className='bub';const r=8+rnd()*26;b.style.width=b.style.height=r+'px';fx1.appendChild(b);bubs.push({el:b,x:rnd()*540,sp:40+rnd()*90,ph:rnd()*6,d:rnd()*1.5,r})}
+// sparkles in s3
+const fx3=document.querySelector('#s3 .fx');const sps=[];for(let i=0;i<7;i++){const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('viewBox','0 0 20 20');s.setAttribute('class','spark');s.innerHTML='<path d="M10 0 L12 8 L20 10 L12 12 L10 20 L8 12 L0 10 L8 8Z" fill="#fff"/>';fx3.appendChild(s);sps.push({el:s,x:60+rnd()*420,y:330+rnd()*260,d:1+rnd()*3.5})}
+window.render=t=>{
+ S.forEach(([a,b],i)=>{const el=document.getElementById('s'+i),on=t>=a&&t<b+ (i==S.length-1?1:0);el.style.visibility=on?'visible':'hidden';if(!on)return;
+  const lt=t-a,p=lt/(b-a);
+  el.querySelector('.bg').style.transform=`scale(${1.02+0.12*p}) translateX(${(i%2?-1:1)*12*p}px)`;
+  el.querySelectorAll('.w').forEach((w,j)=>{const e=eb((lt-.15-j*.09)/.45);w.style.opacity=cl((lt-.15-j*.09)/.2);w.style.transform=`translateY(${(1-e)*40}px) scale(${.8+.2*e})`});
+  const n=el.querySelector('.num');if(n){const e=eb(lt/.45);n.style.transform=`scale(${e}) rotate(${(1-e)*-90}deg)`;const pr=((lt-.3)%1.4)/1.4;n.style.boxShadow=lt>.3?`0 0 0 ${pr*22}px rgba(182,139,72,${.5*(1-pr)})`:'none'}
+  const tp=el.querySelector('.tip');if(tp){const e=eio((lt-.9)/.6);tp.style.clipPath=`inset(0 ${100-100*e}% 0 0)`}
+  const sh=el.querySelector('.shine');if(sh){const q=((lt-.4)/1.6);sh.style.left=(-200+q*900)+'px';sh.style.opacity=q>0&&q<1?1:0}
+ });
+ // bubbles
+ if(t>=S[1][0]&&t<S[1][1]){const lt=t-S[1][0];bubs.forEach(b=>{const l=lt-b.d;const y=960-(l*b.sp)-0;b.el.style.opacity=l>0?Math.min(1,l*2)*.9:0;b.el.style.transform=`translate(${b.x+Math.sin(l*2+b.ph)*14}px,${y}px)`})}
+ if(t>=S[3][0]&&t<S[3][1]){const lt=t-S[3][0];sps.forEach(s=>{const l=(lt-s.d)/.7;const e=l<0||l>1?0:Math.sin(l*Math.PI);s.el.style.transform=`translate(${s.x}px,${s.y}px) scale(${e*1.4}) rotate(${l*90}deg)`;s.el.style.opacity=e})}
+ // outro
+ if(t>=S[4][0]){const lt=t-S[4][0];[['lc',214,.5],['ll',42,1.1],['lk',50,1.35]].forEach(([id,L,d])=>document.getElementById(id).style.strokeDashoffset=L*(1-eio((lt-d)/.5)));
+  const br=document.getElementById('br');br.style.transform=`translateY(${(1-eo((lt-1.7)/.5))*60}px)`;
+  const bt=document.getElementById('btn');const e=eb((lt-2.2)/.5);const pulse=lt>2.8?1+.05*Math.sin((lt-2.8)*6):1;bt.style.transform=`translateX(-50%) scale(${e*pulse})`}
+ // wipe transitions
+ let w1=-101,w2=-101;S.slice(1).forEach(([a])=>{const q=(t-(a-.3))/.6;if(q>0&&q<1){w1=-101+202*eio(q);w2=-101+202*eio((q-.12)/.88)}});
+ document.querySelector('.wipe').style.transform=`translateX(${w1}%)`;document.querySelector('.wipe2').style.transform=`translateX(${Math.min(w2,w1)}%)`;
+ document.getElementById('bi').style.width=(t/D*100)+'%';
+};
 window.render(0);
 </script></body></html>
