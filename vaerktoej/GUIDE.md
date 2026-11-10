@@ -46,13 +46,18 @@ Alt er deterministisk i window.render(t) (ingen CSS-transitions/Math.random uden
 
 ## Rendering
     node vaerktoej/render.js <fil.html> frames <sekunder> 30
-    ffmpeg -framerate 30 -i frames/f%05d.jpg -c:v libx264 -pix_fmt yuv420p -crf 20 -movflags +faststart videoer/<dato>-<emne>.mp4
+    ffmpeg -framerate 30 -i frames/f%05d.jpg -c:v libx264 -pix_fmt yuv420p -crf 20 -movflags +faststart /tmp/stum.mp4
+    # LYD ER PÅKRÆVET (Daniel 2026-11-10: videoer uden lyd duer ikke på TikTok). Eget syntetiseret lydspor = ingen rettighedsproblemer.
+    # Sæt cues efter din egen tidslinje: whoosh ved sceneskift, pop når trin/tal dukker op, chime når logoet vises. Skift --seed hver video.
+    python3 vaerktoej/lyd.py <sekunder> /tmp/lyd.wav --whoosh 3.5,8.6 --pop 3.6,7.8 --chime 25.8 --seed <1-99>
+    ffmpeg -i /tmp/stum.mp4 -i /tmp/lyd.wav -c:v copy -c:a aac -b:a 160k -shortest -movflags +faststart videoer/<dato>-<emne>.mp4
+    # Tjek: ffprobe skal vise både en video- og en audio-stream.
 
 ## Udgivelse
 - Commit mp4 til grenen `tiktok-videoer` under `videoer/`, push.
 - URL: https://raw.githubusercontent.com/dymorte24-beep/marked-bilpleje/tiktok-videoer/videoer/<fil>.mp4
 - Metricool createScheduledPost, blogId 7988347, network tiktok, timezone Europe/Copenhagen,
-  tiktokData.title påkrævet, isAigc true, commercialContentOwnBrand true.
+  tiktokData.title påkrævet, isAigc true, commercialContentOwnBrand true. (autoAddMusic virker kun på foto-opslag, så lyden skal ligge i mp4'en.)
 - Faste dage: mandag, onsdag, lørdag kl. 19:00.
 - ALLE 3 videoer hver uge skal være forklarende i stil med `eksempel-polering-forklaret.html` (tværsnit/diagrammer/trin), evt. kombineret med Unsplash-fotos i krogen. Alt kører automatisk uden Daniels godkendelse.
 
