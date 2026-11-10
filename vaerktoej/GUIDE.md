@@ -5,10 +5,24 @@ Brand: navy #131D2E, guld #B68B48, hvid. Wordmark: "find" (normal) + "bilplejere
 
 ## Format
 - 1080x1920 (HTML 540x960 renderet med deviceScaleFactor 2), 30 fps, 18-25 sek.
-- Animeret illustration (SVG/CSS), ingen fotos af rigtige personer, ingen varemærker.
+- Animeret illustration (SVG/CSS) og/eller ægte fotos fra Unsplash (se nedenfor). Ingen genkendelige personer, ingen varemærker/logoer/nummerplader.
 - Struktur: krog (0-3 s, stor tekst) -> 3-4 korte scener -> outro med wordmark og "Link i bio".
 - Hold tekst væk fra nederste 15 % og højre kant (TikToks knapper).
 - Skabelon: `eksempel-vinterfejl.html` (window.render(t) tegner frame ved tid t).
+
+## Ægte fotos (Unsplash-connector, tilføjet 2026-11-10)
+Brug fotos i mindst 2 af ugens 3 videoer (og læg mærke til i LAERING.md om foto-videoer klarer sig bedre).
+1. `mcp__Unsplash__search_photos` med orientation `portrait` og korte engelske søgeord, ét begreb pr. søgning
+   (fx "car detailing", "car polish", "car wash foam", "car interior cleaning", "wheel cleaning", "winter car snow").
+2. Vælg 2-4 fotos pr. video uden tydelige bilmærke-logoer, nummerplader eller genkendelige ansigter.
+3. Hent med `mcp__Unsplash__download_asset` (brug den URL den giver, ikke `urls` fra søgningen), gem som
+   `videoer/fotos/<dato>-<emne>-<n>.jpg`, skalér: `ffmpeg -i in.jpg -vf "scale=1080:-2" -q:v 4 ud.jpg`.
+4. I HTML: foto som fuldskærms-baggrund med langsom zoom (Ken Burns, fx scale 1.0 -> 1.12 over scenen), mørk
+   navy-gradient over (#131D2E, 60-80 % opacitet), så hvid/guld tekst altid kan læses. Skift foto mellem scener.
+5. Lille linje nederst i scenen: "Foto: <fotografens navn> / Unsplash".
+6. Fejler Unsplash (mangler adgang eller bekræftet e-mail), så lav videoerne uden fotos og skriv det i opsummeringen til Daniel.
+
+Canva-connectoren er forbundet, men på gratis-planen er AI-billeder og AI-video ikke tilgængelige. Brug den ikke i rutinen, før Daniel evt. opgraderer.
 
 ## Rendering
     node vaerktoej/render.js <fil.html> frames <sekunder> 30
