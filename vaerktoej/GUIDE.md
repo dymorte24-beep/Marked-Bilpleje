@@ -1,6 +1,16 @@
 # Sådan laves ugens TikTok-videoer (til Claude-rutinen)
 
 Målgruppe: bilejere på Fyn (og bilplejere). Sprog: dansk. Tone: energisk, sjov, konkret.
+
+## VIGTIGST: forklar og fortæl, sælg ikke (Daniel, 2026-11-10)
+Videoerne skal være storytelling/undervisning, ikke reklame. Seeren skal lære noget og forstå HVAD der sker.
+- Gode typer: "Sådan vasker du bilen bedst om vinteren", "Vask bilen med minimale ridser" (trin for trin),
+  "Sådan ser det ud i lakken, når man polerer" (visuelt tværsnit), hvad vejsalt gør ved bilen, hvordan coating virker på mikroniveau,
+  hvorfor vaskehal-børster laver ridser, før/efter forklaret.
+- Vis det visuelt: tværsnit, diagrammer, lys der reflekteres, trin-for-trin med nummererede scener. Se `eksempel-polering-forklaret.html`.
+- Byg det som en lille historie: spørgsmål/problem i krogen -> forklaring i 3-5 trin -> "aha"-afslutning.
+- Outro blødt: "Følg med for flere bilpleje-forklaringer" + lille logo. Højst ca. hver 3. video må nævne at man kan finde en bilplejer på findbilplejere.dk.
+- Opslagsteksten: et spørgsmål til seeren (fx "Vidste du det?") i stedet for salg.
 Brand: navy #131D2E, guld #B68B48, hvid. Wordmark: "find" (normal) + "bilplejere" (fed) + ".dk" (guld). Ikon: lup med guld flueben.
 
 ## Format
@@ -8,7 +18,7 @@ Brand: navy #131D2E, guld #B68B48, hvid. Wordmark: "find" (normal) + "bilplejere
 - Animeret illustration (SVG/CSS) og/eller ægte fotos fra Unsplash (se nedenfor). Ingen genkendelige personer, ingen varemærker/logoer/nummerplader.
 - Struktur: krog (0-3 s, stor tekst) -> 3-4 korte scener -> outro med wordmark og "Link i bio".
 - Hold tekst væk fra nederste 15 % og højre kant (TikToks knapper).
-- Skabeloner: `eksempel-vinterfejl.html` (kun grafik) og `eksempel-med-fotos.html` (Unsplash-fotos, læg fotos som f1.jpg.. ved siden af html-filen). window.render(t) tegner frame ved tid t.
+- Skabeloner: `eksempel-polering-forklaret.html` (forklarende tværsnit, foretrukket stil), `eksempel-vinterfejl.html` (kun grafik) og `eksempel-med-fotos.html` (Unsplash-fotos, læg fotos som f1.jpg.. ved siden af html-filen). window.render(t) tegner frame ved tid t.
 
 ## Ægte fotos (Unsplash-connector, tilføjet 2026-11-10)
 Brug fotos i mindst 2 af ugens 3 videoer (og læg mærke til i LAERING.md om foto-videoer klarer sig bedre).
@@ -46,6 +56,6 @@ Alt er deterministisk i window.render(t) (ingen CSS-transitions/Math.random uden
 - Faste dage: mandag, onsdag, lørdag kl. 19:00.
 
 ## Emneideer (variér, gentag ikke emner fra `videoer/`)
-Coating-myter, vinterpleje, vejsalt, fælgrens, indvendig rens (hundehår, børnebil), lakrens/polering, PPF og solfilm forklaret,
+Lakkens lag og polering forklaret, vask med minimale ridser (tospandsmetoden), vinterens bedste vask, coating-myter, vinterpleje, vejsalt, fælgrens, indvendig rens (hundehår, børnebil), lakrens/polering, PPF og solfilm forklaret,
 hvad koster bilpleje, "før/efter" animeret, sådan finder du en bilplejer på findbilplejere.dk, sæsontips (jul, forår, pollen), quiz "rigtigt eller forkert".
 Ingen påstande om konkrete bilplejere eller priser, der ikke er sande. Coating m.m. beskrives ærligt (ikke "skudsikker").

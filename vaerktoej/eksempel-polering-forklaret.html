@@ -1,0 +1,99 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:540px;height:960px;overflow:hidden;background:#131D2E;font-family:"Inter","Helvetica Neue",Arial,sans-serif;color:#fff}
+#hook{position:absolute;inset:0;overflow:hidden}
+#hook .bg{position:absolute;inset:-4%;background:url(f3.jpg) center/cover}
+#hook .ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(19,29,46,.9),rgba(19,29,46,.45) 45%,rgba(19,29,46,.92))}
+.h{position:absolute;width:100%;text-align:center;font-weight:800;line-height:1.08;padding:0 30px;text-shadow:0 2px 18px rgba(0,0,0,.5)}
+.w{display:inline-block}
+.g{color:#B68B48}
+.cap{position:absolute;left:30px;right:30px;top:120px;text-align:center}
+.cap .t{font-size:34px;font-weight:800;line-height:1.1}
+.cap .s{margin-top:12px;font-size:19px;color:#c9d1de;line-height:1.35}
+.step{position:absolute;top:62px;left:0;right:0;text-align:center;font-size:13px;letter-spacing:5px;font-weight:800;color:#B68B48}
+#svg{position:absolute;left:0;top:250px;width:540px;height:470px}
+.bar{position:absolute;top:30px;left:34px;right:34px;height:4px;border-radius:2px;background:rgba(255,255,255,.15);overflow:hidden;z-index:30}.bar i{display:block;height:100%;background:#B68B48;width:0}
+.cr{position:absolute;left:34px;bottom:120px;font-size:10px;color:rgba(255,255,255,.55)}
+.lbl{font:600 13px Inter,Arial;fill:#c9d1de}
+#out{position:absolute;inset:0;background:#131D2E}
+.brand{font-size:30px;white-space:nowrap}.brand .f{font-weight:400}.brand .b{font-weight:800}.brand .d{color:#B68B48;font-weight:800}
+</style></head><body>
+<div id="main">
+ <div class="step" id="step"></div>
+ <div class="cap"><div class="t" id="ct"></div><div class="s" id="cs"></div></div>
+ <svg id="svg" viewBox="0 0 540 470">
+  <defs>
+   <linearGradient id="gk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe3ff" stop-opacity=".55"/><stop offset="1" stop-color="#9fc0e8" stop-opacity=".35"/></linearGradient>
+   <linearGradient id="gf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b3262e"/><stop offset="1" stop-color="#7a1419"/></linearGradient>
+   <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#ffe7a8"/></marker>
+  </defs>
+  <g id="layers">
+   <rect x="0" y="330" width="540" height="140" fill="#6c7380"/>
+   <rect x="0" y="290" width="540" height="40" fill="#8f8a7c"/>
+   <rect x="0" y="230" width="540" height="60" fill="url(#gf)"/>
+   <path id="clear" fill="url(#gk)" stroke="#e8f2ff" stroke-width="2"/>
+   <text class="lbl" x="530" y="455" text-anchor="end">Metal</text>
+   <text class="lbl" x="530" y="315" text-anchor="end" fill="#222">Grunder</text>
+   <text class="lbl" x="530" y="270" text-anchor="end">Farvelak</text>
+   <text class="lbl" x="530" y="212" text-anchor="end" fill="#131D2E" id="lk">Klarlak</text>
+  </g>
+  <g id="rays"></g>
+  <g id="pad"><rect x="-60" y="0" width="120" height="34" rx="8" fill="#f1f1f1"/><rect x="-40" y="-40" width="80" height="40" rx="6" fill="#c0392b"/><rect x="-12" y="-80" width="24" height="42" fill="#333"/></g>
+  <g id="mic" opacity="0"><line x1="20" y1="120" x2="20" y2="225" stroke="#B68B48" stroke-width="2"/><line x1="12" y1="120" x2="28" y2="120" stroke="#B68B48" stroke-width="2"/><line x1="12" y1="225" x2="28" y2="225" stroke="#B68B48" stroke-width="2"/><text x="34" y="178" font="700 14px Inter" fill="#B68B48" style="font:700 14px Inter,Arial">ca. 0,04 mm</text></g>
+ </svg>
+</div>
+<div id="hook"><div class="bg"></div><div class="ov"></div>
+ <div class="h" style="top:260px;font-size:44px" id="hh">Hvad sker der / egentlig med lakken, / <span class="g">når den poleres?</span></div>
+ <div class="cr">Foto: Neelabh Raj / Unsplash</div></div>
+<div id="out"><div class="h" style="top:330px;font-size:38px" id="oh">Følg med for flere / <span class="g">bilpleje-forklaringer</span></div>
+ <div style="position:absolute;top:520px;width:100%;text-align:center" class="brand" id="ob"><span class="f">find</span><span class="b">bilplejere</span><span class="d">.dk</span></div></div>
+<div class="bar"><i id="bi"></i></div>
+<script>
+const D=27, cl=x=>x<0?0:x>1?1:x, eo=x=>1-Math.pow(1-cl(x),3), eio=x=>{x=cl(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2}, eb=x=>{x=cl(x);const c=1.70158;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+document.querySelectorAll('.h').forEach(h=>{const o=[];h.childNodes.forEach(n=>{const c=n.nodeType==1?n.className:'';n.textContent.split(/\s+/).filter(Boolean).forEach(w=>o.push(w=='/'?'<br>':`<span class="w ${c}">${w}</span>`))});h.innerHTML=o.join(' ').replace(/ <br> /g,'<br>')});
+const TOP=160, SCR=[[70,26,30],[150,18,22],[215,30,34],[300,22,26],[370,16,20],[440,28,30]]; // x,halfwidth,depth
+let depth=new Array(SCR.length).fill(0), lower=0;
+const surf=x=>{let y=TOP+lower;SCR.forEach(([cx,hw,dp],i)=>{const d=Math.abs(x-cx);if(d<hw){y+=dp*depth[i]*(1-d/hw)}});return y};
+function clearPath(){let p=`M0 230 L0 ${surf(0)}`;for(let x=0;x<=540;x+=3)p+=` L${x} ${surf(x).toFixed(1)}`;return p+' L540 230 Z'}
+const rays=document.getElementById('rays');
+function drawRays(n,alpha,len){let h='';const dir=[0.45,0.89];const L=Math.hypot(...dir);const dx=dir[0]/L,dy=dir[1]/L;
+ for(let i=0;i<n;i++){const hx=40+i*(460/(n-1));const hy=surf(hx);const sx=hx-dx*150,sy=hy-dy*150;
+  const s=(surf(hx+1.5)-surf(hx-1.5))/3;let nx=-s,ny=-1;const nl=Math.hypot(nx,ny);nx/=nl;ny/=nl;const dot=dx*nx+dy*ny;const rx=dx-2*dot*nx,ry=dy-2*dot*ny;
+  h+=`<line x1="${sx}" y1="${sy}" x2="${hx}" y2="${hy}" stroke="#ffe7a8" stroke-width="2" opacity="${alpha}"/>`;
+  h+=`<line x1="${hx}" y1="${hy}" x2="${hx+rx*len}" y2="${hy+ry*len}" stroke="#ffe7a8" stroke-width="2" opacity="${alpha}" marker-end="url(#ar)"/>`}
+ rays.innerHTML=h}
+const CAP=[[3.4,'TRIN 1','Lakken i <span class="g">tværsnit</span>','Øverst ligger klarlakken. Den er tyndere end et stykke papir.'],
+[7.6,'TRIN 2','Sådan ser <span class="g">ridser</span> ud','Vask med snavset svamp, børster i vaskehal og sand laver små dale i klarlakken.'],
+[11.8,'TRIN 3','Lyset <span class="g">spredes</span>','Når lyset rammer ridserne, kastes det i alle retninger. Lakken ser mat og "spindelvævs"-agtig ud.'],
+[16,'TRIN 4','Poleringen <span class="g">jævner</span> overfladen','Maskinen fjerner en hårfin skive klarlak, indtil bunden af ridserne er nået.'],
+[21,'TRIN 5','Spejlblank <span class="g">lak</span>','Nu kastes lyset lige tilbage. Derfor ser lakken dyb og blank ud igen.']];
+window.render=t=>{
+ // hook
+ const hk=document.getElementById('hook');hk.style.opacity=t<3.4?1:1-eo((t-3.4)/.4);hk.style.display=t<3.85?'block':'none';
+ hk.querySelector('.bg').style.transform=`scale(${1+t*.03})`;
+ document.querySelectorAll('#hh .w').forEach((w,j)=>{const e=eb((t-.15-j*.1)/.45);w.style.opacity=cl((t-.15-j*.1)/.2);w.style.transform=`translateY(${(1-e)*40}px)`});
+ // captions
+ let ci=0;CAP.forEach((c,i)=>{if(t>=c[0])ci=i});const c=CAP[ci],lt=t-c[0];
+ document.getElementById('step').textContent=c[1];document.getElementById('ct').innerHTML=c[2];document.getElementById('cs').innerHTML=c[3];
+ const ca=document.querySelector('.cap');ca.style.opacity=eo(lt/.4);ca.style.transform=`translateY(${(1-eo(lt/.4))*20}px)`;
+ // scratches grow 7.6-9.5
+ const g=eio((t-8)/1.6);
+ // polishing 16-20.5: pad sweeps, depth reduces behind pad
+ const padX=t<16?-100:-60+eio((t-16.3)/3.8)*660;
+ SCR.forEach(([cx],i)=>{let d=g;if(t>16.3){const passed=cl((padX-cx+40)/80);d=g*(1-passed)}depth[i]=d});
+ lower=t>16.3?eio((t-16.3)/3.8)*6:0;
+ document.getElementById('clear').setAttribute('d',clearPath());
+ const pad=document.getElementById('pad');pad.style.display=t>16&&t<20.8?'inline':'none';pad.setAttribute('transform',`translate(${padX},${surf(Math.max(0,Math.min(540,padX)))-36-2*Math.sin(t*40)}) rotate(${Math.sin(t*50)*2})`);
+ document.getElementById('mic').setAttribute('opacity',t>4&&t<7.6?eo((t-4.3)/.5):0);
+ // rays
+ if(t>=11.8&&t<16){drawRays(9,eo((t-12.2)/.5),90*eo((t-12.4)/.8)+1)}else if(t>=21&&t<25){drawRays(9,eo((t-21.5)/.5),120*eo((t-21.7)/.8)+1)}else rays.innerHTML='';
+ // layers intro
+ document.getElementById('layers').style.opacity=eo((t-3.6)/.6);document.getElementById('layers').style.transform=`translateY(${(1-eo((t-3.6)/.6))*40}px)`;
+ // outro
+ const o=document.getElementById('out');o.style.display=t>=24.6?'block':'none';o.style.opacity=eo((t-24.6)/.4);
+ document.querySelectorAll('#oh .w').forEach((w,j)=>{const e=eb((t-24.8-j*.08)/.45);w.style.opacity=cl((t-24.8-j*.08)/.2);w.style.transform=`translateY(${(1-e)*30}px)`});
+ document.getElementById('ob').style.opacity=eo((t-25.6)/.5);
+ document.getElementById('bi').style.width=(t/D*100)+'%';
+};
+window.render(0);
+</script></body></html>
