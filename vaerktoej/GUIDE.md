@@ -8,7 +8,7 @@ Brand: navy #131D2E, guld #B68B48, hvid. Wordmark: "find" (normal) + "bilplejere
 - Animeret illustration (SVG/CSS) og/eller ægte fotos fra Unsplash (se nedenfor). Ingen genkendelige personer, ingen varemærker/logoer/nummerplader.
 - Struktur: krog (0-3 s, stor tekst) -> 3-4 korte scener -> outro med wordmark og "Link i bio".
 - Hold tekst væk fra nederste 15 % og højre kant (TikToks knapper).
-- Skabelon: `eksempel-vinterfejl.html` (window.render(t) tegner frame ved tid t).
+- Skabeloner: `eksempel-vinterfejl.html` (kun grafik) og `eksempel-med-fotos.html` (Unsplash-fotos, læg fotos som f1.jpg.. ved siden af html-filen). window.render(t) tegner frame ved tid t.
 
 ## Ægte fotos (Unsplash-connector, tilføjet 2026-11-10)
 Brug fotos i mindst 2 af ugens 3 videoer (og læg mærke til i LAERING.md om foto-videoer klarer sig bedre).

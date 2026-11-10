@@ -1,0 +1,49 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:540px;height:960px;overflow:hidden;background:#131D2E;font-family:"Inter","Helvetica Neue",Arial,sans-serif;color:#fff}
+.sc{position:absolute;inset:0;opacity:0;overflow:hidden}
+.bg{position:absolute;inset:0;background-size:cover;background-position:center;transform-origin:50% 40%}
+.ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(19,29,46,.92) 0%,rgba(19,29,46,.55) 38%,rgba(19,29,46,.35) 55%,rgba(19,29,46,.9) 100%)}
+.k{position:absolute;top:92px;width:100%;text-align:center;font-size:14px;letter-spacing:5px;color:#B68B48;font-weight:800}
+.h{position:absolute;top:125px;width:100%;text-align:center;font-size:46px;font-weight:800;line-height:1.06;padding:0 34px;text-shadow:0 2px 18px rgba(0,0,0,.5)}
+.g{color:#B68B48}
+.num{position:absolute;top:60px;left:50%;margin-left:-30px;width:60px;height:60px;border-radius:50%;background:#B68B48;color:#131D2E;font-weight:900;font-size:28px;display:flex;align-items:center;justify-content:center}
+.tip{position:absolute;left:34px;right:70px;top:640px;border-left:4px solid #B68B48;background:rgba(19,29,46,.82);padding:16px 20px;font-size:21px;font-weight:600;line-height:1.32;border-radius:0 14px 14px 0}
+.cr{position:absolute;left:34px;bottom:120px;font-size:10px;color:rgba(255,255,255,.55);letter-spacing:.5px}
+.brand{font-size:40px;letter-spacing:-.5px}.brand .f{font-weight:400}.brand .b{font-weight:800}.brand .d{color:#B68B48;font-weight:800}
+.bar{position:absolute;top:30px;left:34px;right:34px;height:4px;border-radius:2px;background:rgba(255,255,255,.15);overflow:hidden}.bar i{display:block;height:100%;background:#B68B48;width:0}
+</style></head><body>
+<div class="sc" id="s0"><div class="bg" style="background-image:url(f4.jpg)"></div><div class="ov"></div>
+ <div class="k" style="top:250px">BILPLEJE-HEMMELIGHEDER</div>
+ <div class="h" style="top:290px;font-size:54px">Derfor skinner<br>bilen mere hos<br><span class="g">en bilplejer</span></div>
+ <div class="cr">Foto: Ville Kaisla / Unsplash</div></div>
+<div class="sc" id="s1"><div class="bg" style="background-image:url(f1.jpg)"></div><div class="ov"></div>
+ <div class="num">1</div><div class="h">Skum <span class="g">før</span><br>svamp</div>
+ <div class="tip">Skummet løsner snavset, før noget rører lakken. Det betyder færre ridser.</div>
+ <div class="cr">Foto: Willian Cittadin / Unsplash</div></div>
+<div class="sc" id="s2"><div class="bg" style="background-image:url(f2.jpg)"></div><div class="ov"></div>
+ <div class="num">2</div><div class="h">Fælgene får<br><span class="g">egen børste</span></div>
+ <div class="tip">Bremsestøv er skarpt som sandpapir. Det må aldrig komme over på lakken.</div>
+ <div class="cr">Foto: Zac Nielson / Unsplash</div></div>
+<div class="sc" id="s3"><div class="bg" style="background-image:url(f3.jpg)"></div><div class="ov"></div>
+ <div class="num">3</div><div class="h">Maskin-<br><span class="g">polering</span></div>
+ <div class="tip">Fjerner de fine ridser og "spindelvæv" i lakken, som ingen vask kan fjerne.</div>
+ <div class="cr">Foto: Neelabh Raj / Unsplash</div></div>
+<div class="sc" id="s4"><div class="bg" style="background-image:url(f4.jpg)"></div><div class="ov" style="background:rgba(19,29,46,.82)"></div>
+ <div class="h" style="top:300px;font-size:40px">Find en bilplejer<br><span class="g">tæt på dig på Fyn</span></div>
+ <div style="position:absolute;top:470px;width:100%;text-align:center" class="brand"><span class="f">find</span><span class="b">bilplejere</span><span class="d">.dk</span></div>
+ <div style="position:absolute;top:560px;left:50%;transform:translateX(-50%);background:#B68B48;color:#131D2E;font-weight:800;font-size:22px;padding:14px 34px;border-radius:40px">Link i bio</div>
+ <div class="cr">Foto: Ville Kaisla / Unsplash</div></div>
+<div class="bar"><i id="bi"></i></div>
+<script>
+const S=[[0,3.6],[3.6,8.6],[8.6,13.6],[13.6,18.6],[18.6,22]],D=22;
+const ease=x=>x<0?0:x>1?1:1-Math.pow(1-x,3);
+window.render=t=>{S.forEach(([a,b],i)=>{const el=document.getElementById('s'+i);
+ let o=Math.min(ease((t-a)/.35),i==S.length-1?1:ease((b-t)/.35));if(i==0&&t<a+.01)o=1;el.style.opacity=t>=a-.01&&t<=b+.01?o:0;
+ const p=(t-a)/(b-a);el.querySelector('.bg').style.transform=`scale(${1+0.12*p})`;
+ const h=el.querySelector('.h');if(h){const e=ease((t-a-.1)/.5);h.style.transform=`translateY(${(1-e)*30}px)`;h.style.opacity=e;}
+ const tp=el.querySelector('.tip');if(tp){const e=ease((t-a-.7)/.5);tp.style.transform=`translateX(${(1-e)*-60}px)`;tp.style.opacity=e;}
+ const n=el.querySelector('.num');if(n){const e=ease((t-a)/.4);n.style.transform=`scale(${e})`;}
+});document.getElementById('bi').style.width=(t/D*100)+'%';};
+window.render(0);
+</script></body></html>
