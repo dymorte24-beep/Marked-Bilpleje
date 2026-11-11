@@ -1,5 +1,6 @@
 // Statistik-fanen i admin-panelet. Bruger `db` fra admin-siden (samme login).
 // TikTok-tallene fyldes i tiktok_dag/tiktok_videoer af en daglig planlagt opgave (Metricool -> Supabase).
+// Google-tallene fyldes i google_dag/google_soegeord af en daglig planlagt opgave (Search Console via Windsor.ai -> Supabase).
 let days = 30;
 let statLoaded = false;
 
@@ -49,13 +50,15 @@ async function loadStatistik(){
   const startPrev = new Date(startCur.getTime() - days * 864e5);
   const sinceIso = startPrev.toISOString();
   try {
-    const [views, clicks, searches, shopsRes, tkDays, tkVideos] = await Promise.all([
+    const [views, clicks, searches, shopsRes, tkDays, tkVideos, gDays, gWords] = await Promise.all([
       fetchAll('profil_visninger', 'butik, created_at', sinceIso),
       fetchAll('butik_klik', 'butik, metode, created_at', sinceIso),
       fetchAll('soegninger', 'by, created_at', sinceIso),
       db.from('shops').select('name, city, godkendt, tier, ad_active'),
       db.from('tiktok_dag').select('*').gte('dato', dayKey(startPrev)).order('dato'),
-      db.from('tiktok_videoer').select('*').order('udgivet', { ascending:false }).limit(12)
+      db.from('tiktok_videoer').select('*').order('udgivet', { ascending:false }).limit(12),
+      db.from('google_dag').select('*').gte('dato', dayKey(startPrev)).order('dato'),
+      db.from('google_soegeord').select('*').order('visninger', { ascending:false }).limit(15)
     ]);
     const shops = shopsRes.data || [];
     const V = splitPeriods(views, startCur), C = splitPeriods(clicks, startCur), S = splitPeriods(searches, startCur);
@@ -67,6 +70,10 @@ async function loadStatistik(){
     const active = shops.filter(s => s.godkendt);
     const komplet = active.filter(s => s.tier === 'betalt').length;
     const ads = active.filter(s => s.ad_active).length;
+    const g = gDays.data || [];
+    const gCur = g.filter(d => d.dato >= dayKey(startCur)), gPrev = g.filter(d => d.dato < dayKey(startCur));
+    const avgPos = a => { const w = a.filter(d => d.position != null && d.visninger); const v = sum(w, 'visninger'); return v ? w.reduce((s, d) => s + d.position * d.visninger, 0) / v : null; };
+    const gPos = avgPos(gCur), gPosPrev = avgPos(gPrev);
     const followers = lastWith(tk, 'foelgere');
     const followersPrev = lastWith(tkPrev, 'foelgere');
 
@@ -75,15 +82,21 @@ async function loadStatistik(){
       { lbl:'Profilvisninger', val:V.cur.length, sub:delta(V.cur.length, V.prev.length) },
       { lbl:'Kontaktklik', val:C.cur.length, sub:delta(C.cur.length, C.prev.length) },
       { lbl:'Søgninger', val:S.cur.length, sub:delta(S.cur.length, S.prev.length) },
+      { lbl:'Klik fra Google', val:sum(gCur, 'klik'), sub:g.length ? delta(sum(gCur, 'klik'), sum(gPrev, 'klik')) : 'Venter på første tal' },
+      { lbl:'Visninger på Google', val:sum(gCur, 'visninger'), sub:g.length ? delta(sum(gCur, 'visninger'), sum(gPrev, 'visninger')) : 'Venter på første tal' },
+      { lbl:'Placering på Google', val:gPos != null ? Math.round(gPos) : '–', sub:gPos != null ? (gPosPrev != null ? `${gPos <= gPosPrev ? '<span class="st-delta up">▲ bedre</span>' : '<span class="st-delta down">▼ dårligere</span>'} end forrige ${days} dage (${Math.round(gPosPrev)})` : 'Gennemsnit. Lavere tal er bedre') : 'Venter på første tal' },
       { lbl:'TikTok-visninger', val:sum(tkCur, 'visninger'), sub:tk.length ? delta(sum(tkCur, 'visninger'), sum(tkPrev, 'visninger')) : 'Venter på første tal', accent:true },
       { lbl:'TikTok-følgere', val:followers ?? 0, sub:followersPrev != null && followers != null ? `${followers - followersPrev >= 0 ? '+' : ''}${fmt(followers - followersPrev)} i perioden` : 'I alt', accent:true }
-    ].map(t => `<div class="st-tile${t.accent ? ' st-accent' : ''}"><div class="st-lbl">${t.lbl}</div><div class="st-val">${fmt(t.val)}</div><div class="st-sub">${t.sub || '&nbsp;'}</div></div>`).join('');
+    ].map(t => `<div class="st-tile${t.accent ? ' st-accent' : ''}"><div class="st-lbl">${t.lbl}</div><div class="st-val">${typeof t.val === 'number' ? fmt(t.val) : t.val}</div><div class="st-sub">${t.sub || '&nbsp;'}</div></div>`).join('');
 
     const keys = dayList(days);
     barChart('chartViews', perDay(V.cur, keys), 'visninger', '#131D2E');
     barChart('chartClicks', perDay(C.cur, keys), 'klik', '#B68B48');
     const tkMap = Object.fromEntries(tkCur.map(d => [d.dato, d.visninger || 0]));
     barChart('chartTiktok', keys.map(k => ({ key:k, value:tkMap[k] || 0 })), 'visninger', '#131D2E');
+
+    const gMap = Object.fromEntries(gCur.map(d => [d.dato, d.visninger || 0]));
+    barChart('chartGoogle', keys.map(k => ({ key:k, value:gMap[k] || 0 })), 'visninger', '#B68B48');
 
     // Bilplejer-tabel
     const vc = {}, cc = {};
@@ -110,6 +123,16 @@ async function loadStatistik(){
     document.getElementById('tiktokHint').textContent = lastUpd
       ? `Hentes automatisk fra Metricool hver morgen · sidst ${new Date(lastUpd).toLocaleString('da-DK', { dateStyle:'short', timeStyle:'short' })}`
       : 'Hentes automatisk fra Metricool hver morgen. Første tal kommer, når videoerne har fået visninger.';
+    // Google
+    const gLast = g.length ? g.reduce((m, d) => d.opdateret > m ? d.opdateret : m, g[0].opdateret) : null;
+    document.getElementById('googleHint').textContent = gLast
+      ? `Hentes automatisk fra Google Search Console hver morgen (Google er 2-3 dage bagud) · sidst ${new Date(gLast).toLocaleString('da-DK', { dateStyle:'short', timeStyle:'short' })}`
+      : 'Hentes automatisk fra Google Search Console hver morgen.';
+    const words = gWords.data || [];
+    document.getElementById('googleTable').innerHTML = words.length ? words.map(w =>
+      `<tr><td>${esc(w.soegeord)}</td><td class="st-num">${fmt(w.visninger)}</td><td class="st-num">${w.position != null ? Math.round(w.position) : '–'}</td></tr>`
+    ).join('') : '<tr><td colspan="3" class="st-empty">Ingen søgeord hentet endnu.</td></tr>';
+
     const vids = tkVideos.data || [];
     document.getElementById('videoTable').innerHTML = vids.length ? vids.map(v =>
       `<tr><td><a href="${esc(v.url)}" target="_blank" rel="noopener">${esc((v.beskrivelse || 'Video').slice(0, 60))}</a></td><td class="hide-sm">${v.udgivet ? new Date(v.udgivet).toLocaleDateString('da-DK') : '–'}</td><td class="st-num">${fmt(v.visninger)}</td><td class="st-num">${fmt(v.likes)}</td><td class="st-num hide-sm">${fmt(v.kommentarer)}</td><td class="st-num hide-sm">${fmt(v.delinger)}</td></tr>`
