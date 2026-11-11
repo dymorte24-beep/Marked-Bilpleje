@@ -1,5 +1,8 @@
 # Sådan laves ugens TikTok-videoer (til Claude-rutinen)
 
+**LÆS FØRST `LAERING.md` i roden af grenen** (vidIQ-research 2026-11-11: krog, første frame, tempo, voiceover, 3 faste formater).
+Reglerne der går forud for det nedenfor, hvor de er i konflikt (fx første frame må IKKE være mørk navy). Tilføj ugens tal nederst i LAERING.md hver søndag.
+
 Målgruppe: bilejere på Fyn (og bilplejere). Sprog: dansk. Tone: energisk, sjov, konkret.
 
 ## VIGTIGST: forklar og fortæl, sælg ikke (Daniel, 2026-11-10)
@@ -16,7 +19,7 @@ Brand: navy #131D2E, guld #B68B48, hvid. Wordmark: "find" (normal) + "bilplejere
 ## Format
 - 1080x1920 (HTML 540x960 renderet med deviceScaleFactor 2), 30 fps, 18-25 sek.
 - Animeret illustration (SVG/CSS) og/eller ægte fotos fra Unsplash (se nedenfor). Ingen genkendelige personer, ingen varemærker/logoer/nummerplader.
-- Struktur: krog (0-3 s, stor tekst) -> 3-4 korte scener -> outro med wordmark og "Link i bio".
+- Struktur: krog (0-2 s, lyst konkret billede + påstand på max 8 ord) -> billedskift hvert 1,5-2,5 s -> reveal -> kort outro (max 3 s) oven på sidste billede. Se LAERING.md.
 - SIKKER ZONE (Daniel 2026-11-10: tekst blev skjult af TikToks søgefelt og knapper). I 540x960-koordinater skal al tekst, tal,
   labels og vigtige ting ligge inden for x 40-450 og y 150-640. Brug left:40px; right:90px i stedet for width:100%, og centrér
   ting omkring x=245 (ikke 270). Top (y<140) dækkes af søgefeltet, bund (y>650) af navn/tekst, højre (x>450) af like/kommentar.
@@ -30,8 +33,7 @@ Brug fotos i mindst 2 af ugens 3 videoer (og læg mærke til i LAERING.md om fot
 2. Vælg 2-4 fotos pr. video uden tydelige bilmærke-logoer, nummerplader eller genkendelige ansigter.
 3. Hent med `mcp__Unsplash__download_asset` (brug den URL den giver, ikke `urls` fra søgningen), gem som
    `videoer/fotos/<dato>-<emne>-<n>.jpg`, skalér: `ffmpeg -i in.jpg -vf "scale=1080:-2" -q:v 4 ud.jpg`.
-4. I HTML: foto som fuldskærms-baggrund med langsom zoom (Ken Burns, fx scale 1.0 -> 1.12 over scenen), mørk
-   navy-gradient over (#131D2E, 60-80 % opacitet), så hvid/guld tekst altid kan læses. Skift foto mellem scener.
+4. I HTML: foto som fuldskærms-baggrund med langsom zoom (Ken Burns, fx scale 1.0 -> 1.12 over scenen), navy-gradient over (#131D2E) KUN bag teksten (fx nederste/øverste tredjedel, 40-60 %), så fotoet stadig er lyst og tydeligt. Hvid/guld tekst skal stadig kunne læses. Skift foto mellem scener.
 5. Lille linje nederst i scenen: "Foto: <fotografens navn> / Unsplash".
 6. Fejler Unsplash (mangler adgang eller bekræftet e-mail), så lav videoerne uden fotos og skriv det i opsummeringen til Daniel.
 
