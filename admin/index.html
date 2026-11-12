@@ -284,6 +284,17 @@
     <p class="st-updated" id="stUpdated">Henter tal…</p>
     <div class="st-tiles" id="tiles"></div>
 
+    <div class="section-title">Mailliste <span style="font-size:13px; font-weight:500; color:#6B7280;">bilejere der har sagt ja til mails</span></div>
+    <div class="st-card">
+      <h3 id="nbOverblik">Henter…</h3>
+      <p class="st-hint">Kun folk der selv har sat flueben. Afmeldte tæller ikke med og må ikke få mails. Tilmelding: findbilplejere.dk/tips og boksen på forsiden.</p>
+      <div style="overflow-x:auto"><table>
+        <thead><tr><th>Mail</th><th class="hide-sm">Postnr.</th><th>Vil have</th><th class="st-num hide-sm">Tilmeldt</th></tr></thead>
+        <tbody id="nbTable"></tbody>
+      </table></div>
+      <p style="margin-top:12px;"><button class="st-chip" onclick="downloadMailliste()">⬇ Hent aktive som CSV</button></p>
+    </div>
+
     <div class="section-title">Hjemmesiden</div>
     <div class="st-grid2">
       <div class="st-card"><h3>Profilvisninger pr. dag</h3><p class="st-hint">Hvor mange der har åbnet en bilplejers profil</p><div class="st-chart" id="chartViews"></div></div>

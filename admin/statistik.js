@@ -214,6 +214,31 @@ function showTab(name){
   document.getElementById('tab-stat').style.display = name === 'stat' ? 'block' : 'none';
   document.querySelectorAll('.admin-tab').forEach(t => t.classList.toggle('on', t.dataset.tab === name));
   localStorage.setItem('adminTab', name);
-  if (name === 'stat') { statLoaded = true; loadStatistik(); }
+  if (name === 'stat') { statLoaded = true; loadStatistik(); loadMailliste(); }
 }
 document.addEventListener('visibilitychange', () => { if (!document.hidden && statLoaded && isStatTab()) loadStatistik(); });
+
+// ---- Mailliste (nyhedsbrev til bilejere) ----
+let nbRows = [];
+const NB_NAVN = { saesontips: 'Sæsontips', tilbud: 'Tilbud' };
+async function loadMailliste(){
+  const { data, error } = await db.from('nyhedsbrev').select('email, postnummer, interesser, tilmeldt_at, afmeldt_at, afmeld_token').order('tilmeldt_at', { ascending:false });
+  const h = document.getElementById('nbOverblik'); if (!h) return;
+  if (error){ h.textContent = 'Kunne ikke hente maillisten'; return; }
+  nbRows = data || [];
+  const aktive = nbRows.filter(r => !r.afmeldt_at);
+  const n = k => aktive.filter(r => (r.interesser || []).includes(k)).length;
+  h.textContent = `${aktive.length} aktive · ${n('saesontips')} vil have sæsontips · ${n('tilbud')} vil have tilbud · ${nbRows.length - aktive.length} afmeldt`;
+  const esc = t => String(t ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
+  document.getElementById('nbTable').innerHTML = aktive.slice(0, 50).map(r => `<tr><td>${esc(r.email)}</td><td class="hide-sm">${esc(r.postnummer || '')}</td><td>${(r.interesser || []).map(i => NB_NAVN[i] || i).join(', ')}</td><td class="st-num hide-sm">${new Date(r.tilmeldt_at).toLocaleDateString('da-DK')}</td></tr>`).join('') || '<tr><td colspan="4" style="color:#6B7280;">Ingen tilmeldte endnu</td></tr>';
+}
+function downloadMailliste(){
+  const aktive = nbRows.filter(r => !r.afmeldt_at);
+  const q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  const lines = ['EMAIL;POSTNUMMER;SAESONTIPS;TILBUD;TILMELDT;AFMELD_LINK'].concat(aktive.map(r => [
+    q(r.email), q(r.postnummer || ''), (r.interesser || []).includes('saesontips') ? 'ja' : 'nej', (r.interesser || []).includes('tilbud') ? 'ja' : 'nej',
+    q(r.tilmeldt_at), q('https://findbilplejere.dk/afmeld.html?t=' + r.afmeld_token)
+  ].join(';')));
+  const blob = new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'mailliste-findbilplejere.csv'; a.click();
+}
