@@ -15,6 +15,11 @@ let shops = [];
 
 let wizardAnswers = null;
 
+// Bilplejer der kører ud til kunden (samme regel som søgefilteret "mobil")
+function isMobileShop(services){
+  return (services || []).some(s => String(s).toLowerCase().includes('mobil'));
+}
+
 function formatServicesPreview(services, max = 3){
   const shown = services.slice(0, max);
   const remaining = services.length - shown.length;
@@ -76,10 +81,11 @@ function renderShops(list, originName, ads){
           <div class="card-name">${shop.name}</div>
           ${shop._distanceKm != null ? `<div class="card-distance">${shop._distanceKm} km fra ${originName}</div>` : ''}
         </div>
+        ${(shop.reviewRating && shop.reviewCount && shop.reviewVisible !== false) ? `<div class="card-rating"><span class="card-rating-stars" aria-hidden="true">★</span> ${shop.reviewRating} <span class="card-rating-count">(${shop.reviewCount} anmeldelser${shop.reviewSource ? ' på ' + shop.reviewSource : ''})</span></div>` : ''}
         <div class="card-meta">${shop.city} · ${formatServicesPreview(shop.services)}</div>
         ${(shop._distanceKm > 10 && shop.coverageAreas && shop.coverageAreas.length <= 40) ? `<div class="card-coverage-note">Dækker ${shop.coverageAreas}</div>` : ''}
         <div class="card-tags">
-          ${(shop.reviewRating && shop.reviewCount && shop.reviewVisible !== false) ? `<span class="pill">⭐ ${shop.reviewRating} (${shop.reviewCount}${shop.reviewSource ? ' på ' + shop.reviewSource : ''})</span>` : ''}
+          ${isMobileShop(shop.services) ? `<span class="pill mobil">Kommer ud til dig</span>` : ''}
           ${shop._ad ? `<span class="pill annonce">Annonce</span>` : ''}
           ${shop.verificeret ? `<span class="pill verified">Verificeret</span>` : ''}
           ${shop.priceLevel ? `<span class="pill">${priceLevelHtml(shop.priceLevel)} ${PRICE_LEVEL_NAMES[shop.priceLevel]}</span>` : ''}
@@ -106,7 +112,7 @@ async function filterCards(){
   const placeEl = document.getElementById('placeSearch');
   const onlyMobile = placeEl && placeEl.value === 'mobil';
   let list = shops.filter(shop => service === 'alle ydelser' || shop.services.some(s => s.toLowerCase().includes(service)));
-  if (onlyMobile) list = list.filter(shop => shop.services.some(s => s.toLowerCase().includes('mobil')));
+  if (onlyMobile) list = list.filter(shop => isMobileShop(shop.services));
   let originName = '';
   let ads = [];
 
