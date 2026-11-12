@@ -1,3 +1,8 @@
+# Den gamle adresse bilpleje-dk.netlify.app ligger stadig i Googles resultater.
+# Send alle besøg (og Google) permanent videre til samme side på findbilplejere.dk.
+https://bilpleje-dk.netlify.app/*  https://findbilplejere.dk/:splat  301!
+http://bilpleje-dk.netlify.app/*   https://findbilplejere.dk/:splat  301!
+
 # Nye butikker oprettet via admin-panelet får ikke deres egen statiske fil —
 # denne regel viser i stedet den fælles skabelon (bilpleje/profil.html) på samme pæne URL.
 # Rigtige filer har forrang og rammes IKKE af denne regel.

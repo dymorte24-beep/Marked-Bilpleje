@@ -546,3 +546,16 @@ section.nb h2{font-size:28px; color:var(--navy); margin-bottom:12px; text-align:
 .guide-cta{margin-top:32px; background:var(--navy); color:var(--white); border-radius:12px; padding:28px; text-align:center;}
 .guide-cta h2{color:var(--white); font-size:22px; margin-bottom:8px;}
 .guide-cta p{color:var(--chrome); margin-bottom:16px;}
+
+/* Faste SEO-bysider (fx /bilpleje/odense/): brødtekst, FAQ og CTA */
+.seo-text{max-width:680px; color:var(--text-muted); font-size:15px; line-height:1.65;}
+.seo-text p{margin-bottom:12px;}
+.seo-text ul{margin:0 0 12px 20px;}
+.seo-text li{margin-bottom:6px;}
+.seo-text strong{color:var(--navy);}
+.faq-list{max-width:680px;}
+.faq-item{border-bottom:1px solid var(--chrome-line); padding:14px 0;}
+.faq-item summary{cursor:pointer; font-weight:600; color:var(--navy); font-size:15px;}
+.faq-item p{margin-top:10px; color:var(--text-muted); font-size:14px; line-height:1.6;}
+.seo-cta{margin-top:36px; font-size:14px; color:var(--text-muted);}
+.seo-cta a{text-decoration:underline; font-weight:600;}

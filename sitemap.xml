@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Opdateret 19. sep 2026. Domæne skiftet til findbilplejere.dk, og
+  Opdateret 12. nov 2026 (Fyn-profiler tilføjet). Tidligere 19. sep 2026: Domæne skiftet til findbilplejere.dk, og
   listen udvidet med alle butikker/byer tilføjet siden 25. aug 2026.
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -28,6 +28,12 @@
   <url><loc>https://findbilplejere.dk/bilpleje/holbek/gg-autocare/</loc></url>
   <url><loc>https://findbilplejere.dk/bilpleje/koge/</loc></url>
   <url><loc>https://findbilplejere.dk/bilpleje/koge/koge-bilpleje-aps/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/hovedgard/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/hovedgard/j-o-bilpleje/</loc></url>
   <url><loc>https://findbilplejere.dk/bilpleje/odense/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/odense/bilplejen-dk/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/odense/ac-detailing/</loc></url>
   <url><loc>https://findbilplejere.dk/bilpleje/bellinge/cleantech-bilpleje/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/svendborg/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/svendborg/direkte-detailing/</loc></url>
 </urlset>
