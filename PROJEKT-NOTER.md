@@ -1,5 +1,17 @@
 # Bilpleje.dk — Projektoverblik
 
+## ✉️ Lovlig mailliste for bilejere (12. nov 2026)
+Daniel vil kunne sende mails med tips og tilbud til bilejere. Kun lovligt med forudgående samtykke (markedsføringslovens § 10 + GDPR), så ingen købte lister eller skrabede mails.
+
+- **Tilmelding:** boks på forsiden (`#tips`, mellem "Sådan virker det" og "For bilpleje-butikker") + egen side `findbilplejere.dk/tips` (`tips.html`, til TikTok-bio og annoncer). To separate flueben, ikke forudvalgt: **sæsontips** og **besked når en bilplejer i området kører tilbud**. Postnummer valgfrit
+- **Lokkemiddel:** `vinterguide.html` (8 vintertips, noindex) vises straks efter tilmelding
+- **Database:** tabellen `nyhedsbrev` (email, postnummer, interesser[], samtykke_tekst, samtykke_version, kilde, tilmeldt_at, afmeldt_at, afmeld_token, sendt_til_brevo_at). Den ordrette tekst ved de afkrydsede flueben gemmes som bevis. Ingen kan læse tabellen fra siden; tilmelding sker via RPC `tilmeld_nyhedsbrev`, afmelding via `afmeld_nyhedsbrev(token)`. SQL i `supabase/2026-11-12-nyhedsbrev.sql` (kørt 12. nov)
+- **Afmelding:** `afmeld.html?t=<token>` (ét klik). Brevo har desuden sit eget afmeldingslink i hver mail
+- **Admin:** Statistik-fanen har kortet "Mailliste" med tal + "Hent aktive som CSV" (inkl. personligt afmeld-link pr. modtager)
+- **GA-hændelse:** `newsletter_signup`
+- **Mailprogram:** Brevo (gratis op til 300 mails/dag). Daniel opretter kontoen. Afsender skal være findbilplejere.dk-domænet (DNS-opsætning i Brevo). Send højst 2 mails/md, kun det folk har valgt
+- Privatlivspolitikken er opdateret med afsnit om mails, Brevo og opbevaring (samtykkebevis gemmes op til 2 år efter afmelding)
+
 ## 📣 Annonce-tilkøb (9. nov 2026)
 Betalt topplacering pr. by. Nye kolonner på `shops`: `ad_active` (bool) og `ad_cities` (text[]) — kun admin kan ændre dem (tilføjet til triggerfunktionen `protect_admin_only_shop_fields`).
 

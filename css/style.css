@@ -509,3 +509,40 @@ footer{
 .price-level{font-family:'JetBrains Mono',monospace; font-weight:600; letter-spacing:0.02em; white-space:nowrap;}
 .price-level-on{color:var(--gold-dark);}
 .price-level-off{color:#C9C4BA;}
+
+/* NYHEDSBREV TIL BILEJERE (vinterguide) */
+section.nb{background:var(--gold-light); padding:56px 0;}
+.nb-inner{display:grid; grid-template-columns:1.1fr 0.9fr; gap:40px; align-items:center;}
+.nb-eyebrow{font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold-dark); margin-bottom:8px;}
+section.nb h2{font-size:28px; color:var(--navy); margin-bottom:12px; text-align:left;}
+.nb-points{list-style:none; margin:14px 0 0; padding:0;}
+.nb-points li{padding:5px 0 5px 26px; position:relative; color:#3A4150; font-size:15px;}
+.nb-points li::before{content:''; position:absolute; left:0; top:9px; width:14px; height:14px; border-radius:50%; background:var(--gold);}
+.nb-form{background:var(--navy); border-radius:12px; padding:24px; display:flex; flex-direction:column; gap:6px; box-shadow:0 10px 30px rgba(16,24,40,0.15);}
+.nb-form label.nb-lbl{color:var(--chrome); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; margin-top:8px;}
+.nb-form input[type=email], .nb-form input[type=text]{font-family:'Inter',sans-serif; font-size:16px; padding:12px 14px; border-radius:6px; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.06); color:var(--white);}
+.nb-form input::placeholder{color:var(--chrome);}
+.nb-check{display:flex; gap:10px; align-items:flex-start; margin-top:12px; cursor:pointer;}
+.nb-check input{width:20px; height:20px; margin-top:2px; flex:none; accent-color:var(--gold);}
+.nb-consent-text{color:var(--white); font-size:13px; line-height:1.45;}
+.nb-form .btn-primary{width:100%; margin-top:12px;}
+.nb-small{color:var(--chrome); font-size:12px; margin-top:8px; text-align:center;}
+.nb-small a{color:inherit; text-decoration:underline;}
+.nb-msg{color:#F9A8A8; font-size:13px; text-align:center; min-height:0;}
+@media (max-width:760px){
+  .nb-inner{grid-template-columns:1fr; gap:24px;}
+  section.nb h2{font-size:24px;}
+}
+/* Vinterguide-siden */
+.guide{padding:48px 0 72px;}
+.guide .wrap{max-width:760px;}
+.guide-tak{background:var(--gold-light); border-left:4px solid var(--gold); padding:14px 18px; border-radius:8px; margin-bottom:28px; font-size:15px;}
+.guide h1{font-size:32px; margin-bottom:10px;}
+.guide .intro{color:#3A4150; font-size:16px; margin-bottom:28px;}
+.guide-tip{display:grid; grid-template-columns:48px 1fr; gap:16px; padding:20px 0; border-top:1px solid var(--chrome-line);}
+.guide-num{width:44px; height:44px; border-radius:50%; background:var(--navy); color:var(--gold); font-family:'Oswald',sans-serif; font-size:20px; display:flex; align-items:center; justify-content:center;}
+.guide-tip h2{font-size:19px; color:var(--navy); margin-bottom:6px;}
+.guide-tip p{font-size:15px; color:#3A4150; margin:0;}
+.guide-cta{margin-top:32px; background:var(--navy); color:var(--white); border-radius:12px; padding:28px; text-align:center;}
+.guide-cta h2{color:var(--white); font-size:22px; margin-bottom:8px;}
+.guide-cta p{color:var(--chrome); margin-bottom:16px;}

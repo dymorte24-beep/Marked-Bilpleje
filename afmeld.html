@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18378049298"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-18378049298');
+  gtag('config', 'G-KTK6266STG');
+</script>
+<title>Afmeld mails | FindBilplejere.dk</title>
+<meta name="description" content="Afmeld mails fra findbilplejere.dk.">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="/" class="logo"><span class="logo-prefix">find</span>bilplejere<span class="logo-suffix">.dk</span></a>
+    <div class="nav-links">
+      <a href="/#search">Find en bilplejer</a>
+      <a href="/#shops">For bilplejere</a>
+    </div>
+    <a href="/#search" class="nav-cta">Find bilplejer</a>
+  </div>
+</nav>
+
+<section class="legal" style="padding:64px 0 96px;">
+  <div class="wrap" style="max-width:620px; text-align:center;">
+    <h1 id="afTitel" style="font-size:28px; margin-bottom:12px;">Afmelder…</h1>
+    <p id="afTekst" style="font-size:16px; color:#3A4150;">Et øjeblik.</p>
+    <p style="margin-top:24px;"><a href="/" class="btn-primary" style="display:inline-block; padding:12px 22px;">Til forsiden</a></p>
+  </div>
+</section>
+
+<footer>
+  <a href="/privatlivspolitik.html">Privatlivspolitik</a> · findbilplejere.dk
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(async function(){
+  const titel = document.getElementById('afTitel'), tekst = document.getElementById('afTekst');
+  const token = new URLSearchParams(location.search).get('t');
+  const fejl = 'Skriv til <a href="mailto:dymorte24@gmail.com">dymorte24@gmail.com</a>, så afmelder vi dig med det samme.';
+  if (!token || !/^[0-9a-f-]{36}$/i.test(token)){ titel.textContent = 'Linket virker ikke'; tekst.innerHTML = 'Vi kunne ikke læse afmeldingslinket. ' + fejl; return; }
+  const db = supabase.createClient('https://xeosltdpvkcaudiijtge.supabase.co', 'sb_publishable_iG0iWu8szH_7-uwErdxN9g_pE9YGFWd');
+  const { data, error } = await db.rpc('afmeld_nyhedsbrev', { p_token: token });
+  if (error || !data){ titel.textContent = 'Noget gik galt'; tekst.innerHTML = 'Vi kunne ikke finde din tilmelding. ' + fejl; return; }
+  titel.textContent = 'Du er afmeldt';
+  tekst.textContent = 'Du får ikke flere mails fra findbilplejere.dk. Fortryder du, kan du altid skrive dig op igen på forsiden.';
+})();
+</script>
+</body>
+</html>

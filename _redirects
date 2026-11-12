@@ -6,3 +6,6 @@
 # Samme idé for byside: /bilpleje/{by}/ viser den fælles bysides-skabelon,
 # der henter alle butikker i den by fra databasen. Virker automatisk for enhver by.
 /bilpleje/:city/  /bilpleje/by.html  200
+
+# Kort link til tilmelding (TikTok-bio, annoncer): findbilplejere.dk/tips
+/tips  /tips.html  200
