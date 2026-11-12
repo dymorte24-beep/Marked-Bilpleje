@@ -276,3 +276,19 @@ function handleLeadSubmit(e){
       err.textContent = 'Der gik noget galt. Prøv igen om lidt.';
     });
 }
+
+
+// "Populære byer"-knapperne: tæl klik, så de kan ses i admin → Statistik.
+// Gemmes i soegninger med ydelse = 'by-knap' (tælles IKKE med som almindelige søgninger).
+// keepalive gør, at klikket når frem, selvom siden skifter med det samme.
+document.querySelectorAll('[data-byknap]').forEach(a => a.addEventListener('click', () => {
+  const by = a.dataset.byknap;
+  track('byknap_klik', { by });
+  try {
+    fetch(SUPABASE_URL + '/rest/v1/soegninger', {
+      method: 'POST', keepalive: true,
+      headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({ by, ydelse: 'by-knap' })
+    }).catch(() => {});
+  } catch (e) {}
+}));

@@ -50,18 +50,21 @@ async function loadStatistik(){
   const startPrev = new Date(startCur.getTime() - days * 864e5);
   const sinceIso = startPrev.toISOString();
   try {
-    const [views, clicks, searches, shopsRes, tkDays, tkVideos, gDays, gWords] = await Promise.all([
+    const [views, clicks, searches, shopsRes, tkDays, tkVideos, gDays, gWords, tkPeriod] = await Promise.all([
       fetchAll('profil_visninger', 'butik, created_at', sinceIso),
       fetchAll('butik_klik', 'butik, metode, created_at', sinceIso),
-      fetchAll('soegninger', 'by, created_at', sinceIso),
+      fetchAll('soegninger', 'by, ydelse, created_at', sinceIso),
       db.from('shops').select('name, city, godkendt, tier, ad_active'),
       db.from('tiktok_dag').select('*').gte('dato', dayKey(startPrev)).order('dato'),
       db.from('tiktok_videoer').select('*').order('udgivet', { ascending:false }).limit(12),
       db.from('google_dag').select('*').gte('dato', dayKey(startPrev)).order('dato'),
-      db.from('google_soegeord').select('*').order('visninger', { ascending:false }).limit(15)
+      db.from('google_soegeord').select('*').order('visninger', { ascending:false }).limit(15),
+      db.from('tiktok_videoer').select('udgivet, visninger').gte('udgivet', sinceIso)
     ]);
     const shops = shopsRes.data || [];
-    const V = splitPeriods(views, startCur), C = splitPeriods(clicks, startCur), S = splitPeriods(searches, startCur);
+    const isByknap = r => r.ydelse === 'by-knap';
+    const V = splitPeriods(views, startCur), C = splitPeriods(clicks, startCur), S = splitPeriods(searches.filter(r => !isByknap(r)), startCur);
+    const B = splitPeriods(searches.filter(isByknap), startCur);
     const tk = tkDays.data || [];
     const tkCur = tk.filter(d => d.dato >= dayKey(startCur)), tkPrev = tk.filter(d => d.dato < dayKey(startCur));
     const sum = (a, f) => a.reduce((s, x) => s + (x[f] || 0), 0);
@@ -74,6 +77,13 @@ async function loadStatistik(){
     const gCur = g.filter(d => d.dato >= dayKey(startCur)), gPrev = g.filter(d => d.dato < dayKey(startCur));
     const avgPos = a => { const w = a.filter(d => d.position != null && d.visninger); const v = sum(w, 'visninger'); return v ? w.reduce((s, d) => s + d.position * d.visninger, 0) / v : null; };
     const gPos = avgPos(gCur), gPosPrev = avgPos(gPrev);
+    // Metricool giver ikke daglige visninger for TikTok-kontoen (altid 0), men den giver
+    // visninger pr. video. Derfor tæller vi visningerne på de videoer, der er lagt op i perioden.
+    const tkVids = tkPeriod.data || [];
+    const vidCur = tkVids.filter(v => new Date(v.udgivet) >= startCur), vidPrev = tkVids.filter(v => new Date(v.udgivet) < startCur);
+    const useVideos = sum(tk, 'visninger') === 0 && tkVids.length > 0;
+    const tkViewsCur = useVideos ? sum(vidCur, 'visninger') : sum(tkCur, 'visninger');
+    const tkViewsPrev = useVideos ? sum(vidPrev, 'visninger') : sum(tkPrev, 'visninger');
     const followers = lastWith(tk, 'foelgere');
     const followersPrev = lastWith(tkPrev, 'foelgere');
 
@@ -82,17 +92,20 @@ async function loadStatistik(){
       { lbl:'Profilvisninger', val:V.cur.length, sub:delta(V.cur.length, V.prev.length) },
       { lbl:'Kontaktklik', val:C.cur.length, sub:delta(C.cur.length, C.prev.length) },
       { lbl:'Søgninger', val:S.cur.length, sub:delta(S.cur.length, S.prev.length) },
+      { lbl:'Klik på by-knapper', val:B.cur.length, sub:delta(B.cur.length, B.prev.length) || 'Tælles fra i dag' },
       { lbl:'Klik fra Google', val:sum(gCur, 'klik'), sub:g.length ? delta(sum(gCur, 'klik'), sum(gPrev, 'klik')) : 'Venter på første tal' },
       { lbl:'Visninger på Google', val:sum(gCur, 'visninger'), sub:g.length ? delta(sum(gCur, 'visninger'), sum(gPrev, 'visninger')) : 'Venter på første tal' },
       { lbl:'Placering på Google', val:gPos != null ? Math.round(gPos) : '–', sub:gPos != null ? (gPosPrev != null ? `${gPos <= gPosPrev ? '<span class="st-delta up">▲ bedre</span>' : '<span class="st-delta down">▼ dårligere</span>'} end forrige ${days} dage (${Math.round(gPosPrev)})` : 'Gennemsnit. Lavere tal er bedre') : 'Venter på første tal' },
-      { lbl:'TikTok-visninger', val:sum(tkCur, 'visninger'), sub:tk.length ? delta(sum(tkCur, 'visninger'), sum(tkPrev, 'visninger')) : 'Venter på første tal', accent:true },
+      { lbl:'TikTok-visninger', val:tkViewsCur, sub:(tk.length || tkVids.length) ? (useVideos ? `på ${vidCur.length} videoer lagt op i perioden` : delta(tkViewsCur, tkViewsPrev)) : 'Venter på første tal', accent:true },
       { lbl:'TikTok-følgere', val:followers ?? 0, sub:followersPrev != null && followers != null ? `${followers - followersPrev >= 0 ? '+' : ''}${fmt(followers - followersPrev)} i perioden` : 'I alt', accent:true }
     ].map(t => `<div class="st-tile${t.accent ? ' st-accent' : ''}"><div class="st-lbl">${t.lbl}</div><div class="st-val">${typeof t.val === 'number' ? fmt(t.val) : t.val}</div><div class="st-sub">${t.sub || '&nbsp;'}</div></div>`).join('');
 
     const keys = dayList(days);
     barChart('chartViews', perDay(V.cur, keys), 'visninger', '#131D2E');
     barChart('chartClicks', perDay(C.cur, keys), 'klik', '#B68B48');
-    const tkMap = Object.fromEntries(tkCur.map(d => [d.dato, d.visninger || 0]));
+    const tkMap = {};
+    if (useVideos) vidCur.forEach(v => { const k = dayKey(v.udgivet); tkMap[k] = (tkMap[k] || 0) + (v.visninger || 0); });
+    else tkCur.forEach(d => tkMap[d.dato] = d.visninger || 0);
     barChart('chartTiktok', keys.map(k => ({ key:k, value:tkMap[k] || 0 })), 'visninger', '#131D2E');
 
     const gMap = Object.fromEntries(gCur.map(d => [d.dato, d.visninger || 0]));
@@ -118,10 +131,16 @@ async function loadStatistik(){
     S.cur.forEach(r => { if (!r.by) return; const k = r.by.trim().charAt(0).toUpperCase() + r.by.trim().slice(1).toLowerCase(); bc[k] = (bc[k] || 0) + 1; });
     hBars('cityBars', bc, 'Ingen søgninger endnu. De bliver talt fra i dag.', 8);
 
+    // Populære byer-knapperne på forsiden
+    const bk = { 'København':0, 'Aarhus':0, 'Odense':0 };
+    B.cur.forEach(r => { if (r.by) bk[r.by] = (bk[r.by] || 0) + 1; });
+    if (B.cur.length) hBars('byknapBars', bk, '');
+    else document.getElementById('byknapBars').innerHTML = '<div class="st-empty">Ingen klik endnu. De bliver talt fra i dag.</div>';
+
     // TikTok
     const lastUpd = tk.length ? tk.reduce((m, d) => d.opdateret > m ? d.opdateret : m, tk[0].opdateret) : null;
     document.getElementById('tiktokHint').textContent = lastUpd
-      ? `Hentes automatisk fra Metricool hver morgen · sidst ${new Date(lastUpd).toLocaleString('da-DK', { dateStyle:'short', timeStyle:'short' })}`
+      ? `${useVideos ? 'Alle visninger på hver video, vist på den dag videoen blev lagt op. ' : ''}Hentes automatisk fra Metricool hver morgen · sidst ${new Date(lastUpd).toLocaleString('da-DK', { dateStyle:'short', timeStyle:'short' })}`
       : 'Hentes automatisk fra Metricool hver morgen. Første tal kommer, når videoerne har fået visninger.';
     // Google
     const gLast = g.length ? g.reduce((m, d) => d.opdateret > m ? d.opdateret : m, g[0].opdateret) : null;
