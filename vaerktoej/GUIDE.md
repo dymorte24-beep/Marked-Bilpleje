@@ -5,6 +5,22 @@ Reglerne der går forud for det nedenfor, hvor de er i konflikt (fx første fram
 
 Målgruppe: bilejere på Fyn (og bilplejere). Sprog: dansk. Tone: energisk, sjov, konkret.
 
+## MÅLGRUPPE OG FORDELING (Daniel, 2026-11-12, efter kundetest med 100 simulerede bilejere)
+Kundetesten viste: folk der **skal sælge bilen eller aflevere en leasingbil** sagde ja 7 af 10 gange, bilentusiaster 5 af 10, travle familier 6 af 15. Folk der vasker selv: 0 af 30. Daniel valgte at gå mest efter sælg/leasing-gruppen.
+Fordeling af ugens 3 videoer:
+- **2 videoer: serien "Sælg bilen / aflever leasingbilen"** (forklarende, ikke salg, samme stil og outro som altid).
+- **1 video: gratis vaske- og plejetips** til dem der gør det selv (rækkevidde; der bruges ingen annoncekroner på dem).
+Emneideer til serien (variér, gentag ikke):
+- "Det her koster dig penge, når du afleverer leasingbilen" (stenslag, ridser, lugt, fælge: hvad tjekkes ved aflevering)
+- "Sådan får du mere for bilen, når du sælger den" (rent interiør, poleret lak, gode salgsbilleder)
+- "Klargøring før salg: hvad gør en bilplejer?" (trin for trin, før/efter animeret)
+- "Køberen ser det her først" (lugt, sæder, rat, fælge, lygter)
+- "Polering vs. ny lak: hvad giver mest værdi ved salg?" (forklaret visuelt, ingen konkrete priser)
+- "Leasing-tjeklisten: 5 ting du selv kan gøre, og 3 du skal lade en bilplejer gøre"
+- "Hundehår og børnekrummer: derfor trækker det ned i prisen"
+Regler: lov aldrig en bestemt merpris eller at man "slipper for regningen"; skriv fx "kan hjælpe" og "kan trække ned". Ingen konkrete bilplejer-priser. Opslagstekst: spørgsmål som "Skal du sælge bilen snart?".
+I opsummeringen til Daniel: skriv hvilke 2 videoer der var serien, og hold øje i LAERING.md med om serien klarer sig bedre end tips-videoerne.
+
 ## VIGTIGST: forklar og fortæl, sælg ikke (Daniel, 2026-11-10)
 Videoerne skal være storytelling/undervisning, ikke reklame. Seeren skal lære noget og forstå HVAD der sker.
 - Gode typer: "Sådan vasker du bilen bedst om vinteren", "Vask bilen med minimale ridser" (trin for trin),
@@ -64,6 +80,7 @@ Alt er deterministisk i window.render(t) (ingen CSS-transitions/Math.random uden
 - Metricool createScheduledPost, blogId 7988347, network tiktok, timezone Europe/Copenhagen,
   tiktokData.title påkrævet, isAigc true, commercialContentOwnBrand true. (autoAddMusic virker kun på foto-opslag, så lyden skal ligge i mp4'en.)
 - Faste dage: mandag, onsdag, lørdag kl. 19:00.
+- Fordeling: 2 videoer i serien "Sælg bilen / aflever leasingbilen" + 1 gør-det-selv-tip (se MÅLGRUPPE OG FORDELING øverst).
 - ALLE 3 videoer hver uge skal være forklarende i stil med `eksempel-polering-forklaret.html` (tværsnit/diagrammer/trin), evt. kombineret med Unsplash-fotos i krogen. Alt kører automatisk uden Daniels godkendelse.
 
 ## Emneideer (variér, gentag ikke emner fra `videoer/`)
