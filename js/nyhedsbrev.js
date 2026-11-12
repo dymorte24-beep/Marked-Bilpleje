@@ -3,7 +3,7 @@
 (function(){
   const URL_ = 'https://xeosltdpvkcaudiijtge.supabase.co';
   const KEY_ = 'sb_publishable_iG0iWu8szH_7-uwErdxN9g_pE9YGFWd';
-  const SAMTYKKE_VERSION = 'v1-2026-11-12';
+  const SAMTYKKE_VERSION = 'v2-2026-11-12';
   let client = null;
   function getDb(){
     if (typeof db !== 'undefined') return db;
@@ -22,7 +22,7 @@
     const honeypot = form.querySelector('[name=bot-field]');
     msg.textContent = '';
     if (honeypot && honeypot.value) return;
-    if (!valgte.length){ msg.textContent = 'Sæt flueben ved mindst én af de to slags mails.'; return; }
+    if (!valgte.length){ msg.textContent = 'Sæt flueben ved det, du gerne vil have.'; return; }
     // Gem præcis de sætninger, personen satte flueben ved (bevis for samtykke).
     const samtykkeTekst = valgte.map(c => c.closest('label').querySelector('.nb-consent-text').textContent.replace(/\s+/g, ' ').trim()).join(' | ')
       + ' | ' + (form.querySelector('[data-vilkaar]') || {textContent:''}).textContent.replace(/\s+/g, ' ').trim();
