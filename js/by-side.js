@@ -4,6 +4,11 @@ const SUPABASE_URL = 'https://xeosltdpvkcaudiijtge.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_iG0iWu8szH_7-uwErdxN9g_pE9YGFWd';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// Bilplejer der kører ud til kunden
+function isMobileShop(services){
+  return (services || []).some(x => String(x).toLowerCase().includes('mobil'));
+}
+
 function formatServicesPreview(services, max = 3){
   const shown = services.slice(0, max);
   const remaining = services.length - shown.length;
@@ -81,10 +86,11 @@ async function loadCity(){
           <div class="card-name">${s.name}</div>
           ${s._distanceKm != null ? `<div class="card-distance">${s._distanceKm} km fra ${originName}</div>` : ''}
         </div>
+        ${(s.review_rating && s.review_count && s.review_visible !== false) ? `<div class="card-rating"><span class="card-rating-stars" aria-hidden="true">★</span> ${s.review_rating} <span class="card-rating-count">(${s.review_count} anmeldelser${s.review_source ? ' på ' + s.review_source : ''})</span></div>` : ''}
         <div class="card-meta">${s.city} · ${formatServicesPreview(s.services)}</div>
         ${(s._distanceKm > 10 && s.coverage_areas && s.coverage_areas.length <= 40) ? `<div class="card-coverage-note">Dækker ${s.coverage_areas}</div>` : ''}
         <div class="card-tags">
-          ${(s.review_rating && s.review_count && s.review_visible !== false) ? `<span class="pill">⭐ ${s.review_rating} (${s.review_count}${s.review_source ? ' på ' + s.review_source : ''})</span>` : ''}
+          ${isMobileShop(s.services) ? '<span class="pill mobil">Kommer ud til dig</span>' : ''}
           ${s._ad ? '<span class="pill annonce">Annonce</span>' : ''}
           ${s.verificeret ? '<span class="pill verified">Verificeret</span>' : ''}
           ${s.price_level ? `<span class="pill">${priceLevelHtml(s.price_level)} ${PRICE_LEVEL_NAMES[s.price_level]}</span>` : ''}

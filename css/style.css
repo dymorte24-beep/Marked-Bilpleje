@@ -285,6 +285,10 @@ section.search{
   font-size:11px; padding:3px 9px; border-radius:20px;
   background:var(--fog); color:var(--text-muted);
 }
+.pill.mobil{background:var(--gold-light); color:var(--navy); border:1px solid var(--gold); font-weight:600;}
+.card-rating{font-size:13px; font-weight:600; color:var(--navy); margin-bottom:3px;}
+.card-rating-stars{color:var(--gold);}
+.card-rating-count{font-weight:400; color:var(--text-muted);}
 .pill.verified{background:var(--gold-light); color:var(--gold-dark); font-weight:600;}
 .pill.discount{background:var(--gold); color:var(--navy); font-weight:600;}
 .badge-premium{

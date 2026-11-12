@@ -51,7 +51,12 @@
   }
   h1.pf-name{font-size:52px; line-height:1.05; margin-bottom:14px;}
   .pf-location{color:var(--text-muted); font-size:16px; margin-bottom:14px;}
-  .pf-stars-row{margin-bottom:14px;}
+  .pf-badges{display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; margin-bottom:14px;}
+  .pf-stars-row{margin:0; display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 8px;}
+  .pf-rating-num{font-size:18px; color:var(--navy);}
+  .pf-rating-count{color:var(--text-muted); font-size:14px;}
+  .pf-mobil{margin:0; display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:var(--navy); background:var(--gold-light); border:1px solid var(--gold); border-radius:20px; padding:4px 12px;}
+  .pf-mobil::before{content:''; width:8px; height:8px; border-radius:50%; background:var(--gold-dark);}
   .pf-stars{color:var(--gold); font-size:20px; letter-spacing:3px;}
   .pf-tagline{color:var(--text-muted); font-size:17px; font-style:italic; line-height:1.5;}
 
@@ -74,7 +79,7 @@
   .pf-secondary-btn svg{width:15px; height:15px;}
 
   @media (max-width:760px){
-    .pf-hero-main{text-align:center;}
+    .pf-hero-main{text-align:center;} .pf-badges, .pf-stars-row{justify-content:center;}
     h1.pf-name{font-size:32px;}
     .pf-secondary-actions{justify-content:center;}
   }
@@ -303,6 +308,7 @@ async function loadShop(){
   `;
 
   const hasReview = shop.review_rating && shop.review_count && shop.review_visible !== false;
+  const isMobile = (shop.services || []).some(s => String(s).toLowerCase().includes('mobil'));
   const starsGlyphs = hasReview ? '★★★★★'.slice(0, Math.round(shop.review_rating)) + '☆☆☆☆☆'.slice(0, 5 - Math.round(shop.review_rating)) : '';
 
   // ---- KONTAKT: direkte til butikken (ingen "Få tilbud"-mellemled) ----
@@ -330,7 +336,10 @@ async function loadShop(){
           <p class="pf-eyebrow">Bilpleje i ${shop.city}</p>
           <h1 class="pf-name">${shop.name}</h1>
           ${shop.address ? `<p class="pf-location">${shop.address}</p>` : ''}
-          ${hasReview ? `<p class="pf-stars-row"><span class="pf-stars" role="img" aria-label="${shop.review_rating} ud af 5 stjerner">${starsGlyphs}</span></p>` : ''}
+          ${(hasReview || isMobile) ? `<div class="pf-badges">
+            ${hasReview ? `<p class="pf-stars-row"><span class="pf-stars" role="img" aria-label="${shop.review_rating} ud af 5 stjerner">${starsGlyphs}</span> <strong class="pf-rating-num">${shop.review_rating}</strong> <span class="pf-rating-count">${shop.review_count} anmeldelser${shop.review_source ? ' på ' + shop.review_source : ''}</span></p>` : ''}
+            ${isMobile ? `<p class="pf-mobil">Kommer ud til dig</p>` : ''}
+          </div>` : ''}
           ${shop.tagline ? `<p class="pf-tagline">${shop.tagline}</p>` : ''}
         </div>
         <div class="pf-hero-media">

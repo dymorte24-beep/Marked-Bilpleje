@@ -362,3 +362,9 @@ Inspireret af kardet.com, men med eget brand og egne tekster. Toppen er nu: Dani
 - Viser: aktive bilplejere (godkendt), profilvisninger (`profil_visninger`), kontaktklik (`butik_klik`, nu med `metode`), søgninger (ny tabel `soegninger`, logges i `filterCards`), TikTok-tal (`tiktok_dag`, `tiktok_videoer`).
 - TikTok-tabellerne fyldes af en daglig planlagt opgave, der henter fra Metricool (brand 7988347) og skriver via Supabase. SQL: `supabase/2026-11-09-statistik.sql`.
 - Instagram/Facebook-links på profilen tæller nu også som kontaktklik.
+
+## 2026-11-12 — Anmeldelser og "Kommer ud til dig" (efter kundepanelet)
+- Kundetest med 100 simulerede bilejere viste, at anmeldelser og "kommer de ud til mig?" er noget af det, folk kigger efter.
+- Søgekort (forside + by-sider): stjerner og antal anmeldelser står nu som en linje lige under navnet i stedet for som et lille mærke.
+- Profilen: stjerner + tal + "X anmeldelser på Trustpilot" øverst ved navnet.
+- Mærket **"Kommer ud til dig"** vises på søgekort og profil for bilplejere med ydelsen "Mobil bilpleje" (samme regel som søgefilteret "Hjemme hos mig").
