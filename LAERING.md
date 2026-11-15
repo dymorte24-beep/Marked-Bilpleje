@@ -111,3 +111,4 @@ Ugens videoer (uge 47): 16/11 18:00 leasing-aflevering (serie), 18/11 18:00 vask
 
 ## Daniel 2026-11-15: "200-300 visninger fungerer ikke, prøv noget nyt"
 Næste søndags kørsel SKAL lave et større skift ud over ny krog-stil, ikke kun finjustere. Se Daniels valg i TikTok-tråden (forslag: ægte optagelser fra creator/bilplejere med deres tilladelse, flere opslag om ugen inkl. foto-karruseller med trend-musik). Spørgsmålet blev sendt til Daniel 2026-11-15; brug hans svar, hvis det står i projekt-hukommelsen.
+Daniels valg 2026-11-15: "Opslag hver dag med karruseller". Fra uge 47: 3 videoer + foto-karruseller med autoAddMusic de øvrige dage. Uge 47 karruseller: tor 19/11 18:00 leasing-selv, lør 21/11 12:00 coating-quiz, søn 22/11 12:00 salgsbilleder.

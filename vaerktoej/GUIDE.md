@@ -65,6 +65,14 @@ Alt er deterministisk i window.render(t) (ingen CSS-transitions/Math.random uden
 - Emne-effekter: skumbobler (vask), gnister (polering) – find på nye der passer til emnet (sne, vanddråber, støv).
 - Outro: luppen tegnes streg for streg, logo glider op, "Link i bio"-knap popper og pulserer.
 
+## OPSLAG HVER DAG (Daniel valgte 2026-11-15, fordi 200-300 visninger ikke virker)
+Ud over de 3 videoer laves en FOTO-KARRUSEL på hver af ugens øvrige dage (typisk 4 om ugen; spring dage over der allerede har et opslag i getScheduledPosts).
+- Værktøj: python3 vaerktoej/lav_karrusel.py spec.json karruseller/<dato>-<emne>/  (5-7 slides 1080x1920: krog + "Swipe", nummererede trin, fast outro). Spec gemmes som spec.json i mappen.
+- Formater der passer: tjeklister (5 ting...), quiz "rigtigt eller forkert", før/efter-trin, myter. Samme fordeling: mest sælg/leasing-serien, resten tips.
+- Metricool: media = liste med raw.githubusercontent.com-URL'er til hver slide i rækkefølge, tiktokData.autoAddMusic TRUE (giver trend-musik), photoCoverIndex 0, isAigc true, commercialContentOwnBrand true, title påkrævet.
+- Tidspunkt: hverdage 18:00, weekend 12:00 (Metricool best time).
+- Sammenlign i LAERING.md karruseller mod videoer (visninger, likes, kommentarer, gemt/delt).
+
 ## HURTIGSTE VEJ (fra uge 47): `vaerktoej/lav_video.py`
 Én JSON-spec pr. video -> færdig mp4 med fotos, dansk voiceover (piper), store undertekster, NEJ/JA-stempler, nummer-badges, punch-zoom, hvidt blink ved sceneskift, outro og lydspor (lyd.py under stemmen). Se docstring øverst i filen for spec-formatet.
 Opsætning af piper (1 min):
