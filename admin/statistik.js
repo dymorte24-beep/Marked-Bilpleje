@@ -12,6 +12,18 @@ const shortDate = key => { const [y,m,d] = key.split('-'); return `${+d}/${+m}`;
 const METHOD_NAMES = { phone:'Ring', call:'Ring', tel:'Ring', email:'Mail', mail:'Mail', website:'Hjemmeside', sms:'SMS', facebook:'Facebook', instagram:'Instagram', maps:'Rutevejledning', directions:'Rutevejledning' };
 
 // ---------- Data ----------
+// Den samme TikTok-video kan stå flere gange i tiktok_videoer (Metricool har skiftet link-format,
+// fx med og uden ?utm_...). Vi tæller hver video én gang ud fra video-id'et og bruger den nyeste række.
+function uniqVideos(rows){
+  const m = new Map();
+  (rows || []).forEach(v => {
+    const id = ((v.url || '').match(/video\/(\d+)/) || [])[1] || v.url;
+    const cur = m.get(id);
+    if (!cur || (v.opdateret || '') > (cur.opdateret || '')) m.set(id, v);
+  });
+  return [...m.values()].sort((a, b) => (b.udgivet || '').localeCompare(a.udgivet || ''));
+}
+
 // Supabase giver højst 1000 rækker ad gangen, så vi henter i bidder.
 async function fetchAll(table, cols, since){
   let out = [], from = 0;
@@ -57,10 +69,10 @@ async function loadStatistik(){
       fetchAll('soegninger', 'by, ydelse, created_at', sinceIso),
       db.from('shops').select('name, city, godkendt, tier, ad_active'),
       db.from('tiktok_dag').select('*').gte('dato', dayKey(startPrev)).order('dato'),
-      db.from('tiktok_videoer').select('*').order('udgivet', { ascending:false }).limit(12),
+      db.from('tiktok_videoer').select('*').order('udgivet', { ascending:false }).limit(60),
       db.from('google_dag').select('*').gte('dato', dayKey(startPrev)).order('dato'),
       db.from('google_soegeord').select('*').order('visninger', { ascending:false }).limit(15),
-      db.from('tiktok_videoer').select('udgivet, visninger').gte('udgivet', sinceIso),
+      db.from('tiktok_videoer').select('url, udgivet, visninger, opdateret').gte('udgivet', sinceIso),
       db.from('google_ads_dag').select('*').gte('dato', dayKey(startPrev)).order('dato'),
       db.from('google_ads_soegeord').select('*').order('visninger', { ascending:false }).limit(60)
     ]);
@@ -82,7 +94,7 @@ async function loadStatistik(){
     const gPos = avgPos(gCur), gPosPrev = avgPos(gPrev);
     // Metricool giver ikke daglige visninger for TikTok-kontoen (altid 0), men den giver
     // visninger pr. video. Derfor tæller vi visningerne på de videoer, der er lagt op i perioden.
-    const tkVids = tkPeriod.data || [];
+    const tkVids = uniqVideos(tkPeriod.data);
     const vidCur = tkVids.filter(v => new Date(v.udgivet) >= startCur), vidPrev = tkVids.filter(v => new Date(v.udgivet) < startCur);
     const useVideos = sum(tk, 'visninger') === 0 && tkVids.length > 0;
     const tkViewsCur = useVideos ? sum(vidCur, 'visninger') : sum(tkCur, 'visninger');
@@ -194,7 +206,7 @@ async function loadStatistik(){
       `<tr><td>${esc(w.soegeord)}</td><td class="st-num">${fmt(w.visninger)}</td><td class="st-num">${w.position != null ? Math.round(w.position) : '–'}</td></tr>`
     ).join('') : '<tr><td colspan="3" class="st-empty">Ingen søgeord hentet endnu.</td></tr>';
 
-    const vids = tkVideos.data || [];
+    const vids = uniqVideos(tkVideos.data).slice(0, 12);
     document.getElementById('videoTable').innerHTML = vids.length ? vids.map(v =>
       `<tr><td><a href="${esc(v.url)}" target="_blank" rel="noopener">${esc((v.beskrivelse || 'Video').slice(0, 60))}</a></td><td class="hide-sm">${v.udgivet ? new Date(v.udgivet).toLocaleDateString('da-DK') : '–'}</td><td class="st-num">${fmt(v.visninger)}</td><td class="st-num">${fmt(v.likes)}</td><td class="st-num hide-sm">${fmt(v.kommentarer)}</td><td class="st-num hide-sm">${fmt(v.delinger)}</td></tr>`
     ).join('') : '<tr><td colspan="6" class="st-empty">Ingen videoer hentet endnu.</td></tr>';
