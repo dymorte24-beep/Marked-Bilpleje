@@ -28,6 +28,7 @@ HEAD_START = """<!DOCTYPE html>
   gtag('config', 'AW-18378049298');
   gtag('config', 'G-KTK6266STG');
 </script>
+<script src="/js/kilde.js"></script>
 """
 
 HEAD_FÆLLES = """<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">

@@ -1,6 +1,7 @@
 // Statistik-fanen i admin-panelet. Bruger `db` fra admin-siden (samme login).
 // TikTok-tallene fyldes i tiktok_dag/tiktok_videoer af en daglig planlagt opgave (Metricool -> Supabase).
 // Google-tallene fyldes i google_dag/google_soegeord af en daglig planlagt opgave (Search Console via Windsor.ai -> Supabase).
+// Google Ads-tallene fyldes i google_ads_dag/google_ads_soegeord af samme opgave (Google Ads via Windsor.ai -> Supabase).
 let days = 30;
 let statLoaded = false;
 
@@ -50,16 +51,18 @@ async function loadStatistik(){
   const startPrev = new Date(startCur.getTime() - days * 864e5);
   const sinceIso = startPrev.toISOString();
   try {
-    const [views, clicks, searches, shopsRes, tkDays, tkVideos, gDays, gWords, tkPeriod] = await Promise.all([
-      fetchAll('profil_visninger', 'butik, created_at', sinceIso),
-      fetchAll('butik_klik', 'butik, metode, created_at', sinceIso),
+    const [views, clicks, searches, shopsRes, tkDays, tkVideos, gDays, gWords, tkPeriod, adDays, adWords] = await Promise.all([
+      fetchAll('profil_visninger', 'butik, kilde, created_at', sinceIso),
+      fetchAll('butik_klik', 'butik, metode, kilde, created_at', sinceIso),
       fetchAll('soegninger', 'by, ydelse, created_at', sinceIso),
       db.from('shops').select('name, city, godkendt, tier, ad_active'),
       db.from('tiktok_dag').select('*').gte('dato', dayKey(startPrev)).order('dato'),
       db.from('tiktok_videoer').select('*').order('udgivet', { ascending:false }).limit(12),
       db.from('google_dag').select('*').gte('dato', dayKey(startPrev)).order('dato'),
       db.from('google_soegeord').select('*').order('visninger', { ascending:false }).limit(15),
-      db.from('tiktok_videoer').select('udgivet, visninger').gte('udgivet', sinceIso)
+      db.from('tiktok_videoer').select('udgivet, visninger').gte('udgivet', sinceIso),
+      db.from('google_ads_dag').select('*').gte('dato', dayKey(startPrev)).order('dato'),
+      db.from('google_ads_soegeord').select('*').order('visninger', { ascending:false }).limit(60)
     ]);
     const shops = shopsRes.data || [];
     const isByknap = r => r.ydelse === 'by-knap';
@@ -136,6 +139,45 @@ async function loadStatistik(){
     B.cur.forEach(r => { if (r.by) bk[r.by] = (bk[r.by] || 0) + 1; });
     if (B.cur.length) hBars('byknapBars', bk, '');
     else document.getElementById('byknapBars').innerHTML = '<div class="st-empty">Ingen klik endnu. De bliver talt fra i dag.</div>';
+
+    // Kilder (hvor kom den besøgende fra)
+    const kc = {}, kv = {};
+    C.cur.forEach(r => { const k = r.kilde || 'Ukendt (før 15/11)'; kc[k] = (kc[k] || 0) + 1; });
+    V.cur.forEach(r => { const k = r.kilde || 'Ukendt (før 15/11)'; kv[k] = (kv[k] || 0) + 1; });
+    hBars('kildeBars', kc, 'Ingen kontaktklik i perioden endnu.', 8);
+    hBars('kildeViewBars', kv, 'Ingen profilvisninger i perioden endnu.', 8);
+
+    // Google-annoncer
+    const ad = adDays.data || [];
+    const adCur = ad.filter(d => d.dato >= dayKey(startCur)), adPrev = ad.filter(d => d.dato < dayKey(startCur));
+    const kr = n => (Math.round((n || 0) * 100) / 100).toLocaleString('da-DK', { minimumFractionDigits:0, maximumFractionDigits:2 }) + ' kr.';
+    const adKlik = sum(adCur, 'klik'), adKr = sum(adCur, 'forbrug'), adVis = sum(adCur, 'visninger');
+    const adKontakt = C.cur.filter(r => r.kilde === 'Google-annonce').length;
+    const adKontaktPrev = C.prev.filter(r => r.kilde === 'Google-annonce').length;
+    const waiting = 'Venter på første tal';
+    document.getElementById('adsTiles').innerHTML = [
+      { lbl:'Annonceklik', val:adKlik, sub:ad.length ? delta(adKlik, sum(adPrev, 'klik')) : waiting },
+      { lbl:'Vist på Google', val:adVis, sub:ad.length ? (adVis ? `${Math.round(adKlik / adVis * 1000) / 10}% klikkede` : '&nbsp;') : waiting },
+      { lbl:'Brugt', val:kr(adKr), sub:ad.length ? delta(Math.round(adKr), Math.round(sum(adPrev, 'forbrug'))) : waiting },
+      { lbl:'Pris pr. klik', val:adKlik ? kr(adKr / adKlik) : '–', sub:'Gennemsnit i perioden' },
+      { lbl:'Kontaktklik fra annoncer', val:adKontakt, sub:adKontakt || adKontaktPrev ? delta(adKontakt, adKontaktPrev) : 'Tælles fra 15/11', accent:true },
+      { lbl:'Pris pr. kontaktklik', val:adKontakt ? kr(adKr / adKontakt) : '–', sub:'Brugt ÷ kontaktklik fra annoncer', accent:true }
+    ].map(t => `<div class="st-tile${t.accent ? ' st-accent' : ''}"><div class="st-lbl">${t.lbl}</div><div class="st-val">${typeof t.val === 'number' ? fmt(t.val) : t.val}</div><div class="st-sub">${t.sub || '&nbsp;'}</div></div>`).join('');
+    const adK = Object.fromEntries(adCur.map(d => [d.dato, d.klik || 0]));
+    const adF = Object.fromEntries(adCur.map(d => [d.dato, Math.round(d.forbrug || 0)]));
+    barChart('chartAdsKlik', keys.map(k => ({ key:k, value:adK[k] || 0 })), 'klik', '#131D2E');
+    barChart('chartAdsKr', keys.map(k => ({ key:k, value:adF[k] || 0 })), 'kr.', '#B68B48');
+    const adLast = ad.length ? ad.reduce((m, d) => d.opdateret > m ? d.opdateret : m, ad[0].opdateret) : null;
+    document.getElementById('adsHint').textContent = adLast
+      ? `Hentes automatisk fra Google Ads hver morgen · sidst ${new Date(adLast).toLocaleString('da-DK', { dateStyle:'short', timeStyle:'short' })}`
+      : 'Hentes automatisk fra Google Ads hver morgen. Første tal kommer, når annoncerne er blevet vist.';
+    // Kun søgninger fra seneste opdatering (gamle rækker bliver liggende i tabellen)
+    const aw = adWords.data || [];
+    const awLast = aw.reduce((m, w) => w.opdateret > m ? w.opdateret : m, '');
+    const awFresh = aw.filter(w => new Date(awLast) - new Date(w.opdateret) < 6 * 3600e3).slice(0, 20);
+    document.getElementById('adsTable').innerHTML = awFresh.length ? awFresh.map(w =>
+      `<tr><td>${esc(w.soegeord)}</td><td class="st-num">${fmt(w.visninger)}</td><td class="st-num">${fmt(w.klik)}</td><td class="st-num">${kr(w.forbrug).replace(' kr.', '')}</td></tr>`
+    ).join('') : '<tr><td colspan="4" class="st-empty">Ingen søgninger hentet endnu.</td></tr>';
 
     // TikTok
     const lastUpd = tk.length ? tk.reduce((m, d) => d.opdateret > m ? d.opdateret : m, tk[0].opdateret) : null;

@@ -246,7 +246,7 @@ initWizard();
 // i statistikken, hvor mange kunder siden har sendt videre til dem.
 function trackContact(shopName, method){
   track('contact_click', { shop_name: shopName, method });
-  db.from('butik_klik').insert({ butik: shopName, metode: method || null }).then(({ error }) => {
+  db.from('butik_klik').insert({ butik: shopName, metode: method || null, kilde: window.fbKilde ? window.fbKilde() : null }).then(({ error }) => {
     if (error) console.error('Kunne ikke logge klik', error);
   });
 }
