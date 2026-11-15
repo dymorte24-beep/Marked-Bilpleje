@@ -2,6 +2,9 @@
 """Tekster til de faste bysider på Fyn. Hver by har sin egen, lokale tekst,
 så siderne ikke ligner hinanden (det straffer Google)."""
 
+# Byer uden for Fyn, hvor vi allerede har en bilplejer og ligger tæt på side 1 i Google.
+ANDRE_BYER_ORDEN = ["birkerod", "aabybro"]
+
 FYN_BYER_ORDEN = ["odense", "svendborg", "nyborg", "middelfart", "faaborg", "assens", "kerteminde", "bogense", "ringe"]
 
 YDELSER = """      <p>En professionel bilplejer gør mere end en vaskehal. Typiske ydelser er:</p>
@@ -26,6 +29,18 @@ BYER = {
         "sektioner": [
             ("Hvad kan en bilplejer i Odense hjælpe med?", YDELSER + """
       <p>Bor du i Odense, er vinteren hård ved bilen. Vejsalt sætter sig på lak, fælge og undervogn, så det kan betale sig at få bilen vasket grundigt og beskyttet, før det for alvor bliver koldt. <a href="/guide/vask-bilen-om-vinteren/">Læs vores guide til vinter-vask</a>.</p>"""),
+            ("Polering og keramisk coating i Odense", """      <p>Polering og keramisk coating er nogle af de mest efterspurgte ydelser hos bilplejerne i Odense. De to ting hører ofte sammen: først poleres lakken, så fine ridser, swirls og mat lak forsvinder, og bagefter lægges coatingen på som et hårdt, blankt lag, der låser resultatet fast.</p>
+      <p>En <strong>polering</strong> giver lakken dybde og glans igen og er et godt valg, hvis bilen er et par år gammel og har fået vaskehals-ridser. En <strong>keramisk coating</strong> beskytter lakken mod vejsalt, fugleklatter og sol i lang tid, og vand og snavs preller af, så bilen er meget lettere at holde ren. Et lettere alternativ er <strong>lakforsegling eller voks</strong>, der beskytter i nogle måneder.</p>
+      <p>Spørg bilplejeren, hvor mange trin lakken skal poleres i, hvor længe coatingen holder, og om der følger en garanti med. Så kan du sammenligne tilbuddene på lige fod. <a href="/guide/polering-eller-coating/">Læs mere om polering eller coating</a>.</p>"""),
+            ("Billig bilpleje i Odense: sådan får du mest for pengene", """      <p>Bilpleje behøver ikke at være dyrt. Prisen afhænger mest af, hvor meget arbejde bilen kræver, så du kan selv gøre en del for at holde den nede:</p>
+      <ul>
+        <li><strong>Vælg det, bilen har brug for.</strong> En grundig håndvask og indvendig rens er ofte nok. Polering og coating kan vente, til lakken trænger.</li>
+        <li><strong>Tøm bilen først.</strong> Fjern affald, barnestole og ting fra bagagerummet, så bilplejeren kan gå direkte i gang.</li>
+        <li><strong>Spørg efter en pakke.</strong> Mange bilplejere i Odense har faste pakker med ud- og indvendig rens, der er billigere end at bestille tingene hver for sig.</li>
+        <li><strong>Kom før det bliver slemt.</strong> Vejsalt og pletter er lettere og billigere at fjerne, hvis de ikke har siddet hele vinteren.</li>
+        <li><strong>Få en pris fra flere.</strong> Kontakt to eller tre bilplejere og beskriv bilen ens, så du kan sammenligne.</li>
+      </ul>
+      <p>Billigst er ikke altid bedst. En vaskehal er billig, men børsterne kan give de fine ridser, som du senere skal betale for at få poleret væk.</p>"""),
             ("Bilpleje i hele Odense", """      <p>Odense er Danmarks tredjestørste by, og bilplejerne ligger spredt over hele byen. Nogle har værksted i industriområderne i Odense NV, Odense SØ og Odense S, andre er mobile og kommer ud til dig. Vi viser altid de bilplejere, der ligger tættest på, så du ikke skal krydse hele byen for en vask.</p>
       <p>Vi dækker hele kommunen, også postnumrene 5000 Odense C, 5200 Odense V, 5210 Odense NV, 5220 Odense SØ, 5230 Odense M, 5240 Odense NØ, 5250 Odense SV, 5260 Odense S og 5270 Odense N, og forstæder som Dalum, Bellinge, Fraugde, Højby og Vollsmose.</p>
       <p>Kører du ind til Odense fra resten af Fyn, kan en bilplejer i byen også være et godt valg. Mange har travlt i weekenden, så ring gerne et par dage i forvejen.</p>"""),
@@ -41,6 +56,8 @@ BYER = {
         "faq": [
             ("Hvad koster bilpleje i Odense?", "Prisen afhænger af bilens størrelse, stand og hvad du vil have lavet. En udvendig håndvask koster typisk langt mindre end en polering eller en keramisk coating. Kontakt et par bilplejere direkte og beskriv din bil, så får du den mest præcise pris."),
             ("Hvad er forskellen på en vask, en polering og en coating?", "En vask fjerner snavs. En polering fjerner fine ridser og mat lak, så lakken skinner igen. En coating er et beskyttende lag oven på lakken, der gør bilen lettere at holde ren og beskytter mod vejsalt og vejr i måneder eller år."),
+            ("Hvor holder keramisk coating i Odense?", "En keramisk coating holder typisk fra et til flere år, afhængigt af produktet, og hvordan bilen bliver vasket bagefter. Spørg bilplejeren, hvor længe deres coating holder, og hvordan du bedst vedligeholder den. Mange anbefaler en blid håndvask uden vaskehal."),
+            ("Hvordan finder jeg billig bilpleje i Odense?", "Vælg kun de ydelser bilen har brug for, tøm bilen inden, og spørg efter en fast pakke. Kontakt gerne et par bilplejere direkte og beskriv bilen ens, så kan du sammenligne priserne. Det koster ikke noget at søge på FindBilplejere.dk."),
             ("Hvor ofte bør jeg få min bil plejet?", "De fleste har godt af en grundig rengøring et par gange om året, især før og efter vinteren, hvor vejsalt slider på lak og undervogn. Kører du meget, eller holder bilen udendørs, kan det betale sig oftere."),
             ("Kan en bilplejer komme ud til mig i Odense?", "Ja, nogle bilplejere tilbyder mobil bilpleje og kommer hjem til dig eller på arbejdspladsen. De er markeret med \"Kommer ud til dig\" i listen. Se på den enkelte bilplejers profil, hvilket område de dækker."),
             ("Hvor lang tid tager bilpleje?", "En udvendig vask tager ofte en til to timer. En grundig indvendig rens eller en polering kan tage det meste af en dag, og en keramisk coating tager typisk en til to dage, fordi lakken skal poleres først. Spørg bilplejeren, når du booker."),
@@ -206,4 +223,54 @@ BYER = {
             FAQ_GRATIS,
         ],
     },
+}
+
+BYER["birkerod"] = {
+    "navn": "Birkerød",
+    "titel": "Bilpleje i Birkerød – bilplejere til polering, coating og indvendig rens",
+    "beskrivelse": "Find bilpleje i Birkerød og Nordsjælland. Se lokale bilplejere til polering, keramisk coating og indvendig rens, og kontakt dem direkte. Gratis og uden mellemled.",
+    "h1": "Bilpleje i Birkerød",
+    "intro": "Find en bilplejer i Birkerød og omegn, også hvis du bor i Bistrup, Høje Sandbjerg, Kajerød eller Bregnerød. Se hvad de tilbyder, og kontakt bilplejeren direkte på telefon, mail eller hjemmeside. Det er gratis, og der er ingen mellemled.",
+    "sektioner": [
+        ("Bilpleje i Birkerød og Nordsjælland", """      <p>Birkerød ligger midt i Nordsjælland mellem skov og sø, med Hillerødmotorvejen og Kongevejen lige ved siden af. Mange pendler ind mod København hver dag, og bilen holder ofte under træerne i villakvartererne. Det giver harpiks, blade og fuglesnavs på lakken om sommeren og vejsalt om vinteren.</p>
+      <p>En bilplejer kan fjerne harpiks og pletter skånsomt, polere fine ridser væk og beskytte lakken med voks eller keramisk coating, så den holder sig pæn længere. Vi viser også bilplejere i nabobyerne, fx Farum, Allerød, Hørsholm og Lyngby, sorteret efter afstand.</p>"""),
+        ("Hvad kan en bilplejer i Birkerød hjælpe med?", YDELSER),
+        ("Sådan vælger du den rigtige bilplejer", """      <ul>
+        <li>Se hvilke ydelser bilplejeren tilbyder, og om de dækker dit område.</li>
+        <li>Kig efter anmeldelser og billeder af tidligere arbejde.</li>
+        <li>Beskriv din bil og hvad du ønsker, så du kan få en præcis pris.</li>
+        <li>Spørg om bilplejeren kan komme ud til dig, eller om du skal aflevere bilen.</li>
+      </ul>"""),
+    ],
+    "faq": [
+        ("Hvad koster bilpleje i Birkerød?", "Prisen afhænger af bilens størrelse, stand og hvad du vil have lavet. En håndvask koster langt mindre end en polering eller en keramisk coating. Kontakt bilplejeren direkte og beskriv din bil, så får du den mest præcise pris."),
+        ("Kan man få keramisk coating i Birkerød?", "Ja. Flere bilplejere i Birkerød og Nordsjælland tilbyder polering og keramisk coating. Se ydelserne på den enkelte bilplejers profil i listen ovenfor."),
+        ("Hvordan får jeg harpiks og fuglesnavs af lakken?", "Fjern det hurtigt, da det kan ætse sig ned i lakken. Brug ikke en hård svamp. En bilplejer kan fjerne det skånsomt og polere eventuelle mærker væk bagefter, og en coating gør det lettere at fjerne næste gang."),
+        FAQ_GRATIS,
+    ],
+    "guides": ["polering-eller-coating", "vask-bilen-om-vinteren", "klargoering-foer-salg", "aflevering-af-leasingbil"],
+    "naboer": [("farum", "Farum"), ("helsingor", "Helsingør"), ("lyngby", "Lyngby"), ("hillerod", "Hillerød")],
+}
+
+BYER["aabybro"] = {
+    "navn": "Aabybro",
+    "titel": "Bilpleje i Aabybro – bilplejere til keramisk coating og polering",
+    "beskrivelse": "Find bilpleje i Aabybro og Vesthimmerland/Jammerbugt. Lokale bilplejere til keramisk coating, polering og indvendig rens. Kontakt dem direkte, gratis.",
+    "h1": "Bilpleje i Aabybro",
+    "intro": "Find en bilplejer i Aabybro og omegn, fx Biersted, Gjøl, Brovst og Nørresundby. Se hvad de tilbyder, og kontakt bilplejeren direkte på telefon, mail eller hjemmeside. Det er gratis, og der er ingen mellemled.",
+    "sektioner": [
+        ("Bilpleje i Aabybro og Jammerbugt", """      <p>Aabybro ligger i Jammerbugt Kommune, tæt på Limfjorden og ikke langt fra Vesterhavet. Vind fra havet, sand og vejsalt om vinteren slider på lak, fælge og undervogn, og mange kører dagligt ad landevejen eller motorvejen ind mod Aalborg.</p>
+      <p>En bilplejer kan vaske salt og sand grundigt af, polere fine ridser væk og beskytte lakken med keramisk coating eller voks, så snavset ikke sætter sig så hårdt fast. Vi viser også bilplejere i Nordjylland omkring Aabybro, sorteret efter afstand.</p>"""),
+        ("Hvad kan en bilplejer i Aabybro hjælpe med?", YDELSER),
+        ("Keramisk coating i Aabybro", """      <p>Keramisk coating er et hårdt, blankt lag oven på lakken. Det beskytter mod vejsalt, sand og fugleklatter og gør bilen langt lettere at holde ren, fordi vand og snavs preller af. Inden coatingen lægges på, bliver lakken som regel poleret, så den er helt ren og uden fine ridser.</p>
+      <p>Spørg bilplejeren, hvor længe coatingen holder, hvor mange trin lakken poleres i, og hvordan du bedst vasker bilen bagefter. <a href="/guide/polering-eller-coating/">Læs mere om polering eller coating</a>.</p>"""),
+    ],
+    "faq": [
+        ("Hvad koster bilpleje i Aabybro?", "Det afhænger af bilen, dens stand og hvad du vil have lavet. En håndvask koster langt mindre end en polering eller en keramisk coating. Kontakt bilplejeren direkte og beskriv din bil for at få en præcis pris."),
+        ("Hvor længe holder keramisk coating?", "Typisk fra et til flere år, afhængigt af produktet, og hvordan bilen bliver vasket bagefter. Spørg bilplejeren, hvor længe deres coating holder, og om der følger en garanti med."),
+        ("Er der bilpleje tæt på Aabybro, hvis jeg bor i Nørresundby eller Brovst?", "Ja. Listen ovenfor viser bilplejerne tættest på Aabybro, sorteret efter afstand, så du kan se hvem der ligger nærmest dig."),
+        FAQ_GRATIS,
+    ],
+    "guides": ["polering-eller-coating", "vask-bilen-om-vinteren", "klargoering-foer-salg", "aflevering-af-leasingbil"],
+    "naboer": [("aalborg", "Aalborg"), ("norresundby", "Nørresundby"), ("brovst", "Brovst"), ("fjerritslev", "Fjerritslev")],
 }
