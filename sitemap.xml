@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Opdateret 12. nov 2026 (Fyn-profiler tilføjet). Tidligere 19. sep 2026: Domæne skiftet til findbilplejere.dk, og
+  Opdateret 15. nov 2026 (bysider på Fyn + guides). 12. nov 2026: Fyn-profiler tilføjet. Tidligere 19. sep 2026: Domæne skiftet til findbilplejere.dk, og
   listen udvidet med alle butikker/byer tilføjet siden 25. aug 2026.
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -31,10 +31,22 @@
   <url><loc>https://findbilplejere.dk/bilpleje/koge/koge-bilpleje-aps/</loc></url>
   <url><loc>https://findbilplejere.dk/bilpleje/hovedgard/</loc></url>
   <url><loc>https://findbilplejere.dk/bilpleje/hovedgard/j-o-bilpleje/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/odense/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/odense/</loc><lastmod>2026-11-15</lastmod></url>
   <url><loc>https://findbilplejere.dk/bilpleje/odense/bilplejen-dk/</loc></url>
   <url><loc>https://findbilplejere.dk/bilpleje/odense/ac-detailing/</loc></url>
   <url><loc>https://findbilplejere.dk/bilpleje/bellinge/cleantech-bilpleje/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/svendborg/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/svendborg/</loc><lastmod>2026-11-15</lastmod></url>
   <url><loc>https://findbilplejere.dk/bilpleje/svendborg/direkte-detailing/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/nyborg/</loc><lastmod>2026-11-15</lastmod></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/middelfart/</loc><lastmod>2026-11-15</lastmod></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/faaborg/</loc><lastmod>2026-11-15</lastmod></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/assens/</loc><lastmod>2026-11-15</lastmod></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/kerteminde/</loc><lastmod>2026-11-15</lastmod></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/bogense/</loc><lastmod>2026-11-15</lastmod></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/ringe/</loc><lastmod>2026-11-15</lastmod></url>
+  <url><loc>https://findbilplejere.dk/guide/</loc><lastmod>2026-11-15</lastmod></url>
+  <url><loc>https://findbilplejere.dk/guide/vask-bilen-om-vinteren/</loc><lastmod>2026-11-15</lastmod></url>
+  <url><loc>https://findbilplejere.dk/guide/polering-eller-coating/</loc><lastmod>2026-11-15</lastmod></url>
+  <url><loc>https://findbilplejere.dk/guide/klargoering-foer-salg/</loc><lastmod>2026-11-15</lastmod></url>
+  <url><loc>https://findbilplejere.dk/guide/aflevering-af-leasingbil/</loc><lastmod>2026-11-15</lastmod></url>
 </urlset>
