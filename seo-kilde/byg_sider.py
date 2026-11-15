@@ -7,7 +7,7 @@ kan læse al teksten med det samme. Listen over bilplejere hentes stadig live fr
 databasen af js/by-side.js, så den altid er opdateret.
 """
 import json, os, html
-from byer import BYER, FYN_BYER_ORDEN
+from byer import BYER, FYN_BYER_ORDEN, ANDRE_BYER_ORDEN
 from guides import GUIDES
 
 ROD = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -145,6 +145,12 @@ def by_links(udelad):
     return '<div class="related-links">\n      ' + "\n      ".join(out) + "\n    </div>"
 
 
+def nabo_links(naboer):
+    out = [f'<a href="/bilpleje/{k}/">Bilpleje i {esc(n)}</a>' for k, n in naboer]
+    out.append('<a href="/bilpleje/odense/">Bilpleje i Odense</a>')
+    return '<div class="related-links">\n      ' + "\n      ".join(out) + "\n    </div>"
+
+
 def byg_by(key):
     b = BYER[key]
     url = f"/bilpleje/{key}/"
@@ -165,7 +171,9 @@ def byg_by(key):
         + sektioner
         + f"    <h2>Ofte stillede spørgsmål om bilpleje i {esc(b['navn'])}</h2>\n    {faq}\n\n"
         + "    <h2>Gode råd før du bestiller</h2>\n    " + guide_links(b.get("guides", [g["slug"] for g in GUIDES][:3])) + "\n\n"
-        + "    <h2>Bilpleje i andre byer på Fyn</h2>\n    " + by_links(key) + "\n\n"
+        + (("    <h2>Bilpleje i andre byer på Fyn</h2>\n    " + by_links(key)) if key in FYN_BYER_ORDEN
+           else ("    <h2>Bilpleje i nærheden</h2>\n    " + nabo_links(b.get("naboer", []))))
+        + "\n\n"
         + f'    <p class="seo-cta">Er du bilplejer i {esc(b["navn"])} eller omegn? <a href="/#shops">Bliv listet gratis på FindBilplejere.dk</a>.</p>\n'
         + "  </div>\n</section>\n\n" + FOOTER + "\n" + BY_SCRIPTS + "\n</body>\n</html>\n"
     )
@@ -238,7 +246,7 @@ def byg_guide_oversigt():
 
 
 if __name__ == "__main__":
-    for k in FYN_BYER_ORDEN:
+    for k in FYN_BYER_ORDEN + ANDRE_BYER_ORDEN:
         byg_by(k)
     for g in GUIDES:
         byg_guide(g)
