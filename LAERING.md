@@ -108,3 +108,6 @@ Det gør vi mere af / mindre af / tester næste uge (uge 47):
 - TEST: serien "Sælg bilen / aflever leasingbilen" (2 videoer) mod 1 gør-det-selv-myteknuser. Sammenlign næste søndag.
 
 Ugens videoer (uge 47): 16/11 18:00 leasing-aflevering (serie), 18/11 18:00 vask-myter (tips), 20/11 18:00 køberen-ser-først (serie). Alle med stemme, fotos og ca. 21-25 s.
+
+## Daniel 2026-11-15: "200-300 visninger fungerer ikke, prøv noget nyt"
+Næste søndags kørsel SKAL lave et større skift ud over ny krog-stil, ikke kun finjustere. Se Daniels valg i TikTok-tråden (forslag: ægte optagelser fra creator/bilplejere med deres tilladelse, flere opslag om ugen inkl. foto-karruseller med trend-musik). Spørgsmålet blev sendt til Daniel 2026-11-15; brug hans svar, hvis det står i projekt-hukommelsen.
