@@ -1,0 +1,244 @@
+# -*- coding: utf-8 -*-
+"""Bygger de faste SEO-sider: bysider på Fyn (/bilpleje/{by}/) og guides (/guide/...).
+
+Kør fra repoets rod:  python3 seo-kilde/byg_sider.py
+Teksterne ligger i byer.py og guides.py. Siderne er almindelig HTML, så Google
+kan læse al teksten med det samme. Listen over bilplejere hentes stadig live fra
+databasen af js/by-side.js, så den altid er opdateret.
+"""
+import json, os, html
+from byer import BYER, FYN_BYER_ORDEN
+from guides import GUIDES
+
+ROD = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DOMÆNE = "https://findbilplejere.dk"
+OPDATERET = "2026-11-15"
+
+HEAD_START = """<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18378049298"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-18378049298');
+  gtag('config', 'G-KTK6266STG');
+</script>
+"""
+
+HEAD_FÆLLES = """<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+"""
+
+NAV = """<nav>
+  <div class="wrap">
+    <a href="/" class="logo"><span class="logo-prefix">find</span>bilplejere<span class="logo-suffix">.dk</span></a>
+    <div class="nav-links">
+      <a href="/#search">Find en bilplejer</a>
+      <a href="/guide/">Guides</a>
+      <a href="/#shops">For bilplejere</a>
+    </div>
+    <a href="/#search" class="nav-cta">Find bilplejer</a>
+  </div>
+</nav>
+"""
+
+FOOTER = """<footer>
+  <a href="/privatlivspolitik.html">Privatlivspolitik</a> · <a href="/guide/">Guides</a> · <a href="/bilpleje/odense/">Bilpleje i Odense</a> · findbilplejere.dk
+</footer>
+"""
+
+BY_SCRIPTS = """<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/js/geo.js"></script>
+<script src="/js/profil-niveau.js"></script>
+<script src="/js/by-side.js"></script>
+"""
+
+
+def esc(t):
+    return html.escape(t, quote=True)
+
+
+def jsonld(obj):
+    return '<script type="application/ld+json">\n' + json.dumps(obj, ensure_ascii=False, indent=1) + "\n</script>\n"
+
+
+def brødkrummer(items):
+    """items: [(navn, url eller None)]"""
+    schema = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": i + 1, "name": n, "item": DOMÆNE + (u or "")}
+            for i, (n, u) in enumerate(items) if u
+        ],
+    }
+    dele = []
+    for n, u in items:
+        dele.append(f'<a href="{u}">{esc(n)}</a>' if u and u != items[-1][1] else esc(n))
+    synlig = '<span class="sep">/</span>'.join(dele)
+    return schema, f'<div class="breadcrumb" id="breadcrumb">{synlig}</div>'
+
+
+def faq_html(faq):
+    schema = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq
+        ],
+    }
+    items = "\n".join(
+        f'    <details class="faq-item">\n      <summary>{esc(q)}</summary>\n      <p>{esc(a)}</p>\n    </details>'
+        for q, a in faq
+    )
+    return schema, f'<div class="faq-list">\n{items}\n    </div>'
+
+
+def head(titel, beskrivelse, url, og_type="website", ekstra=""):
+    return (
+        HEAD_START
+        + f"<title>{esc(titel)}</title>\n"
+        + f'<meta name="description" content="{esc(beskrivelse)}" id="metaDescription">\n'
+        + f'<link rel="canonical" href="{DOMÆNE}{url}">\n'
+        + f'<meta property="og:title" content="{esc(titel.split(" | ")[0])}">\n'
+        + f'<meta property="og:description" content="{esc(beskrivelse)}">\n'
+        + f'<meta property="og:url" content="{DOMÆNE}{url}">\n'
+        + f'<meta property="og:image" content="{DOMÆNE}/og-image.png">\n'
+        + f'<meta property="og:type" content="{og_type}">\n'
+        + HEAD_FÆLLES
+        + ekstra
+    )
+
+
+def skriv(relsti, indhold):
+    sti = os.path.join(ROD, relsti)
+    os.makedirs(os.path.dirname(sti), exist_ok=True)
+    with open(sti, "w", encoding="utf-8") as f:
+        f.write(indhold)
+    print("skrev", relsti)
+
+
+def guide_links(slugs):
+    out = []
+    for s in slugs:
+        g = next(g for g in GUIDES if g["slug"] == s)
+        out.append(f'<a href="/guide/{s}/">{esc(g["kort"])}</a>')
+    return '<div class="related-links">\n      ' + "\n      ".join(out) + "\n    </div>"
+
+
+def by_links(udelad):
+    out = [
+        f'<a href="/bilpleje/{k}/">Bilpleje i {esc(BYER[k]["navn"])}</a>'
+        for k in FYN_BYER_ORDEN if k != udelad
+    ]
+    return '<div class="related-links">\n      ' + "\n      ".join(out) + "\n    </div>"
+
+
+def byg_by(key):
+    b = BYER[key]
+    url = f"/bilpleje/{key}/"
+    krumme_schema, krumme = brødkrummer([("Forside", "/"), (f"Bilpleje i {b['navn']}", url)])
+    faq_schema, faq = faq_html(b["faq"])
+    sektioner = ""
+    for overskrift, afsnit in b["sektioner"]:
+        sektioner += f"    <h2>{esc(overskrift)}</h2>\n    <div class=\"seo-text\">\n{afsnit}\n    </div>\n\n"
+
+    side = (
+        head(b["titel"], b["beskrivelse"], url, ekstra=jsonld(faq_schema) + jsonld(krumme_schema))
+        + "</head>\n<body>\n\n" + NAV + "\n"
+        + '<section class="seo-page">\n  <div class="wrap">\n    ' + krumme + "\n\n"
+        + f"    <h1>{esc(b['h1'])}</h1>\n"
+        + f"    <p class=\"intro\">{b['intro']}</p>\n\n"
+        + f'    <div id="cityContent" data-static data-city="{key}">\n      <p class="intro">Henter bilplejere…</p>\n    </div>\n'
+        + f'    <p class="seo-note">Listen viser bilplejere i og omkring {esc(b["navn"])}, sorteret efter afstand. Klik på en bilplejer for at se ydelser og kontakte dem direkte.</p>\n\n'
+        + sektioner
+        + f"    <h2>Ofte stillede spørgsmål om bilpleje i {esc(b['navn'])}</h2>\n    {faq}\n\n"
+        + "    <h2>Gode råd før du bestiller</h2>\n    " + guide_links(b.get("guides", [g["slug"] for g in GUIDES][:3])) + "\n\n"
+        + "    <h2>Bilpleje i andre byer på Fyn</h2>\n    " + by_links(key) + "\n\n"
+        + f'    <p class="seo-cta">Er du bilplejer i {esc(b["navn"])} eller omegn? <a href="/#shops">Bliv listet gratis på FindBilplejere.dk</a>.</p>\n'
+        + "  </div>\n</section>\n\n" + FOOTER + "\n" + BY_SCRIPTS + "\n</body>\n</html>\n"
+    )
+    skriv(f"bilpleje/{key}/index.html", side)
+
+
+def byg_guide(g):
+    url = f"/guide/{g['slug']}/"
+    krumme_schema, krumme = brødkrummer([("Forside", "/"), ("Guides", "/guide/"), (g["kort"], url)])
+    artikel = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": g["h1"],
+        "description": g["beskrivelse"],
+        "inLanguage": "da",
+        "datePublished": OPDATERET,
+        "dateModified": OPDATERET,
+        "mainEntityOfPage": DOMÆNE + url,
+        "image": DOMÆNE + "/og-image.png",
+        "author": {"@type": "Organization", "name": "FindBilplejere.dk", "url": DOMÆNE + "/"},
+        "publisher": {"@type": "Organization", "name": "FindBilplejere.dk", "logo": {"@type": "ImageObject", "url": DOMÆNE + "/favicon-512.png"}},
+    }
+    ekstra = jsonld(artikel) + jsonld(krumme_schema)
+    faq_blok = ""
+    if g.get("faq"):
+        faq_schema, faq = faq_html(g["faq"])
+        ekstra = jsonld(artikel) + jsonld(faq_schema) + jsonld(krumme_schema)
+        faq_blok = f"    <h2>Ofte stillede spørgsmål</h2>\n    {faq}\n\n"
+    andre = [x["slug"] for x in GUIDES if x["slug"] != g["slug"]]
+    side = (
+        head(g["titel"], g["beskrivelse"], url, og_type="article", ekstra=ekstra)
+        + "</head>\n<body>\n\n" + NAV + "\n"
+        + '<section class="seo-page guide-artikel">\n  <div class="wrap">\n    ' + krumme + "\n\n"
+        + '    <p class="nb-eyebrow">Guide · opdateret november 2026</p>\n'
+        + f"    <h1>{esc(g['h1'])}</h1>\n"
+        + f"    <p class=\"intro\">{g['intro']}</p>\n\n"
+        + '    <div class="seo-text">\n' + g["brødtekst"] + "\n    </div>\n\n"
+        + faq_blok
+        + '    <div class="guide-cta">\n      <h2>Få en professionel til at gøre det ordentligt</h2>\n'
+        + f"      <p>{esc(g['cta'])}</p>\n"
+        + '      <a href="/#search" class="btn-primary" style="display:inline-block; padding:12px 22px;">Find din bilplejer</a>\n    </div>\n\n'
+        + "    <h2>Find en bilplejer på Fyn</h2>\n    " + by_links(None) + "\n\n"
+        + "    <h2>Flere guides</h2>\n    " + guide_links(andre) + "\n"
+        + "  </div>\n</section>\n\n" + FOOTER + "\n</body>\n</html>\n"
+    )
+    skriv(f"guide/{g['slug']}/index.html", side)
+
+
+def byg_guide_oversigt():
+    url = "/guide/"
+    krumme_schema, krumme = brødkrummer([("Forside", "/"), ("Guides", url)])
+    kort = "\n".join(
+        f'      <a class="guide-kort" href="/guide/{g["slug"]}/"><strong>{esc(g["h1"])}</strong><span>{esc(g["beskrivelse"])}</span></a>'
+        for g in GUIDES
+    )
+    side = (
+        head("Guides til bilpleje: vask, polering, coating og salg | FindBilplejere.dk",
+             "Gratis guides til bilejere: vask om vinteren, polering eller coating, klargøring før salg og aflevering af leasingbil.", url,
+             ekstra=jsonld(krumme_schema))
+        + "</head>\n<body>\n\n" + NAV + "\n"
+        + '<section class="seo-page">\n  <div class="wrap">\n    ' + krumme + "\n\n"
+        + "    <h1>Guides til bilpleje</h1>\n"
+        + '    <p class="intro">Korte, ærlige guides til dig, der vil passe godt på bilen. Skrevet af FindBilplejere.dk ud fra hvad professionelle bilplejere anbefaler.</p>\n\n'
+        + '    <div class="guide-kort-liste">\n' + kort + "\n    </div>\n\n"
+        + "    <h2>Find en bilplejer på Fyn</h2>\n    " + by_links(None) + "\n\n"
+        + '    <p class="seo-cta">Vil du have sæsontips på mail? <a href="/tips">Tilmeld dig gratis her</a>.</p>\n'
+        + "  </div>\n</section>\n\n" + FOOTER + "\n</body>\n</html>\n"
+    )
+    skriv("guide/index.html", side)
+
+
+if __name__ == "__main__":
+    for k in FYN_BYER_ORDEN:
+        byg_by(k)
+    for g in GUIDES:
+        byg_guide(g)
+    byg_guide_oversigt()

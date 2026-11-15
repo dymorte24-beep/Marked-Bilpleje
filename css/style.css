@@ -582,3 +582,16 @@ section.nb h2{font-size:28px; color:var(--navy); margin-bottom:12px; text-align:
   .hero-byer a{height:64px; border-radius:10px;}
   .hero-byer a span{font-size:13.5px; letter-spacing:.3px; bottom:7px;}
 }
+
+/* Faste bysider + guides (bygget af seo-kilde/byg_sider.py) */
+.seo-note{font-size:13px; color:var(--text-muted); margin:14px 0 0;}
+.seo-text a{text-decoration:underline; color:var(--navy);}
+.guide-artikel .seo-text{max-width:720px;}
+.guide-artikel .seo-text h2{font-size:20px; color:var(--navy); margin:32px 0 10px;}
+.guide-artikel .intro{max-width:720px; font-size:16px;}
+.guide-artikel .guide-cta{max-width:720px; margin:40px 0 8px;}
+.guide-kort-liste{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px;}
+.guide-kort{display:flex; flex-direction:column; gap:6px; background:var(--white); border:1px solid var(--chrome-line); border-left:4px solid var(--gold); border-radius:var(--radius); padding:18px;}
+.guide-kort strong{font-family:'Oswald',sans-serif; font-size:18px; color:var(--navy); font-weight:600;}
+.guide-kort span{font-size:14px; color:var(--text-muted);}
+.guide-kort:hover{border-color:var(--gold);}
