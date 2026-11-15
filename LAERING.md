@@ -78,3 +78,33 @@ Tværsnit/diagram (polering, coating) bruges INDE i videoen som forklaring, ikke
 |-----|-------|--------|------|-----------|-------|-------------|------|
 | 45 | 2026-11-08 vinter 3 ting | liste | "3 ting din bil skal have før vinteren" | 289 | 4 | 0 | mørk navy start |
 | 46 | 2026-11-10 polering forklaret | tværsnit | spørgsmål | 254 | 0 | 0 | mørkt første billede |
+
+## Uge 46 (gennemgang søndag 2026-11-15, Metricool 18/10-15/11)
+Alle tal er visninger/likes/kommentarer/delinger. Tider er dansk tid. Fuldførelse og afspilningstid leverer Metricool ikke for kontoen endnu (tomme felter).
+
+| Dato | Tid | Emne | Krog | Længde | Visn. | Likes | Komm. | Delinger |
+|------|-----|------|------|--------|-------|-------|-------|----------|
+| 31/10 | 16:30 | Find bilplejere samlet (reklame) | spørgsmål | 55 s | 947 | 5 | 0 | 1 |
+| 03/11 | 09:08 | Polering (første version) | spørgsmål | 18 s | 276 | 3 | 0 | 0 |
+| 04/11 | 08:57 | Beskidt bil (reklame) | spørgsmål | 6 s | 328 | 4 | 0 | 1 |
+| 05/11 | 12:10 | Beskidt indeni (reklame) | spørgsmål | 6 s | 313 | 1 | 0 | 1 |
+| 06/11 | 09:06 | Find bilplejer på postnr. | spørgsmål | 14 s | 256 | 4 | 0 | 0 |
+| 08/11 | 14:14 | Vinter: 3 ting | liste | 14 s | 290 | 4 | 0 | 0 |
+| 09/11 | 19:31 | Coating: to biler | sammenligning | 48 s | 273 | 0 | 0 | 0 |
+| 10/11 | 17:10 | Polering forklaret | spørgsmål | 29 s | 255 | 0 | 0 | 0 |
+| 11/11 | 19:08 | Reklamefilm "Find din næste bilplejer" | "Kender du det?" | 30 s | 273 | 0 | 0 | 0 |
+| 13/11 | 19:05 | Reklamefilm "De skjulte bilplejere" | påstand | 30 s | 288 | 1 | 0 | 0 |
+
+Konklusion (ærligt: få data, 10 videoer, ingen over ~330 visninger undtagen 31/10):
+- Alt ligger stadig i TikToks første testgruppe (250-330). Hverken tidspunkt (morgen, middag, aften), længde (6-55 s) eller emne gør en målbar forskel. 0 kommentarer på alle.
+- Den eneste afviger (31/10, 947) var den første video på kontoen; sandsynligvis "ny konto"-skub, ikke indholdet.
+- Ingen af videoerne har endnu brugt playbookens nye regler (lyst første billede + påstand, dansk stemme, klip hvert ~2 s). Det tester vi nu.
+
+Det gør vi mere af / mindre af / tester næste uge (uge 47):
+- MERE: lyst foto i første frame + påstand på max 8 ord ("Du vasker sikkert bilen FORKERT").
+- MERE: dansk voiceover i hele videoen + store undertekster 1-3 ord (nyt værktøj `vaerktoej/lav_video.py`).
+- MINDRE: reklame-agtige "Find din bilplejer"-videoer; salg kun i outro og sidste linje af teksten.
+- TEST: kl. 18:00 i stedet for 19:00 (Metricools best time: 18 er højeste time man-fre), og fredag i stedet for lørdag (lørdag er ugens svageste dag).
+- TEST: serien "Sælg bilen / aflever leasingbilen" (2 videoer) mod 1 gør-det-selv-myteknuser. Sammenlign næste søndag.
+
+Ugens videoer (uge 47): 16/11 18:00 leasing-aflevering (serie), 18/11 18:00 vask-myter (tips), 20/11 18:00 køberen-ser-først (serie). Alle med stemme, fotos og ca. 21-25 s.

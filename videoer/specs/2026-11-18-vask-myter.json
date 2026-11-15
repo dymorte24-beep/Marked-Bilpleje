@@ -1,0 +1,9 @@
+{"seed": 23, "bpm": 110, "scenes": [
+ {"foto":"videoer/fotos/2026-11-18-myter-1.jpg","kredit":"Lorenzo Hamers","kicker":"BILVASK","overskrift":"Du vasker / sikkert bilen / *FORKERT*","tale":"Du vasker sikkert din bil forkert. Fem myter."},
+ {"foto":"videoer/fotos/2026-11-18-myter-2.jpg","kredit":"Eugene Chystiakov","nr":1,"overskrift":"Opvaske- / middel er fint?","stempel":"NEJ","tale":"Opvaskemiddel? Nej. Det fjerner voks og beskyttelse."},
+ {"foto":"videoer/fotos/2026-11-18-myter-3.jpg","kredit":"Adrian Dascal","nr":2,"overskrift":"Én spand / er nok?","stempel":"NEJ","tale":"Én spand? Nej. Brug to, så sandet ikke ryger tilbage."},
+ {"foto":"videoer/fotos/2026-11-18-myter-4.jpg","kredit":"Adam Stefanca","nr":3,"overskrift":"Vask i / *solskin*?","stempel":"NEJ","tale":"Vask i solskin? Nej. Sæben tørrer ind og giver pletter."},
+ {"foto":"videoer/fotos/2026-11-18-myter-5.jpg","kredit":"GoGoNano","nr":4,"overskrift":"Tør med et / gammelt håndklæde?","stempel":"NEJ","tale":"Gammelt håndklæde? Nej. Brug ren mikrofiber."},
+ {"foto":"videoer/fotos/2026-11-18-myter-6.jpg","kredit":"Zac Nielson","nr":5,"overskrift":"Skyl saltet af / om *vinteren*?","stempel":"JA","tale":"Skyl saltet af om vinteren? Ja! Også når det er koldt."}
+],
+"outro":{"foto":"videoer/fotos/2026-11-18-myter-1.jpg","kredit":"Lorenzo Hamers","tale":"Eller lad en bilplejer gøre det. Find bilplejere punktum d k."}}

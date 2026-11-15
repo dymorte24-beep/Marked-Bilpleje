@@ -65,7 +65,17 @@ Alt er deterministisk i window.render(t) (ingen CSS-transitions/Math.random uden
 - Emne-effekter: skumbobler (vask), gnister (polering) – find på nye der passer til emnet (sne, vanddråber, støv).
 - Outro: luppen tegnes streg for streg, logo glider op, "Link i bio"-knap popper og pulserer.
 
-## Rendering
+## HURTIGSTE VEJ (fra uge 47): `vaerktoej/lav_video.py`
+Én JSON-spec pr. video -> færdig mp4 med fotos, dansk voiceover (piper), store undertekster, NEJ/JA-stempler, nummer-badges, punch-zoom, hvidt blink ved sceneskift, outro og lydspor (lyd.py under stemmen). Se docstring øverst i filen for spec-formatet.
+Opsætning af piper (1 min):
+    mkdir -p /home/user/piper && cd /home/user/piper
+    curl -sSL -o p.tgz https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_linux_x86_64.tar.gz && tar xzf p.tgz
+    curl -sSL -o da.onnx https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/da/da_DK/talesyntese/medium/da_DK-talesyntese-medium.onnx
+    curl -sSL -o da.onnx.json https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/da/da_DK/talesyntese/medium/da_DK-talesyntese-medium.onnx.json
+Render: python3 vaerktoej/lav_video.py spec.json videoer/<dato>-<emne>.mp4  (ca. 1 min pr. video). Skriv "findbilplejere.dk" i tale som "find bilplejere punktum d k".
+Ugens specs gemmes i `videoer/specs/`. Tjek derefter kontaktark + tjek-safezone.sh som altid.
+
+## Rendering (manuelt med egen HTML)
     node vaerktoej/render.js <fil.html> frames <sekunder> 30
     ffmpeg -framerate 30 -i frames/f%05d.jpg -c:v libx264 -pix_fmt yuv420p -crf 20 -movflags +faststart /tmp/stum.mp4
     # LYD ER PÅKRÆVET (Daniel 2026-11-10: videoer uden lyd duer ikke på TikTok). Eget syntetiseret lydspor = ingen rettighedsproblemer.
