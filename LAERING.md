@@ -112,3 +112,14 @@ Ugens videoer (uge 47): 16/11 18:00 leasing-aflevering (serie), 18/11 18:00 vask
 ## Daniel 2026-11-15: "200-300 visninger fungerer ikke, prøv noget nyt"
 Næste søndags kørsel SKAL lave et større skift ud over ny krog-stil, ikke kun finjustere. Se Daniels valg i TikTok-tråden (forslag: ægte optagelser fra creator/bilplejere med deres tilladelse, flere opslag om ugen inkl. foto-karruseller med trend-musik). Spørgsmålet blev sendt til Daniel 2026-11-15; brug hans svar, hvis det står i projekt-hukommelsen.
 Daniels valg 2026-11-15: "Opslag hver dag med karruseller". Fra uge 47: 3 videoer + foto-karruseller med autoAddMusic de øvrige dage. Uge 47 karruseller: tor 19/11 18:00 leasing-selv, lør 21/11 12:00 coating-quiz, søn 22/11 12:00 salgsbilleder.
+
+## Inspiration fra Daniel 2026-11-16: reel "Nobody knows your app exists" (instagram.com/reel/DfxzNxnQCLW, 71 s)
+Analyseret med vidIQ. Hvad der virker, og hvad vi tager med:
+1. **Smerte-krog i 2 korte linjer + løfte med tal**: "Du har bygget appen. Nu ved ingen, den findes." + "5 trin, gratis, efter trin 3 har du 10 idéer". Vi bruger samme skabelon: "Du har vasket bilen. Nu er lakken fuld af ridser." + "3 trin, og trin 2 koster 0 kr."
+2. **Lav aldrig video om produktet, men om problemet det løser**. Lav en SPØRGSMÅLSBANK: alle spørgsmål bilejere stiller ("Hvorfor får min bil ridser i vaskehallen?", "Hvad skal jeg gøre før jeg afleverer leasingbilen?", "Er coating pengene værd?"). Ét spørgsmål = én video/karrusel. Kilder: Search Console-søgeord, kundepanelet, kommentarer. Fil: `videoer/spoergsmaal.md`.
+3. **Giv svaret væk, ingen salg**: ét nyttigt råd pr. video. Outro beholdes, men kort.
+4. **Trin-indikator øverst** ("01 · VASK  02  03") som pille, der skifter pr. trin. Giver følelse af fremdrift og holder folk til slutningen. Bruges i lav_video.py og som slide-header i karruseller.
+5. **Lys, ren grafik**: lys grå baggrund med svagt gitter, flade ikoner, "stempler" (rødt X, grønt flueben, stort tal som "0 kr"). Passer til reglen om lyst første billede. Navy/guld kun som accent.
+6. **Kommentar-ord som CTA**: "Skriv VINTER i kommentarerne, så laver vi del 2" (vi har 0 kommentarer). Lov ikke at sende DM'er automatisk, det kan vi ikke.
+7. **Lyd**: swoosh + klik på første ord, voiceover starter i frame 0, UI-klik på hvert stempel.
+8. Til REKRUTTERING af bilplejere virker krogen næsten ordret: "Du er en dygtig bilplejer. Men ingen ved, du findes."
