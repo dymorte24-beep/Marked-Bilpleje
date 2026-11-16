@@ -81,6 +81,7 @@ Opsætning af piper (1 min):
     curl -sSL -o da.onnx https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/da/da_DK/talesyntese/medium/da_DK-talesyntese-medium.onnx
     curl -sSL -o da.onnx.json https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/da/da_DK/talesyntese/medium/da_DK-talesyntese-medium.onnx.json
 Render: python3 vaerktoej/lav_video.py spec.json videoer/<dato>-<emne>.mp4  (ca. 1 min pr. video). Skriv "findbilplejere.dk" i tale som "find bilplejere punktum d k".
+STEMME (Daniel 2026-11-16 "mere ægte menneskelig"): lav_video.py bruger nu tempo 0.97 ±5 % pr. scene, mere tonefaldsvariation, 0,3 s pauser og EQ/kompressor. Skriv "tale" som TALESPROG: korte sætninger, "okay", "altså", spørgsmål + svar, komma hvor man trækker vejret. Undgå enkeltord alene (de udtales dårligst). Lydtest: /mnt/project-files/tiktok/stemme-test/.
 Ugens specs gemmes i `videoer/specs/`. Tjek derefter kontaktark + tjek-safezone.sh som altid.
 
 ## Rendering (manuelt med egen HTML)

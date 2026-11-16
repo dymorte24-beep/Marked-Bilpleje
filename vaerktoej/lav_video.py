@@ -27,11 +27,20 @@ spec = json.load(open(SPEC))
 work = os.path.join('/tmp', 'lv_' + os.path.basename(OUT).replace('.mp4', ''))
 shutil.rmtree(work, ignore_errors=True); os.makedirs(work)
 SR = 22050
+VOICE_FX = ('highpass=f=90,equalizer=f=200:t=q:w=1:g=2,equalizer=f=3500:t=q:w=1.5:g=2,'
+            'acompressor=threshold=-18dB:ratio=3:attack=5:release=80,aecho=0.8:0.85:18:0.1')
 
 def tts(text, path):
-    subprocess.run([f'{PIPER}/piper/piper', '--model', f'{PIPER}/da.onnx', '--output_file', path,
-                    '--length_scale', str(spec.get('tempo', 0.88)), '--sentence_silence', '0.1'],
+    # Mere menneskelig (Daniel 2026-11-16): lidt roligere tempo der varierer pr. scene, mere variation i tonefald,
+    # pauser mellem sætninger, og bagefter EQ/kompressor/lille rum (se VOICE_FX).
+    import random
+    tempo = spec.get('tempo', 0.97) * random.Random(hash(text) % 9999).uniform(0.95, 1.05)
+    raw = path.replace('.wav', '_raw.wav')
+    subprocess.run([f'{PIPER}/piper/piper', '--model', f'{PIPER}/da.onnx', '--output_file', raw,
+                    '--length_scale', f'{tempo:.3f}', '--noise_scale', '0.75', '--noise_w', '0.95',
+                    '--sentence_silence', '0.3'],
                    input=text.encode(), check=True, capture_output=True)
+    subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', raw, '-af', VOICE_FX, '-ar', '22050', '-ac', '1', path], check=True)
     with wave.open(path) as w:
         a = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(np.float32) / 32768
         sr = w.getframerate()
