@@ -222,6 +222,11 @@
       <option value="3">kr kr kr — Premium</option>
     </select>
 
+    <div class="inline-check">
+      <input type="checkbox" id="newShopKunErhverv">
+      <label for="newShopKunErhverv">Kun erhvervskunder (viser badget "Kun erhverv" og en forklaring på profilen)</label>
+    </div>
+
     <label for="newShopDiscount">Rabat (%) — gemmes kun internt, vises ikke på sitet</label>
     <input type="number" id="newShopDiscount" min="0" max="100">
 
@@ -467,6 +472,7 @@ function resetShopForm(){
   document.getElementById('newShopPrice').value = '';
   document.getElementById('newShopDiscount').value = '';
   document.getElementById('newShopPriceLevel').value = '';
+  document.getElementById('newShopKunErhverv').checked = false;
   document.getElementById('newShopPriceSource').value = '';
   document.getElementById('newShopPriceCheckedAt').value = '';
   document.getElementById('newShopPriceListVerified').checked = false;
@@ -516,6 +522,7 @@ function openEditBox(id){
   document.getElementById('newShopPrice').value = shop.price_from || '';
   document.getElementById('newShopDiscount').value = shop.discount || '';
   document.getElementById('newShopPriceLevel').value = shop.price_level || '';
+  document.getElementById('newShopKunErhverv').checked = !!shop.kun_erhverv;
   document.getElementById('newShopPriceSource').value = shop.price_list_source || '';
   document.getElementById('newShopPriceCheckedAt').value = shop.price_list_checked_at || '';
   document.getElementById('newShopPriceListVerified').checked = !!shop.price_list_verified;
@@ -630,7 +637,7 @@ async function saveShop(){
 
   const shopData = {
     name, city, city_key: cityKey, services, price_from: priceFrom,
-    discount, price_level: priceLevel, contact_person: contactPerson, phone, email,
+    discount, price_level: priceLevel, kun_erhverv: document.getElementById('newShopKunErhverv').checked, contact_person: contactPerson, phone, email,
     tier, verificeret,
     hero_image_url: heroImageUrl, card_image_url: cardImageUrl, tagline, description,
     address, coverage_areas: coverageAreas,
