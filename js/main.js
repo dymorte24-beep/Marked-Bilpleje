@@ -53,7 +53,8 @@ async function loadShops(){
     reviewVisible: row.review_visible,
     heroImageUrl: row.hero_image_url,
     cardImageUrl: row.card_image_url,
-    coverageAreas: row.coverage_areas
+    coverageAreas: row.coverage_areas,
+    kunErhverv: row.kun_erhverv
   }));
   renderShops();
 }
@@ -85,6 +86,7 @@ function renderShops(list, originName, ads){
         <div class="card-meta">${shop.city} · ${formatServicesPreview(shop.services)}</div>
         ${(shop._distanceKm > 10 && shop.coverageAreas && shop.coverageAreas.length <= 40) ? `<div class="card-coverage-note">Dækker ${shop.coverageAreas}</div>` : ''}
         <div class="card-tags">
+          ${shop.kunErhverv ? `<span class="pill erhverv">Kun erhverv</span>` : ''}
           ${isMobileShop(shop.services) ? `<span class="pill mobil">Kommer ud til dig</span>` : ''}
           ${shop._ad ? `<span class="pill annonce">Annonce</span>` : ''}
           ${shop.verificeret ? `<span class="pill verified">Verificeret</span>` : ''}

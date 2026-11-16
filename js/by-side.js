@@ -90,6 +90,7 @@ async function loadCity(){
         <div class="card-meta">${s.city} · ${formatServicesPreview(s.services)}</div>
         ${(s._distanceKm > 10 && s.coverage_areas && s.coverage_areas.length <= 40) ? `<div class="card-coverage-note">Dækker ${s.coverage_areas}</div>` : ''}
         <div class="card-tags">
+          ${s.kun_erhverv ? '<span class="pill erhverv">Kun erhverv</span>' : ''}
           ${isMobileShop(s.services) ? '<span class="pill mobil">Kommer ud til dig</span>' : ''}
           ${s._ad ? '<span class="pill annonce">Annonce</span>' : ''}
           ${s.verificeret ? '<span class="pill verified">Verificeret</span>' : ''}

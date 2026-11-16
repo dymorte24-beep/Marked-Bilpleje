@@ -368,3 +368,8 @@ Inspireret af kardet.com, men med eget brand og egne tekster. Toppen er nu: Dani
 - Søgekort (forside + by-sider): stjerner og antal anmeldelser står nu som en linje lige under navnet i stedet for som et lille mærke.
 - Profilen: stjerner + tal + "X anmeldelser på Trustpilot" øverst ved navnet.
 - Mærket **"Kommer ud til dig"** vises på søgekort og profil for bilplejere med ydelsen "Mobil bilpleje" (samme regel som søgefilteret "Hjemme hos mig").
+
+## 2026-11-16 — MN Auto Care + "Kun erhverv"-mærke
+- Ny bilplejer: **MN Auto Care** (Odense N, Magnus Nohr, mnautocare.dk). Komplet profil gratis, prisniveau Mellem (fra 800 kr., komplet klargøring fra 1.480 kr.), ingen Trustpilot-side fundet.
+- Ny kolonne `shops.kun_erhverv` (boolean, SQL: `supabase/2026-11-16-kun-erhverv.sql`). Sæt flueben i admin ("Kun erhvervskunder").
+- Når den er slået til: navy mærke **"Kun erhverv"** på søgekort (forside + by-sider) og øverst på profilen, plus en kort forklaring på profilen om at privatpersoner ikke kan bestille.

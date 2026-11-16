@@ -57,6 +57,8 @@
   .pf-rating-num{font-size:18px; color:var(--navy);}
   .pf-rating-count{color:var(--text-muted); font-size:14px;}
   .pf-mobil{margin:0; display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:var(--navy); background:var(--gold-light); border:1px solid var(--gold); border-radius:20px; padding:4px 12px;}
+  .pf-erhverv{margin:0; display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:var(--white); background:var(--navy); border:1px solid var(--navy); border-radius:20px; padding:4px 12px;}
+  .pf-erhverv-note{margin:0 0 14px; font-size:15px; line-height:1.5; color:var(--navy); background:var(--gold-light); border-left:4px solid var(--gold); border-radius:6px; padding:10px 14px;}
   .pf-mobil::before{content:''; width:8px; height:8px; border-radius:50%; background:var(--gold-dark);}
   .pf-stars{color:var(--gold); font-size:20px; letter-spacing:3px;}
   .pf-tagline{color:var(--text-muted); font-size:17px; font-style:italic; line-height:1.5;}
@@ -337,10 +339,12 @@ async function loadShop(){
           <p class="pf-eyebrow">Bilpleje i ${shop.city}</p>
           <h1 class="pf-name">${shop.name}</h1>
           ${shop.address ? `<p class="pf-location">${shop.address}</p>` : ''}
-          ${(hasReview || isMobile) ? `<div class="pf-badges">
+          ${(hasReview || isMobile || shop.kun_erhverv) ? `<div class="pf-badges">
             ${hasReview ? `<p class="pf-stars-row"><span class="pf-stars" role="img" aria-label="${shop.review_rating} ud af 5 stjerner">${starsGlyphs}</span> <strong class="pf-rating-num">${shop.review_rating}</strong> <span class="pf-rating-count">${shop.review_count} anmeldelser${shop.review_source ? ' på ' + shop.review_source : ''}</span></p>` : ''}
+            ${shop.kun_erhverv ? `<p class="pf-erhverv">Kun erhverv</p>` : ''}
             ${isMobile ? `<p class="pf-mobil">Kommer ud til dig</p>` : ''}
           </div>` : ''}
+          ${shop.kun_erhverv ? `<p class="pf-erhverv-note"><strong>Bemærk:</strong> ${shop.name} tager kun imod erhvervskunder, fx bilforhandlere, leasingselskaber og firmabiler. Privatpersoner kan desværre ikke bestille her.</p>` : ''}
           ${shop.tagline ? `<p class="pf-tagline">${shop.tagline}</p>` : ''}
         </div>
         <div class="pf-hero-media">
