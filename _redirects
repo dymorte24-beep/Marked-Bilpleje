@@ -17,3 +17,7 @@ http://bilpleje-dk.netlify.app/*   https://findbilplejere.dk/:splat  301!
 
 # Afmelding af påmindelses-SMS fra Stamkunde-appen: findbilplejere.dk/stop?k=<token>
 /stop  /stop.html  200
+
+# Kort anmeldelseslink i tak-SMS'en fra Stamkunde-appen: findbilplejere.dk/g/<kode>
+# Edge-funktionen "anmeld" sender kunden videre til bilplejerens Google-anmeldelse (302).
+/g/*  https://xeosltdpvkcaudiijtge.supabase.co/functions/v1/anmeld/:splat  200

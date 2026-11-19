@@ -422,7 +422,7 @@ async function opdKunde(id, felter) {
 }
 
 // ---------- SMS-indstillinger ----------
-const takEksempel = (navn = 'Mette') => `Hej ${fornavn(navn) || 'Mette'}, tak fordi du valgte ${S.shop.name}. Hvis du er glad for resultatet, vil vi blive rigtig glade for en anmeldelse på Google. Det tager 30 sekunder: ${S.ind.google_link || '[dit Google-link]'} Mvh ${S.shop.name}`;
+const takEksempel = (navn = 'Mette') => `Hej ${fornavn(navn) || 'Mette'}, tak fordi du valgte ${S.shop.name}. Hvis du er glad for resultatet, vil vi blive rigtig glade for en anmeldelse på Google. Det tager 30 sekunder: ${S.ind.google_link ? 'https://findbilplejere.dk/g/' + S.shop.id.slice(0, 8) : '[dit Google-link]'} Mvh ${S.shop.name}`;
 function sms() {
   const ind = S.ind;
   const seneste = S.beskeder.filter(b => b.status !== 'planlagt').sort((a, b) => new Date(b.sendt_at || b.planlagt_til) - new Date(a.sendt_at || a.planlagt_til)).slice(0, 15);
