@@ -51,6 +51,8 @@ export function annonceTekst(tekst: string, token: string) {
   const ren = tekst.replace(/\s*Afmeld:\s*\S+\s*$/i, "").trim();
   return `${ren} Afmeld: findbilplejere.dk/stop?k=${token}`;
 }
+// Kort link på vores eget domæne (godkendt hos GatewayAPI). findbilplejere.dk/g/<kode> sender videre til Google (funktionen "anmeld").
+const kortLink = (shopId: string) => `https://findbilplejere.dk/g/${String(shopId).slice(0, 8)}`;
 async function sendSms(afsender: string, nummer8: string, tekst: string, ref: string) {
   const res = await fetch(GATEWAY, {
     method: "POST",
@@ -98,7 +100,7 @@ async function koer() {
         if (Date.now() - new Date(b.planlagt_til).getTime() > 2 * 864e5) upd = { status: "sprunget_over", fejl: "For gammel (over 2 døgn)" };
         else if (!ind.google_link) upd = { status: "fejl", fejl: "Mangler link til Google-anmeldelse" };
         else {
-          const tekst = takTekst(k.navn, firma, ind.google_link);
+          const tekst = takTekst(k.navn, firma, kortLink(b.shop_id));
           upd = { tekst, ...(await lever(ind, k.navn, k.telefon, tekst, b.id)) };
         }
       } else if (b.type === "paamindelse") {
@@ -231,7 +233,7 @@ async function testSms(req: Request, shopId: string) {
   if (!ind) return json({ fejl: "Ingen adgang eller indstillinger ikke gemt" }, 403);
   if (!ind.testnummer) return json({ fejl: "Skriv dit eget mobilnummer under Testnummer først" }, 400);
   const { data: shop } = await admin.from("shops").select("name").eq("id", shopId).maybeSingle();
-  const tekst = takTekst("Mette", shop?.name ?? "os", ind.google_link || "https://g.page/r/eksempel/review");
+  const tekst = takTekst("Mette", shop?.name ?? "os", ind.google_link ? kortLink(shopId) : "https://g.page/r/eksempel/review");
   const { data: rec } = await admin.from("sk_beskeder").insert({
     shop_id: shopId, type: "test", planlagt_til: new Date().toISOString(), status: "sender", tekst,
   }).select("id").single();
