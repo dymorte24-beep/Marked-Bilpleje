@@ -1,5 +1,16 @@
 # Bilpleje.dk — Projektoverblik
 
+## 📱 Stamkunde-appen, første version (17. nov 2026)
+Bilplejerens egen app på **findbilplejere.dk/app/** (webapp, lægges på hjemmeskærmen). Sender en neutral tak-SMS med link til Google-anmeldelse efter hvert job, og påmindelser (fx coating efter 12 mdr) til kunder, der har sagt "ja tak".
+
+- **Login:** samme konto som butik-panelet (`shops.owner_id`). Daniels admin-mail ser en butiksvælger og kan se alle
+- **Tabeller (lagt i Supabase 17. nov):** `sk_indstillinger`, `sk_kunder`, `sk_job`, `sk_paamindelser`, `sk_beskeder`. RLS: kun ejer eller admin (`sk_ejer()`). SQL: `supabase/2026-11-17-stamkunde-app.sql`
+- **Planlægning sker i databasen:** trigger på `sk_job` laver tak-SMS (næste dag kl. 10, aldrig søndag, eller samme aften 18:30) og påmindelser, hvis behandlingen matcher. Højst én tak-SMS pr. kunde pr. 30 dage. "Stop" annullerer ventende SMS
+- **Afsendelse:** edge-funktionen `supabase/functions/stamkunde-send` (GatewayAPI EU, `messaging.gatewayapi.eu/mobile/single`). Kaldes hvert 5. min af pg_cron (`supabase/2026-11-17-stamkunde-cron.sql`). Regler ved afsendelse: SMS skal være slået til, tak-SMS ældre end 2 døgn springes over, påmindelser kun til "ja tak" og højst 1 pr. måned. **Testtilstand** (standard) sender alt til bilplejerens eget nummer. Uden `GATEWAYAPI_TOKEN` markeres SMS som "simuleret"
+- **Afmelding:** påmindelses-SMS har link `findbilplejere.dk/stop?k=<token>` (`stop.html`, RPC `sk_afmeld`). Ingen svar-nummer endnu, så STOP-svar virker ikke; derfor link
+- **Mangler (næste versioner):** Google Kalender/kalender-link, SMS-til-appen, tilbud i stille uger, optælling af Google-anmeldelser (garanti), svarnummer til JA/STOP, databehandleraftale med bilplejeren
+- GatewayAPI-konto (.EU) oprettet af Daniel 17. nov med kontakt@findbilplejere.dk (Simply Starter Suite). API-nøglen sættes af Daniel i Supabase → Edge Functions → Secrets som `GATEWAYAPI_TOKEN`
+
 ## ✉️ Lovlig mailliste for bilejere (12. nov 2026)
 Daniel vil kunne sende mails med tips og tilbud til bilejere. Kun lovligt med forudgående samtykke (markedsføringslovens § 10 + GDPR), så ingen købte lister eller skrabede mails.
 

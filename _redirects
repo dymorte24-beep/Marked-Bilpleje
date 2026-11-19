@@ -14,3 +14,6 @@ http://bilpleje-dk.netlify.app/*   https://findbilplejere.dk/:splat  301!
 
 # Kort link til tilmelding (TikTok-bio, annoncer): findbilplejere.dk/tips
 /tips  /tips.html  200
+
+# Afmelding af påmindelses-SMS fra Stamkunde-appen: findbilplejere.dk/stop?k=<token>
+/stop  /stop.html  200
