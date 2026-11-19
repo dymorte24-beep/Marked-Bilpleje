@@ -149,7 +149,7 @@ Deno.serve(async (req) => {
         // Driftstest fra databasen: send én fast SMS til et nummer (bruges af admin, ingen data ændres)
         if (body?.test_til && /^[2-9][0-9]{7}$/.test(String(body.test_til))) {
           if (!TOKEN) return json({ status: "simuleret", fejl: "SMS-nøgle ikke sat op endnu" });
-          const ref = await sendSms("Bilpleje", String(body.test_til), "Test fra findbilplejere.dk: SMS-motoren til Stamkunde-appen virker.", "drifttest");
+          const ref = await sendSms("Bilpleje", String(body.test_til), "Test fra FindBilplejere: SMS-motoren til Stamkunde-appen virker.", "drifttest");
           return json({ status: "sendt", gateway_ref: ref });
         }
         return json(await koer());
