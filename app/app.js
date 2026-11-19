@@ -412,7 +412,15 @@ function kundeSheet(id) {
   <div class="glass" style="margin-top:18px"><div class="row"><div><b>Ja tak til annoncer</b><div class="sub">Kunden har sagt ja til at få dine tilbud på SMS</div></div><div class="sw ${k.ja_tak ? 'on' : ''}" onclick="opdKunde('${id}',{ja_tak:${!k.ja_tak}})"></div></div>
   <div class="sub" style="margin-top:10px">${k.ja_tak && k.ja_tak_at ? `Gemt ${esc(new Date(k.ja_tak_at).toLocaleString('da-DK', { timeZone: TZ }))} som dokumentation.` : 'Får tak-SMS og påmindelser, men ingen annoncer.'}</div></div>
   <div class="glass"><div class="row"><div><b>Stop alle SMS</b><div class="sub">Fx hvis kunden ikke var tilfreds</div></div><div class="sw ${k.stop ? 'on' : ''}" onclick="opdKunde('${id}',{stop:${!k.stop}})"></div></div></div>
-  <div class="lbl" style="margin:18px 0 4px">Historik</div><div class="glass">${hist.length ? hist.map(x => x.h).join('') : '<div class="empty">Intet endnu.</div>'}</div>`);
+  <div class="lbl" style="margin:18px 0 4px">Historik</div><div class="glass">${hist.length ? hist.map(x => x.h).join('') : '<div class="empty">Intet endnu.</div>'}</div>
+  <button class="btn dark" style="width:100%;margin-top:18px;color:#ff8a8a" onclick="sletKunde('${id}')">🗑 Slet kunde</button>`);
+}
+async function sletKunde(id) {
+  const k = kunde(id); if (!k) return;
+  if (!confirm(`Slet ${k.navn || 'kunden'}? Kunden og alle planlagte SMS bliver slettet. Det kan ikke fortrydes.`)) return;
+  const { error } = await db.from('sk_kunder').delete().eq('id', id);
+  if (error) return toast('Kunne ikke slette');
+  luk(); await hentAlt(); render(); toast('Kunden er slettet');
 }
 async function opdKunde(id, felter) {
   const { error } = await db.from('sk_kunder').update(felter).eq('id', id);
