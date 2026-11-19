@@ -142,8 +142,19 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   try {
     const hdr = req.headers.get("x-cron-secret");
-    if (hdr) { const hemmelig = await hentCronSecret(); if (hemmelig && hdr === hemmelig) return json(await koer()); }
     const body = await req.json().catch(() => ({}));
+    if (hdr) {
+      const hemmelig = await hentCronSecret();
+      if (hemmelig && hdr === hemmelig) {
+        // Driftstest fra databasen: send én fast SMS til et nummer (bruges af admin, ingen data ændres)
+        if (body?.test_til && /^[2-9][0-9]{7}$/.test(String(body.test_til))) {
+          if (!TOKEN) return json({ status: "simuleret", fejl: "SMS-nøgle ikke sat op endnu" });
+          const ref = await sendSms("Bilpleje", String(body.test_til), "Test fra findbilplejere.dk: SMS-motoren til Stamkunde-appen virker.", "drifttest");
+          return json({ status: "sendt", gateway_ref: ref });
+        }
+        return json(await koer());
+      }
+    }
     if (body?.action === "test" && body?.shop_id && req.headers.get("Authorization")) return await testSms(req, body.shop_id);
     return json({ fejl: "Ikke tilladt" }, 401);
   } catch (e) {
