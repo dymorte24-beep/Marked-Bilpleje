@@ -46,6 +46,11 @@ export function paamindTekst(navn: string, firma: string, behandling: string, ud
   return `Hej ${fornavn(navn)}, nu er det ${tidSiden(udfoert)} siden din ${behandling.toLowerCase()} hos ${firma}. Skal vi finde en ny tid? ${kontakt}. Afmeld: findbilplejere.dk/stop?k=${token}`;
 }
 
+// Annoncen: bilplejerens tekst + afmeld-link (kræves ved markedsføring)
+export function annonceTekst(tekst: string, token: string) {
+  const ren = tekst.replace(/\s*Afmeld:\s*\S+\s*$/i, "").trim();
+  return `${ren} Afmeld: findbilplejere.dk/stop?k=${token}`;
+}
 async function sendSms(afsender: string, nummer8: string, tekst: string, ref: string) {
   const res = await fetch(GATEWAY, {
     method: "POST",
@@ -100,10 +105,19 @@ async function koer() {
         const { count } = await admin.from("sk_beskeder").select("id", { count: "exact", head: true })
           .eq("kunde_id", k.id).eq("type", "paamindelse").in("status", ["sendt", "test_sendt"])
           .gte("sendt_at", new Date(Date.now() - 30 * 864e5).toISOString());
-        if (!k.ja_tak) upd = { status: "sprunget_over", fejl: "Kunden har ikke sagt ja tak til påmindelser" };
-        else if ((count ?? 0) > 0) upd = { status: "sprunget_over", fejl: "Højst 1 påmindelse pr. måned" };
+        // Påmindelser går til alle kunder (der ikke er stoppet). Afmeld-linket er altid med.
+        if ((count ?? 0) > 0) upd = { status: "sprunget_over", fejl: "Højst 1 påmindelse pr. måned" };
         else {
           const tekst = paamindTekst(k.navn, firma, job?.behandling ?? "behandling", job?.udfoert_at ?? b.oprettet_at, shop?.phone ?? null, k.afmeld_token);
+          upd = { tekst, ...(await lever(ind, k.navn, k.telefon, tekst, b.id)) };
+        }
+      } else if (b.type === "annonce") {
+        // Bilplejerens egen annonce: kun til kunder, der har sagt ja tak
+        if (!k.ja_tak) upd = { status: "sprunget_over", fejl: "Kunden har ikke sagt ja tak til annoncer" };
+        else if (Date.now() - new Date(b.planlagt_til).getTime() > 2 * 864e5) upd = { status: "sprunget_over", fejl: "For gammel (over 2 døgn)" };
+        else if (!String(b.tekst || "").trim()) upd = { status: "fejl", fejl: "Annoncen har ingen tekst" };
+        else {
+          const tekst = annonceTekst(String(b.tekst), k.afmeld_token);
           upd = { tekst, ...(await lever(ind, k.navn, k.telefon, tekst, b.id)) };
         }
       } else upd = { status: "sprunget_over", fejl: "Ukendt type" };

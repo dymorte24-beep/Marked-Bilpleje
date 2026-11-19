@@ -81,3 +81,8 @@ select.f{width:100%;border:1px solid var(--line);background:#141a2b;color:var(--
 .hint{font-size:12px;color:var(--mut);margin-top:6px;line-height:1.4}
 .del{background:none;border:0;color:var(--mut);font-size:20px;cursor:pointer;padding:0 4px}
 @media (display-mode: standalone){.app{padding-top:env(safe-area-inset-top)}}
+.aft{padding:12px 0;cursor:pointer}.aft+.aft{border-top:1px solid var(--line)}
+.aft .nm b{font-weight:700;font-size:15px}.aft .nm span{color:var(--mut);font-size:14px}
+.ln{font-size:13px;color:#c9cfdb;margin-top:5px;line-height:1.4}.ln a{color:var(--gold);text-decoration:none}
+.c-gold{color:var(--gold)}.c-green{color:var(--green)}.c-red{color:var(--pink)}.c-blue{color:var(--blue)}
+.chip2.ja{background:rgba(76,213,154,.18);border-color:rgba(76,213,154,.4);color:var(--green)}

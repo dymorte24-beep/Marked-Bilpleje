@@ -48,7 +48,47 @@ const STATUS = {
   test_sendt: ['Sendt til test', 't-blue'], simuleret: ['Ikke sendt (prøve)', 't-blue'],
   fejl: ['Fejl', 't-red'], annulleret: ['Annulleret', 't-red'], sprunget_over: ['Sprunget over', 't-blue']
 };
-const TYPE = { tak: '⭐ Tak + anmeldelse', paamindelse: '🔁 Påmindelse', test: '🧪 Test-SMS' };
+const TYPE = { tak: '⭐ Tak + anmeldelse', paamindelse: '🔁 Påmindelse', annonce: '📣 Annonce', test: '🧪 Test-SMS' };
+// Hvornår tak-SMS'en bliver sendt. Samme regel som databasen (sk_tak_tidspunkt): næste dag kl. 10 (aldrig søndag) eller samme aften kl. 18:30
+function takTidspunkt(slut) {
+  let [d, t] = new Date(slut).toLocaleString('sv-SE', { timeZone: TZ }).split(' ');
+  const plus = (ds, n) => new Date(Date.parse(ds + 'T12:00:00Z') + n * 864e5).toISOString().slice(0, 10);
+  let k;
+  if (S.ind.tak_tid === 'samme_aften_1830' && t < '18:00') k = '18.30'; else { d = plus(d, 1); k = '10.00'; }
+  if (new Date(d + 'T12:00:00Z').getUTCDay() === 0) { d = plus(d, 1); k = '10.00'; }
+  return dagNavn(d) + ' kl. ' + k;
+}
+function dagNavn(d) {
+  if (d === idag()) return 'i dag';
+  if (d === dagKey(Date.now() + 864e5)) return 'i morgen';
+  return new Date(d + 'T12:00:00Z').toLocaleDateString('da-DK', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'short' });
+}
+const senesteTak = kid => S.beskeder.filter(b => b.kunde_id === kid && b.type === 'tak' && !['annulleret', 'sprunget_over'].includes(b.status) && new Date(b.planlagt_til) > Date.now() - 30 * 864e5).sort((a, b) => new Date(b.planlagt_til) - new Date(a.planlagt_til))[0];
+// Én linje om tak-SMS'en for en besked: [tekst, farve]
+function takLinje(b) {
+  const n = naar(b.sendt_at || b.planlagt_til);
+  if (b.status === 'planlagt' || b.status === 'sender') return ['⭐ Får tak/anmeldelses-SMS ' + n, 'c-gold'];
+  if (b.status === 'sendt') return ['✓ Fik tak/anmeldelses-SMS ' + n, 'c-green'];
+  if (b.status === 'test_sendt' || b.status === 'simuleret') return ['✓ Tak/anmeldelses-SMS ' + n + ' (gik til dit testnummer)', 'c-blue'];
+  return ['Tak-SMS: ' + (STATUS[b.status] || [b.status])[0].toLowerCase(), 'c-red'];
+}
+const TYPE_NAVN = { tak: 'Tak/anmeldelse', paamindelse: 'Påmindelse', annonce: 'Annonce', test: 'Test' };
+// Teksten i en SMS: den rigtige hvis den er sendt, ellers sådan den kommer til at se ud
+function smsTekst(b) {
+  if (b.type === 'annonce' && b.status === 'planlagt') return annonceEksempel(b.tekst);
+  if (b.tekst) return b.tekst;
+  const k = kunde(b.kunde_id) || {}, j = S.job.find(x => x.id === b.job_id) || {};
+  if (b.type === 'paamindelse') { const mdr = Math.max(1, Math.round((new Date(b.planlagt_til) - new Date(j.udfoert_at || Date.now())) / (30.44 * 864e5))); return paaEksempel(k.navn, j.behandling, mdr); }
+  return takEksempel(k.navn);
+}
+function visSms(id) {
+  const b = S.beskeder.find(x => x.id === id); if (!b) return;
+  const k = kunde(b.kunde_id) || {};
+  sheet(`<h3>${TYPE[b.type] || b.type}</h3><div class="sub">Til ${esc(k.navn || 'kunde')} · ${esc(naar(b.sendt_at || b.planlagt_til))}</div>
+  <div class="bubble">${esc(smsTekst(b))}</div>
+  <div class="hint">${b.tekst ? 'Det er præcis den tekst, kunden fik.' : 'Sådan kommer SMS\'en til at se ud.'}${b.type === 'annonce' && !k.ja_tak ? ' Annoncer bliver kun sendt til kunder, der har sagt ja tak.' : ''}</div>
+  <button class="btn dark" style="margin-top:14px" onclick="kundeSheet('${b.kunde_id}')">Se kunden</button>`);
+}
 const statusTag = b => { const s = STATUS[b.status] || [b.status, 't-blue']; return `<span class="tag ${s[1]}">${s[0]}</span>`; };
 
 // ---------- login ----------
@@ -103,6 +143,7 @@ async function hentAlt() {
   const fejl = [ind, k, j, b, p, a].find(r => r.error);
   if (fejl) { console.error(fejl.error); toast('Kunne ikke hente data'); }
   S.ind = ind.data || { shop_id: id, aktiv: false, google_link: '', afsender: '', tak_tid: 'naeste_dag_10', testtilstand: true, testnummer: '', ny: true };
+  S.sidstHentet = Date.now();
   S.kunder = k.data || []; S.job = j.data || []; S.beskeder = b.data || []; S.paa = p.data || []; S.aft = a.data || [];
   render();
 }
@@ -122,13 +163,15 @@ function dag() {
   ${S.admin && S.shops.length > 1 ? `<button class="btn dark s" style="margin-bottom:12px" onclick="S.shop=null;render()">Skift butik (${esc(shop.name)})</button>` : ''}
   ${banner}
   ${aftalerKort()}
-  <div class="glass"><div class="lbl" style="margin-bottom:4px">${ind.kalender_url ? 'Job registreret i dag' : 'I dag'}</div>
+  <div class="glass"><div class="lbl" style="margin-bottom:4px">Job registreret i dag</div>
    ${iDag.length ? iDag.map(j => { const k = kunde(j.kunde_id) || {}; const b = S.beskeder.find(x => x.job_id === j.id && x.type === 'tak');
-     return `<div class="job" onclick="kundeSheet('${j.kunde_id}')"><div class="t">${kl(j.udfoert_at)}</div><div class="w"><b>${esc(k.navn)}</b><span>${esc(j.behandling)}</span></div>${k.stop ? '<span class="tag t-red">Ingen SMS</span>' : b ? `<span class="tag t-gold" style="white-space:normal;text-align:center;line-height:1.3;width:104px">Anmeldelses-SMS ${b.status === 'planlagt' ? esc(naar(b.planlagt_til).replace(/ kl\..*/, '')) : esc((STATUS[b.status] || [''])[0].toLowerCase())}</span>` : '<span class="tag t-blue">Fik tak-SMS for nylig</span>'}</div>`; }).join('')
+     const n = !b && senesteTak(j.kunde_id); const l = k.stop ? ['Ingen SMS: kunden er stoppet', 'c-red'] : b ? takLinje(b) : n ? (n.status === 'planlagt' ? takLinje(n) : ['Ingen ny tak-SMS: fik en ' + naar(n.sendt_at || n.planlagt_til), 'c-blue']) : ['Ingen ny tak-SMS: fik en for nylig', 'c-blue'];
+     return `<div class="aft" onclick="kundeSheet('${j.kunde_id}')"><div class="nm"><b>${esc(k.navn)}</b> <span>(${esc(j.behandling)})</span></div><div class="ln ${l[1]}">${esc(l[0])}</div></div>`; }).join('')
    : `<div class="empty">${ind.kalender_url ? 'Job fra kalenderen kommer her, når aftalen er slut. Kunder uden aftale kan du tilføje med den gule knap.' : 'Tryk på den gule knap, når du er færdig med en bil.'}</div>`}
   </div>
   <div class="glass"><div class="lbl" style="margin-bottom:4px">Næste SMS</div>
-   ${kommende.length ? kommende.map(b => { const k = kunde(b.kunde_id) || {}; return `<div class="msg"><div class="w"><b>${esc(k.navn || 'Kunde')}</b><span>${TYPE[b.type] || b.type} · ${esc(naar(b.planlagt_til))}</span></div>${statusTag(b)}</div>`; }).join('') : '<div class="empty">Ingen planlagte SMS.</div>'}
+   ${kommende.length ? kommende.map(b => { const k = kunde(b.kunde_id) || {}; const kunJa = b.type === 'annonce' && !k.ja_tak;
+     return `<div class="aft" onclick="visSms('${b.id}')"><div class="nm"><b>${esc(k.navn || 'Kunde')}</b> <span>· ${TYPE_NAVN[b.type] || b.type} · ${esc(naar(b.planlagt_til))}</span></div>${kunJa ? '<div class="ln c-blue">Sendes ikke: kunden har ikke sagt ja tak til annoncer</div>' : ''}</div>`; }).join('') + '<div class="hint">Tryk på en SMS for at se, hvad der står i den.</div>' : '<div class="empty">Ingen planlagte SMS.</div>'}
   </div>
   </div><button class="btn fab" onclick="jobSheet()">+ Job færdig</button>`;
 }
@@ -136,13 +179,13 @@ function dag() {
 function jobSheet() {
   const J = S.nyJob;
   const forslag = [...new Set([...(S.shop.services || []), ...S.paa.map(p => p.behandling)])].slice(0, 8);
-  sheet(`<h3>Job færdig</h3><div class="sub">Kunden får en tak-SMS med link til Google ${S.ind.tak_tid === 'samme_aften_1830' ? 'i aften kl. 18:30' : 'i morgen kl. 10'}.</div>
+  sheet(`<h3>Job færdig</h3><div class="sub">Kunden får en tak-SMS med link til Google ${S.ind.tak_tid === 'samme_aften_1830' ? 'i aften kl. 18.30' : 'i morgen kl. 10'} og en påmindelse, når det er tid igen. Sig det til kunden, når du tager nummeret.</div>
   <div class="lbl" style="margin-top:18px">Kundens navn</div><input class="f" id="jn" value="${esc(J.navn)}" placeholder="Fx Mette Hansen" autocomplete="off" oninput="S.nyJob.navn=this.value">
   <div class="lbl" style="margin-top:14px">Mobilnummer</div><input class="f" id="jt" value="${esc(J.tlf)}" placeholder="8 cifre" inputmode="tel" autocomplete="off" oninput="S.nyJob.tlf=this.value;findKunde()">
   <div class="hint" id="jkendt"></div>
   <div class="lbl" style="margin-top:14px">Behandling</div><input class="f" id="jb" value="${esc(J.beh)}" placeholder="Fx Coating" oninput="S.nyJob.beh=this.value">
   <div class="seg">${forslag.map(x => `<button class="chip2" onclick="S.nyJob.beh=this.textContent;$('jb').value=this.textContent">${esc(x)}</button>`).join('')}</div>
-  <div class="glass" style="margin-top:16px"><div class="row"><div><b>Ja tak til påmindelser</b><div class="sub">Spørg: "Må vi sende dig en SMS, når det er tid igen? Du kan altid afmelde."</div></div><div class="sw ${J.ja ? 'on' : ''}" id="jja" onclick="S.nyJob.ja=!S.nyJob.ja;this.classList.toggle('on')"></div></div></div>
+  <div class="glass" style="margin-top:16px"><div class="row"><div><b>Ja tak til annoncer på SMS</b><div class="sub">Spørg: "Må vi sende dig vores tilbud på SMS en gang imellem? Du kan altid afmelde."</div></div><div class="sw ${J.ja ? 'on' : ''}" id="jja" onclick="S.nyJob.ja=!S.nyJob.ja;this.classList.toggle('on')"></div></div></div>
   <div class="err" id="jerr"></div>
   <button class="btn" style="margin-top:8px" id="jgem" onclick="gemJob()">Gem job</button>`);
   findKunde();
@@ -150,7 +193,7 @@ function jobSheet() {
 function findKunde() {
   const t = tlf8(S.nyJob.tlf), e = $('jkendt'); if (!e) return;
   const k = t.length === 8 && S.kunder.find(x => x.telefon === t);
-  e.textContent = k ? `Kendt kunde: ${k.navn}${k.ja_tak ? ' · har sagt ja tak' : ''}${k.stop ? ' · STOPPET (får ingen SMS)' : ''}` : '';
+  e.textContent = k ? `Kendt kunde: ${k.navn}${k.ja_tak ? ' · ja tak til annoncer' : ''}${k.stop ? ' · STOPPET (får ingen SMS)' : ''}` : '';
   if (k && !$('jn').value) { $('jn').value = k.navn; S.nyJob.navn = k.navn; }
 }
 async function gemJob() {
@@ -184,18 +227,32 @@ const AFT = {
   venter: ['Tak-SMS efter aftalen', 't-gold'], job: ['Tak-SMS planlagt', 't-green'], mangler_nummer: ['Mangler nummer', 't-red'],
   sprunget_over: ['Ingen SMS', 't-blue'], aflyst: ['Aflyst', 't-blue']
 };
+function aftaleSms(a) {
+  if (a.status === 'aflyst') return ['Aflyst', 'c-blue'];
+  if (a.status === 'sprunget_over') return ['Ingen SMS til denne kunde', 'c-blue'];
+  if (a.status === 'mangler_nummer' || !a.telefon) return ['Mangler mobilnummer. Tryk for at tilføje det', 'c-red'];
+  const k = S.kunder.find(x => x.telefon === a.telefon);
+  if (k && k.stop) return ['Ingen SMS: kunden er stoppet', 'c-red'];
+  if (a.status === 'job') { const b = S.beskeder.find(x => x.job_id === a.job_id && x.type === 'tak'); if (b) return takLinje(b); }
+  const nylig = k && senesteTak(k.id);
+  if (nylig) return nylig.status === 'planlagt' ? takLinje(nylig) : ['Ingen ny tak-SMS: fik en ' + naar(nylig.sendt_at || nylig.planlagt_til), 'c-blue'];
+  return ['⭐ Tak/anmeldelses-SMS planlagt ' + takTidspunkt(a.slut_at), 'c-gold'];
+}
 function aftalerKort() {
   const ind = S.ind;
   if (!ind.kalender_url) return '';
   const iDag = S.aft.filter(a => dagKey(a.start_at) === idag() && a.status !== 'aflyst');
   const mangler = S.aft.filter(a => a.status === 'mangler_nummer' && new Date(a.slut_at) <= new Date() && dagKey(a.start_at) !== idag());
   const fejl = ind.kalender_fejl ? `<div class="banner warn" style="margin:0 0 10px"><b>Kalenderen kunne ikke hentes:</b> ${esc(ind.kalender_fejl)}</div>` : '';
-  const linje = a => { const s = AFT[a.status] || [a.status, 't-blue'];
-    return `<div class="job" onclick="aftaleSheet('${a.id}')"><div class="t">${kl(a.start_at)}</div><div class="w"><b>${esc(a.navn || a.titel || 'Aftale')}</b><span>${esc(a.behandling || '')}${a.telefon ? ' · ' + visTlf(a.telefon) : ''}</span></div><span class="tag ${s[1]}" style="white-space:normal;text-align:center;line-height:1.3;width:104px">${s[0]}</span></div>`; };
+  const linje = a => { const l = aftaleSms(a);
+    return `<div class="aft" onclick="aftaleSheet('${a.id}')"><div class="nm"><b>${esc(a.navn || a.titel || 'Aftale')}</b>${a.behandling ? ` <span>(${esc(a.behandling)})</span>` : ''}</div>
+     <div class="ln">🕙 Kunden ankommer kl. ${kl(a.start_at)}${dagKey(a.start_at) !== idag() ? ' ' + esc(dato(a.start_at)) : ''}</div>
+     ${a.telefon ? `<div class="ln">📞 <a href="tel:+45${a.telefon}" onclick="event.stopPropagation()">${visTlf(a.telefon)}</a></div>` : ''}
+     <div class="ln ${l[1]}">${esc(l[0])}</div></div>`; };
   return `<div class="glass"><div class="row" style="margin-bottom:4px"><div class="lbl">📅 Dagens aftaler</div><button class="chip2" style="margin:0" onclick="synkNu()">Opdatér</button></div>${fejl}
    ${iDag.length ? iDag.map(linje).join('') : '<div class="empty">Ingen aftaler i kalenderen i dag.</div>'}
    ${mangler.length ? `<div class="lbl" style="margin:12px 0 4px">Mangler mobilnummer</div>${mangler.map(linje).join('')}` : ''}
-   <div class="hint">Tak-SMS'en planlægges selv, når aftalen er slut. Tryk på en aftale for at rette eller springe over.</div></div>`;
+   <div class="hint">Opdateret kl. ${kl(S.sidstHentet || Date.now())} · opdaterer selv hver 30. min. Tryk på en aftale for at rette den eller springe SMS'en over.</div></div>`;
 }
 function aftaleSheet(id) {
   const a = S.aft.find(x => x.id === id); if (!a) return;
@@ -331,23 +388,69 @@ function maaned() {
 
 // ---------- Kunder ----------
 function kunderSide() {
-  const sidst = id => S.job.find(j => j.kunde_id === id);
-  return `<div class="top"><div class="lbl">${S.kunder.length} kunder</div><h1>Kunder</h1><div class="sub">${S.kunder.filter(k => k.ja_tak && !k.stop).length} har sagt ja tak til påmindelser</div></div><div class="pad">
+  const ind = S.ind, sidst = id => S.job.find(j => j.kunde_id === id);
+  // Kunder fra i dag: job registreret i dag + dagens aftaler med nummer, der ikke er blevet til job endnu
+  const fraIdag = [];
+  S.job.filter(j => dagKey(j.udfoert_at) === idag()).forEach(j => { const k = kunde(j.kunde_id); if (k && !fraIdag.some(x => x.tlf === k.telefon)) fraIdag.push({ navn: k.navn, tlf: k.telefon, beh: j.behandling, k }); });
+  S.aft.filter(a => dagKey(a.start_at) === idag() && a.telefon && !['aflyst', 'sprunget_over'].includes(a.status)).forEach(a => { if (!fraIdag.some(x => x.tlf === a.telefon)) fraIdag.push({ navn: a.navn || 'Kunde', tlf: a.telefon, beh: a.behandling, k: S.kunder.find(x => x.telefon === a.telefon) }); });
+  const jaAntal = S.kunder.filter(k => k.ja_tak && !k.stop).length;
+  const tak = `<div class="glass gold"><b>⭐ Tak + anmeldelse</b>
+    <div class="ln">🕙 ${ind.tak_tid === 'samme_aften_1830' ? 'Samme aften kl. 18.30' : 'Næste dag kl. 10.00'} efter jobbet (højst én pr. måned)</div>
+    <div class="bubble">${esc(takEksempel())}</div></div>`;
+  const paa = S.paa.filter(p => p.aktiv).map(p => `<div class="glass"><b>🔁 Påmindelse: ${esc(p.behandling)}</b>
+    <div class="ln">🕙 ${p.maaneder} måneder efter behandlingen, kl. 10.00</div>
+    <div class="bubble">${esc(paaEksempel('Mette', p.behandling, p.maaneder))}</div></div>`).join('')
+    || `<div class="glass"><b>🔁 Påmindelse: "Nu er det x tid siden"</b><div class="sub">Du har ikke lavet nogen endnu. Lav fx én til coating efter 12 måneder.</div><button class="btn dark s" style="margin-top:12px" onclick="nyPaa()">+ Lav en påmindelse</button></div>`;
+  const ann = `<div class="glass violet"><b>📣 Annonce: din egen besked</b>
+    <div class="ln">Du skriver selv teksten, fx et tilbud i en stille uge. Afmeld-linket kommer automatisk med.</div>
+    <div class="bubble">${esc(annonceEksempel('Hej! Kun denne uge: 20% på indvendig rens. Ring på ' + (S.shop.phone || 'vores nummer') + '. Mvh ' + S.shop.name))}</div>
+    <button class="btn s" style="margin-top:12px" onclick="nyAnnonce()">Skriv en annonce (${jaAntal} ${jaAntal === 1 ? 'kunde' : 'kunder'})</button></div>`;
+  return `<div class="top"><div class="lbl">${S.kunder.length} kunder · ${jaAntal} har sagt ja tak til annoncer</div><h1>Kunder</h1></div><div class="pad">
+  <div class="glass"><b>Hvad bruger jeg Kunder til?</b>
+   <div class="ln">Alle, du laver en bil for, kommer her af sig selv. Der er to slags SMS:</div>
+   <div class="ln"><b>1. Alle kunder</b> får en tak-SMS med dit Google-link og senere en påmindelse, når det er tid igen.</div>
+   <div class="ln"><b>2. Kunder, der siger ja tak</b>, kan også få dine annoncer, fx et tilbud i en stille uge.</div>
+   <div class="ln">Tryk på en kunde for at se deres SMS'er eller stoppe dem.</div></div>
+
+  <div class="row h2"><div class="lbl">1 · Alle kunder får</div></div>
+  ${tak}${paa}
+
+  <div class="row h2"><div class="lbl">2 · Kun ja tak-kunder kan få</div></div>
+  ${ann}
+
+  <div class="row h2"><div class="lbl">Fra i dag · hvem sagde ja tak til annoncer?</div></div>
+  <div class="glass">${fraIdag.length ? fraIdag.map(x => { const ja = x.k && x.k.ja_tak, stop = x.k && x.k.stop;
+    return `<div class="cust"><div class="av">${ini(x.navn)}</div><div style="flex:1;min-width:0"><b>${esc(x.navn)}</b><div class="sub" style="margin:0">${esc(x.beh || '')}${x.beh ? ' · ' : ''}${visTlf(x.tlf)}</div></div>${stop ? '<span class="tag t-red">Stoppet</span>' : `<button class="chip2 ${ja ? 'ja' : ''}" style="margin:0" onclick="jaIdag('${x.tlf}')">${ja ? '✓ Ja tak' : 'Sagde ja tak'}</button>`}</div>`; }).join('')
+    : '<div class="empty">Ingen kunder fra i dag endnu.</div>'}
+   <div class="hint">Spørg ved aflevering: "Må vi sende dig vores tilbud på SMS en gang imellem? Du kan altid afmelde."</div>
+   <button class="btn dark" style="margin-top:12px" onclick="S.nyJob={navn:'',tlf:'',beh:'',ja:true};jobSheet()">+ Tilføj kunde fra i dag</button></div>
+  <div class="hint" style="margin:-4px 0 0">Navnet i SMS'en bliver kundens fornavn. Tidspunkt, link og påmindelser ændrer du under <b>SMS</b>.</div>
+
+  <div class="row h2"><div class="lbl">Alle kunder</div></div>
   <input class="f" placeholder="Søg navn eller nummer" oninput="filtrer(this.value)" style="margin:0 0 12px">
   <div class="glass" id="klist">${S.kunder.length ? S.kunder.map(k => { const j = sidst(k.id);
-    return `<div class="cust" data-s="${esc((k.navn + ' ' + k.telefon).toLowerCase())}" onclick="kundeSheet('${k.id}')"><div class="av">${ini(k.navn)}</div><div style="flex:1;min-width:0"><b>${esc(k.navn)}</b><div class="sub" style="margin:0">${j ? esc(j.behandling) + ' · ' + esc(dato(j.udfoert_at)) : visTlf(k.telefon)}</div></div>${k.stop ? '<span class="tag t-red">Stoppet</span>' : k.ja_tak ? '<span class="tag t-green">Ja tak</span>' : '<span class="tag t-blue">Kun tak-SMS</span>'}</div>`; }).join('')
-    : '<div class="empty">Kunderne kommer her, når du registrerer job.</div>'}</div></div>`;
+    return `<div class="cust" data-s="${esc((k.navn + ' ' + k.telefon).toLowerCase())}" onclick="kundeSheet('${k.id}')"><div class="av">${ini(k.navn)}</div><div style="flex:1;min-width:0"><b>${esc(k.navn)}</b><div class="sub" style="margin:0">${j ? esc(j.behandling) + ' · ' + esc(dato(j.udfoert_at)) : visTlf(k.telefon)}</div></div>${k.stop ? '<span class="tag t-red">Stoppet</span>' : k.ja_tak ? '<span class="tag t-green">Ja tak</span>' : '<span class="tag t-blue">Ingen annoncer</span>'}</div>`; }).join('')
+    : '<div class="empty">Kunderne kommer her, når du registrerer job, eller når en aftale i kalenderen er slut.</div>'}</div></div>`;
+}
+// "Sagde ja tak" for en kunde fra i dag. Findes kunden ikke endnu (aftalen er ikke slut), oprettes den, så job fra kalenderen bruger den.
+async function jaIdag(tlf) {
+  const k = S.kunder.find(x => x.telefon === tlf);
+  let r;
+  if (k) r = await db.from('sk_kunder').update({ ja_tak: !k.ja_tak }).eq('id', k.id);
+  else { const a = S.aft.find(x => x.telefon === tlf); r = await db.from('sk_kunder').insert({ shop_id: S.shop.id, navn: (a && a.navn) || 'Kunde', telefon: tlf, ja_tak: true }); }
+  if (r.error) { console.error(r.error); return toast('Kunne ikke gemme'); }
+  await hentAlt(); toast(k && k.ja_tak ? 'Ja tak fjernet' : 'Ja tak gemt ✓');
 }
 function filtrer(q) { q = q.toLowerCase().trim(); document.querySelectorAll('#klist .cust').forEach(e => e.style.display = !q || e.dataset.s.includes(q) || e.dataset.s.includes(q.replace(/\s/g, '')) ? '' : 'none'); }
 function kundeSheet(id) {
   const k = kunde(id); if (!k) return;
   const hist = [
     ...S.job.filter(j => j.kunde_id === id).map(j => ({ d: j.udfoert_at, h: `<div class="msg"><div class="w"><b>🚗 ${esc(j.behandling)}</b><span>${esc(naar(j.udfoert_at))}</span></div></div>` })),
-    ...S.beskeder.filter(b => b.kunde_id === id).map(b => ({ d: b.sendt_at || b.planlagt_til, h: `<div class="msg"><div class="w"><b>${TYPE[b.type] || b.type}</b><span>${esc(naar(b.sendt_at || b.planlagt_til))}${b.fejl ? ' · ' + esc(b.fejl) : ''}</span></div>${statusTag(b)}</div>` }))
+    ...S.beskeder.filter(b => b.kunde_id === id).map(b => ({ d: b.sendt_at || b.planlagt_til, h: `<div class="msg" onclick="visSms('${b.id}')" style="cursor:pointer"><div class="w"><b>${TYPE[b.type] || b.type}</b><span>${esc(naar(b.sendt_at || b.planlagt_til))}${b.fejl ? ' · ' + esc(b.fejl) : ''}</span><div class="bubble" style="margin-top:6px">${esc(smsTekst(b))}</div></div>${statusTag(b)}</div>` }))
   ].sort((a, b) => new Date(b.d) - new Date(a.d));
   sheet(`<div class="row"><div class="av" style="width:54px;height:54px;font-size:18px">${ini(k.navn)}</div><div style="flex:1"><h3>${esc(k.navn)}</h3><div class="sub"><a href="tel:+45${k.telefon}" style="color:var(--gold)">${visTlf(k.telefon)}</a></div></div></div>
-  <div class="glass" style="margin-top:18px"><div class="row"><div><b>Ja tak til påmindelser</b><div class="sub">Kunden har sagt ja til SMS, når det er tid igen</div></div><div class="sw ${k.ja_tak ? 'on' : ''}" onclick="opdKunde('${id}',{ja_tak:${!k.ja_tak}})"></div></div>
-  <div class="sub" style="margin-top:10px">${k.ja_tak && k.ja_tak_at ? `Gemt ${esc(new Date(k.ja_tak_at).toLocaleString('da-DK', { timeZone: TZ }))} som dokumentation.` : 'Får kun tak-SMS efter besøg.'}</div></div>
+  <div class="glass" style="margin-top:18px"><div class="row"><div><b>Ja tak til annoncer</b><div class="sub">Kunden har sagt ja til at få dine tilbud på SMS</div></div><div class="sw ${k.ja_tak ? 'on' : ''}" onclick="opdKunde('${id}',{ja_tak:${!k.ja_tak}})"></div></div>
+  <div class="sub" style="margin-top:10px">${k.ja_tak && k.ja_tak_at ? `Gemt ${esc(new Date(k.ja_tak_at).toLocaleString('da-DK', { timeZone: TZ }))} som dokumentation.` : 'Får tak-SMS og påmindelser, men ingen annoncer.'}</div></div>
   <div class="glass"><div class="row"><div><b>Stop alle SMS</b><div class="sub">Fx hvis kunden ikke var tilfreds</div></div><div class="sw ${k.stop ? 'on' : ''}" onclick="opdKunde('${id}',{stop:${!k.stop}})"></div></div></div>
   <div class="lbl" style="margin:18px 0 4px">Historik</div><div class="glass">${hist.length ? hist.map(x => x.h).join('') : '<div class="empty">Intet endnu.</div>'}</div>`);
 }
@@ -359,7 +462,7 @@ async function opdKunde(id, felter) {
 }
 
 // ---------- SMS-indstillinger ----------
-const takEksempel = () => `Hej Mette, tak fordi du valgte ${S.shop.name}. Hvis du er glad for resultatet, vil vi blive rigtig glade for en anmeldelse på Google. Det tager 30 sekunder: ${S.ind.google_link || '[dit Google-link]'} Mvh ${S.shop.name}`;
+const takEksempel = (navn = 'Mette') => `Hej ${fornavn(navn) || 'Mette'}, tak fordi du valgte ${S.shop.name}. Hvis du er glad for resultatet, vil vi blive rigtig glade for en anmeldelse på Google. Det tager 30 sekunder: ${S.ind.google_link || '[dit Google-link]'} Mvh ${S.shop.name}`;
 function sms() {
   const ind = S.ind;
   const seneste = S.beskeder.filter(b => b.status !== 'planlagt').sort((a, b) => new Date(b.sendt_at || b.planlagt_til) - new Date(a.sendt_at || a.planlagt_til)).slice(0, 15);
@@ -380,10 +483,10 @@ function sms() {
    <div class="hint">Det er det navn, kunden ser som afsender. Kun bogstaver (a-z), tal og mellemrum.</div>
   </div>
 
-  <div class="row h2"><div class="lbl">Påmindelser · kun "ja tak"-kunder</div></div>
+  <div class="row h2"><div class="lbl">Påmindelser · alle kunder</div></div>
   ${S.paa.length ? S.paa.map(p => `<div class="glass"><div class="row"><div class="row" style="justify-content:flex-start"><div style="font-size:22px">🔁</div><div><b>${esc(p.behandling)}</b><div class="sub" style="margin:0">${p.maaneder} måneder efter</div></div></div><div class="row" style="gap:6px"><div class="sw ${p.aktiv ? 'on' : ''}" onclick="opdPaa('${p.id}',{aktiv:${!p.aktiv}})"></div><button class="del" title="Slet" onclick="sletPaa('${p.id}')">×</button></div></div></div>`).join('') : '<div class="empty" style="margin-bottom:8px">Ingen påmindelser endnu. Lav fx én til coating efter 12 måneder.</div>'}
   <button class="btn dark" onclick="nyPaa()">+ Lav en påmindelse</button>
-  <div class="hint">Påmindelsen planlægges, når du gemmer et job med den behandling. Den sendes kun, hvis kunden har sagt ja tak, og højst én om måneden.</div>
+  <div class="hint">Påmindelsen planlægges, når et job med den behandling bliver gemt. Den går til alle kunder, der ikke har afmeldt sig, og højst én om måneden.</div>
 
   <div class="row h2"><div class="lbl">Test</div></div>
   <div class="glass"><div class="row"><div><b>Testtilstand</b><div class="sub">Alle SMS går til dit eget nummer i stedet for kunden</div></div><div class="sw ${ind.testtilstand ? 'on' : ''}" onclick="gemInd({testtilstand:${!ind.testtilstand}})"></div></div>
@@ -394,7 +497,7 @@ function sms() {
   <div class="row h2"><div class="lbl">Seneste SMS</div></div>
   <div class="glass">${seneste.length ? seneste.map(b => { const k = kunde(b.kunde_id) || {}; return `<div class="msg"><div class="w"><b>${esc(k.navn || (b.type === 'test' ? 'Dig selv' : 'Kunde'))}</b><span>${TYPE[b.type] || b.type} · ${esc(naar(b.sendt_at || b.planlagt_til))}${b.fejl ? ' · ' + esc(b.fejl) : ''}</span></div>${statusTag(b)}</div>`; }).join('') : '<div class="empty">Ingen SMS endnu.</div>'}</div>
 
-  <div class="glass violet"><b>🏷️ Tilbud i stille uger</b><div class="sub">Kommer i næste version.</div></div>
+  <div class="glass violet"><b>📣 Annoncer</b><div class="sub">Send din egen besked til kunder, der har sagt ja tak.</div><button class="btn s" style="margin-top:12px" onclick="nyAnnonce()">Skriv en annonce</button></div>
   <button class="btn dark" style="margin-top:14px" onclick="logud()">Log ud</button>
   <p class="hint" style="text-align:center;margin-top:10px">Logget ind som ${esc(S.user.email)}</p></div>`;
 }
@@ -409,11 +512,51 @@ async function gemInd(felter) {
   if (error) { console.error(error); toast('Kunne ikke gemme'); return; }
   S.ind = data; render(); toast('Gemt ✓');
 }
+// ---------- Annoncer (kun ja tak-kunder) ----------
+const annonceEksempel = t => `${(t || '').trim() || 'Din tekst'} Afmeld: findbilplejere.dk/stop?k=…`;
+let A = { t: '', naar: 'nu' };
+function nyAnnonce() { A = { t: A.t || '', naar: A.naar || 'nu' }; tegnAnnonce(); }
+function tegnAnnonce() {
+  const modt = S.kunder.filter(k => k.ja_tak && !k.stop);
+  const sidst = S.beskeder.filter(b => b.type === 'annonce').sort((a, b) => new Date(b.planlagt_til) - new Date(a.planlagt_til))[0];
+  sheet(`<h3>Skriv en annonce</h3><div class="sub">Går til ${modt.length} ${modt.length === 1 ? 'kunde' : 'kunder'}, der har sagt ja tak til annoncer.</div>
+  ${S.ind.testtilstand ? '<div class="banner" style="margin-top:12px"><b>Testtilstand:</b> kun én SMS bliver sendt, og den går til dit testnummer.</div>' : ''}
+  <div class="lbl" style="margin-top:16px">Din tekst</div>
+  <textarea class="f" id="atxt" rows="4" maxlength="300" placeholder="Fx Hej! Kun denne uge: 20% på indvendig rens. Ring på ${esc(S.shop.phone || '…')}. Mvh ${esc(S.shop.name)}" oninput="A.t=this.value;opdAnnonce()">${esc(A.t)}</textarea>
+  <div class="hint" id="atael"></div>
+  <div class="lbl" style="margin-top:14px">Sådan ser den ud</div><div class="bubble" id="aprev"></div>
+  <div class="lbl" style="margin-top:16px">Hvornår</div>
+  <div class="seg">${[['nu', 'Nu'], ['imorgen', 'I morgen kl. 10']].map(x => `<button class="chip2 ${A.naar === x[0] ? 'on' : ''}" onclick="A.naar='${x[0]}';tegnAnnonce()">${x[1]}</button>`).join('')}</div>
+  <div class="hint">Skriv navnet på din forretning i teksten. Links virker kun til findbilplejere.dk og Google. Send højst 1-2 om måneden, ellers afmelder folk sig.${sidst ? ` Sidste annonce: ${esc(naar(sidst.planlagt_til))}.` : ''}</div>
+  <div class="err" id="aerr"></div>
+  <button class="btn" id="asend" style="margin-top:6px" onclick="sendAnnonce()" ${modt.length ? '' : 'disabled'}>${modt.length ? `Send til ${S.ind.testtilstand ? 'dit testnummer' : modt.length + (modt.length === 1 ? ' kunde' : ' kunder')}` : 'Ingen kunder har sagt ja tak endnu'}</button>`);
+  opdAnnonce();
+}
+function opdAnnonce() {
+  const fuld = annonceEksempel(A.t).replace('…', 'xxxxxxxx');
+  const enkelt = /^[\x20-\x7EæøåÆØÅéÉüÜäÄöÖ\n\r]*$/.test(fuld), del = enkelt ? (fuld.length <= 160 ? 1 : Math.ceil(fuld.length / 153)) : (fuld.length <= 70 ? 1 : Math.ceil(fuld.length / 67));
+  if ($('aprev')) $('aprev').textContent = annonceEksempel(A.t);
+  if ($('atael')) $('atael').textContent = `${(A.t || '').length}/300 tegn · ${del} SMS pr. kunde`;
+}
+async function sendAnnonce() {
+  const t = (A.t || '').trim(); if (t.length < 10) { $('aerr').textContent = 'Skriv lidt mere tekst'; return; }
+  let modt = S.kunder.filter(k => k.ja_tak && !k.stop);
+  if (!modt.length) return;
+  if (S.ind.testtilstand) modt = modt.slice(0, 1);
+  else if (!confirm(`Send annoncen til ${modt.length} ${modt.length === 1 ? 'kunde' : 'kunder'}? Det kan ikke fortrydes, når den er sendt.`)) return;
+  let tid = new Date();
+  if (A.naar === 'imorgen') { const d = dagKey(Date.now() + 864e5), g = Date.parse(d + 'T10:00:00Z'); const off = Date.parse(new Date(g).toLocaleString('sv-SE', { timeZone: TZ }).replace(' ', 'T') + 'Z') - g; tid = new Date(g - off); }
+  $('asend').disabled = true;
+  const { error } = await db.from('sk_beskeder').insert(modt.map(k => ({ shop_id: S.shop.id, kunde_id: k.id, type: 'annonce', tekst: t, planlagt_til: tid.toISOString(), status: 'planlagt' })));
+  if (error) { console.error(error); $('aerr').textContent = 'Kunne ikke gemme annoncen'; $('asend').disabled = false; return; }
+  const varNu = A.naar === 'nu'; A = { t: '', naar: 'nu' }; luk(); await hentAlt();
+  toast(S.ind.testtilstand ? 'Annonce sendes til dit testnummer om lidt ✓' : varNu ? `Annonce sendes om lidt ✓` : 'Annonce planlagt i morgen kl. 10 ✓');
+}
 let P = { b: '', n: 12 };
 function nyPaa() { P = { b: '', n: 12 }; tegnPaa(); }
 function tegnPaa() {
   const forslag = [...new Set(['Coating', 'Voks', 'Polering', ...(S.shop.services || [])])].slice(0, 8);
-  sheet(`<h3>Ny påmindelse</h3><div class="sub">Sendes kun til kunder med "ja tak".</div>
+  sheet(`<h3>Ny påmindelse</h3><div class="sub">Sendes til alle kunder, der har fået behandlingen.</div>
   <div class="lbl" style="margin-top:18px">Efter behandling</div><input class="f" id="pb" value="${esc(P.b)}" placeholder="Fx Coating" oninput="P.b=this.value;opdPaaTekst()">
   <div class="seg">${forslag.map(x => `<button class="chip2 ${P.b === x ? 'on' : ''}" onclick="P.b=this.textContent;tegnPaa()">${esc(x)}</button>`).join('')}</div>
   <div class="lbl" style="margin-top:18px">Hvornår</div><div class="seg">${[3, 6, 12, 24].map(x => `<button class="chip2 ${P.n === x ? 'on' : ''}" onclick="P.n=${x};tegnPaa()">${x} mdr.</button>`).join('')}</div>
@@ -421,7 +564,8 @@ function tegnPaa() {
   <button class="btn" style="margin-top:18px" onclick="gemPaa()">Gem påmindelse</button>`);
   opdPaaTekst();
 }
-function opdPaaTekst() { const e = $('ptxt'); if (e) e.textContent = `Hej Mette, nu er det ${P.n === 12 ? 'et år' : P.n === 24 ? 'to år' : P.n + ' måneder'} siden din ${(P.b || 'behandling').toLowerCase()} hos ${S.shop.name}. Skal vi finde en ny tid? Ring eller skriv på ${S.shop.phone || 'jeres nummer'}. Afmeld: findbilplejere.dk/stop?k=…`; }
+const paaEksempel = (navn, beh, n) => `Hej ${fornavn(navn) || 'Mette'}, nu er det ${n >= 11 && n <= 13 ? 'et år' : n >= 23 && n <= 25 ? 'to år' : n + ' måneder'} siden din ${(beh || 'behandling').toLowerCase()} hos ${S.shop.name}. Skal vi finde en ny tid? ${S.shop.phone ? 'Ring eller skriv på ' + S.shop.phone : 'Skriv til os'}. Afmeld: findbilplejere.dk/stop?k=…`;
+function opdPaaTekst() { const e = $('ptxt'); if (e) e.textContent = paaEksempel('Mette', P.b, P.n); }
 async function gemPaa() {
   const b = (P.b || '').trim(); if (!b) return toast('Skriv hvilken behandling');
   const { error } = await db.from('sk_paamindelser').insert({ shop_id: S.shop.id, behandling: b, maaneder: P.n });
@@ -462,4 +606,14 @@ function render() {
   else if (visKalenderSide()) app.innerHTML = kalenderSide();
   else app.innerHTML = ({ dag, maaned, kunder: kunderSide, sms }[S.tab])() + nav();
 }
+// Henter selv nye aftaler og SMS-status ca. hver 30. min, mens appen er åben (og når man åbner den igen)
+async function autoOpd() {
+  if (document.hidden || !S.user || !S.shop || !S.ind || $('ov').classList.contains('show') || visKalenderSide()) return;
+  if (Date.now() - (S.sidstHentet || 0) < 30 * 60000) return;
+  if (document.activeElement && ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+  if (S.ind.kalender_url) { try { await db.functions.invoke('stamkunde-send', { body: { action: 'kalender_synk', shop_id: S.shop.id } }); } catch (_) {} }
+  await hentAlt();
+}
+setInterval(autoOpd, 60000);
+document.addEventListener('visibilitychange', autoOpd);
 start();
