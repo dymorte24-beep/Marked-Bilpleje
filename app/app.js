@@ -14,7 +14,7 @@ const I = {
 
 const S = {
   user: null, admin: false, shops: [], shop: null, tab: 'dag',
-  ind: null, kunder: [], job: [], beskeder: [], paa: [],
+  ind: null, kunder: [], job: [], beskeder: [], paa: [], aft: [], kalSpringLokal: false,
   nyJob: { navn: '', tlf: '', beh: '', ja: false }
 };
 
@@ -61,7 +61,7 @@ async function brugSession(session) {
   if (!session) { S.user = null; return render(); }
   S.user = session.user;
   S.admin = (session.user.email || '').toLowerCase() === 'dymorte24@gmail.com';
-  let q = db.from('shops').select('id,name,city,contact_person,phone,services').order('name');
+  let q = db.from('shops').select('id,name,city,contact_person,phone,services,owner_id').order('name');
   if (!S.admin) q = q.eq('owner_id', session.user.id);
   const { data, error } = await q;
   if (error) { toast('Kunne ikke hente din butik'); console.error(error); }
@@ -85,23 +85,25 @@ async function glemt() {
   $('lerr').textContent = 'Hvis mailen findes, har vi sendt et link til ny adgangskode.';
 }
 async function logud() { await db.auth.signOut(); localStorage.removeItem('sk_shop'); S.user = null; S.shop = null; render(); }
-function vaelgShop(id) { S.shop = S.shops.find(s => s.id === id); localStorage.setItem('sk_shop', id); hentAlt(); }
+function vaelgShop(id) { S.kalSpringLokal = false; S.kalVis = false; S.shop = S.shops.find(s => s.id === id); localStorage.setItem('sk_shop', id); hentAlt(); }
 
 // ---------- data ----------
 async function hentAlt() {
   const id = S.shop.id;
   const fra = new Date(Date.now() - 62 * 864e5).toISOString();
-  const [ind, k, j, b, p] = await Promise.all([
+  const aftFra = new Date(Date.now() - 2 * 864e5).toISOString(), aftTil = new Date(Date.now() + 15 * 864e5).toISOString();
+  const [ind, k, j, b, p, a] = await Promise.all([
     db.from('sk_indstillinger').select('*').eq('shop_id', id).maybeSingle(),
     db.from('sk_kunder').select('*').eq('shop_id', id).order('oprettet_at', { ascending: false }),
     db.from('sk_job').select('*').eq('shop_id', id).gte('udfoert_at', fra).order('udfoert_at', { ascending: false }),
     db.from('sk_beskeder').select('*').eq('shop_id', id).or(`planlagt_til.gte.${fra},status.eq.planlagt`).order('planlagt_til', { ascending: false }).limit(500),
-    db.from('sk_paamindelser').select('*').eq('shop_id', id).order('oprettet_at')
+    db.from('sk_paamindelser').select('*').eq('shop_id', id).order('oprettet_at'),
+    db.from('sk_aftaler').select('*').eq('shop_id', id).gte('slut_at', aftFra).lte('start_at', aftTil).order('start_at')
   ]);
-  const fejl = [ind, k, j, b, p].find(r => r.error);
+  const fejl = [ind, k, j, b, p, a].find(r => r.error);
   if (fejl) { console.error(fejl.error); toast('Kunne ikke hente data'); }
   S.ind = ind.data || { shop_id: id, aktiv: false, google_link: '', afsender: '', tak_tid: 'naeste_dag_10', testtilstand: true, testnummer: '', ny: true };
-  S.kunder = k.data || []; S.job = j.data || []; S.beskeder = b.data || []; S.paa = p.data || [];
+  S.kunder = k.data || []; S.job = j.data || []; S.beskeder = b.data || []; S.paa = p.data || []; S.aft = a.data || [];
   render();
 }
 const kunde = id => S.kunder.find(k => k.id === id);
@@ -119,10 +121,11 @@ function dag() {
   return `<div class="hero"><div class="in"><div class="chip">${esc(dagTxt[0].toUpperCase() + dagTxt.slice(1))}</div><h1>God dag, ${esc(navn)}</h1><div class="sub" style="color:#c9cfdb">${iDag.length ? `${iDag.length} job registreret i dag` : 'Ingen job registreret i dag endnu'}</div></div></div><div class="pad">
   ${S.admin && S.shops.length > 1 ? `<button class="btn dark s" style="margin-bottom:12px" onclick="S.shop=null;render()">Skift butik (${esc(shop.name)})</button>` : ''}
   ${banner}
-  <div class="glass"><div class="lbl" style="margin-bottom:4px">I dag</div>
+  ${aftalerKort()}
+  <div class="glass"><div class="lbl" style="margin-bottom:4px">${ind.kalender_url ? 'Job registreret i dag' : 'I dag'}</div>
    ${iDag.length ? iDag.map(j => { const k = kunde(j.kunde_id) || {}; const b = S.beskeder.find(x => x.job_id === j.id && x.type === 'tak');
      return `<div class="job" onclick="kundeSheet('${j.kunde_id}')"><div class="t">${kl(j.udfoert_at)}</div><div class="w"><b>${esc(k.navn)}</b><span>${esc(j.behandling)}</span></div>${k.stop ? '<span class="tag t-red">Ingen SMS</span>' : b ? `<span class="tag t-gold" style="white-space:normal;text-align:center;line-height:1.3;width:104px">Anmeldelses-SMS ${b.status === 'planlagt' ? esc(naar(b.planlagt_til).replace(/ kl\..*/, '')) : esc((STATUS[b.status] || [''])[0].toLowerCase())}</span>` : '<span class="tag t-blue">Fik tak-SMS for nylig</span>'}</div>`; }).join('')
-   : '<div class="empty">Tryk på den gule knap, når du er færdig med en bil.</div>'}
+   : `<div class="empty">${ind.kalender_url ? 'Job fra kalenderen kommer her, når aftalen er slut. Kunder uden aftale kan du tilføje med den gule knap.' : 'Tryk på den gule knap, når du er færdig med en bil.'}</div>`}
   </div>
   <div class="glass"><div class="lbl" style="margin-bottom:4px">Næste SMS</div>
    ${kommende.length ? kommende.map(b => { const k = kunde(b.kunde_id) || {}; return `<div class="msg"><div class="w"><b>${esc(k.navn || 'Kunde')}</b><span>${TYPE[b.type] || b.type} · ${esc(naar(b.planlagt_til))}</span></div>${statusTag(b)}</div>`; }).join('') : '<div class="empty">Ingen planlagte SMS.</div>'}
@@ -174,6 +177,129 @@ async function gemJob() {
     toast(k.stop ? 'Gemt ✓ Kunden er stoppet, så ingen SMS' : b ? `Gemt ✓ Tak-SMS ${naar(b.planlagt_til)}` : 'Gemt ✓ (fik tak-SMS for nylig)');
   } catch (e) { console.error(e); err(e.message || 'Kunne ikke gemme'); $('jgem').disabled = false; }
 }
+
+
+// ---------- Kalender ----------
+const AFT = {
+  venter: ['Tak-SMS efter aftalen', 't-gold'], job: ['Tak-SMS planlagt', 't-green'], mangler_nummer: ['Mangler nummer', 't-red'],
+  sprunget_over: ['Ingen SMS', 't-blue'], aflyst: ['Aflyst', 't-blue']
+};
+function aftalerKort() {
+  const ind = S.ind;
+  if (!ind.kalender_url) return '';
+  const iDag = S.aft.filter(a => dagKey(a.start_at) === idag() && a.status !== 'aflyst');
+  const mangler = S.aft.filter(a => a.status === 'mangler_nummer' && new Date(a.slut_at) <= new Date() && dagKey(a.start_at) !== idag());
+  const fejl = ind.kalender_fejl ? `<div class="banner warn" style="margin:0 0 10px"><b>Kalenderen kunne ikke hentes:</b> ${esc(ind.kalender_fejl)}</div>` : '';
+  const linje = a => { const s = AFT[a.status] || [a.status, 't-blue'];
+    return `<div class="job" onclick="aftaleSheet('${a.id}')"><div class="t">${kl(a.start_at)}</div><div class="w"><b>${esc(a.navn || a.titel || 'Aftale')}</b><span>${esc(a.behandling || '')}${a.telefon ? ' · ' + visTlf(a.telefon) : ''}</span></div><span class="tag ${s[1]}" style="white-space:normal;text-align:center;line-height:1.3;width:104px">${s[0]}</span></div>`; };
+  return `<div class="glass"><div class="row" style="margin-bottom:4px"><div class="lbl">📅 Dagens aftaler</div><button class="chip2" style="margin:0" onclick="synkNu()">Opdatér</button></div>${fejl}
+   ${iDag.length ? iDag.map(linje).join('') : '<div class="empty">Ingen aftaler i kalenderen i dag.</div>'}
+   ${mangler.length ? `<div class="lbl" style="margin:12px 0 4px">Mangler mobilnummer</div>${mangler.map(linje).join('')}` : ''}
+   <div class="hint">Tak-SMS'en planlægges selv, når aftalen er slut. Tryk på en aftale for at rette eller springe over.</div></div>`;
+}
+function aftaleSheet(id) {
+  const a = S.aft.find(x => x.id === id); if (!a) return;
+  const laast = ['job'].includes(a.status);
+  sheet(`<h3>${esc(a.titel || 'Aftale')}</h3><div class="sub">${esc(naar(a.start_at))} til ${kl(a.slut_at)}</div>
+  ${laast ? `<div class="banner" style="margin-top:14px">Aftalen er slut, og tak-SMS'en er planlagt. Du kan stoppe den under kunden.</div>` : `
+  <div class="lbl" style="margin-top:18px">Kundens navn</div><input class="f" id="an" value="${esc(a.navn || '')}" placeholder="Fx Mette Hansen">
+  <div class="lbl" style="margin-top:14px">Mobilnummer</div><input class="f" id="at" value="${esc(a.telefon || '')}" placeholder="8 cifre" inputmode="tel">
+  <div class="lbl" style="margin-top:14px">Behandling</div><input class="f" id="ab" value="${esc(a.behandling || '')}" placeholder="Fx Coating">
+  <div class="err" id="aerr"></div>
+  <button class="btn" style="margin-top:8px" onclick="gemAftale('${id}')">Gem</button>
+  ${a.status !== 'sprunget_over' ? `<button class="btn dark" style="margin-top:10px" onclick="springAftale('${id}', true)">Send ingen SMS for denne aftale</button>` : `<button class="btn dark" style="margin-top:10px" onclick="springAftale('${id}', false)">Send alligevel tak-SMS</button>`}`}`);
+}
+async function gemAftale(id) {
+  const a = S.aft.find(x => x.id === id), t = tlf8($('at').value), navn = $('an').value.trim(), beh = $('ab').value.trim();
+  if (t && !/^[2-9]\d{7}$/.test(t)) { $('aerr').textContent = 'Mobilnummeret skal have 8 cifre'; return; }
+  const status = a.status === 'sprunget_over' ? 'sprunget_over' : t ? 'venter' : 'mangler_nummer';
+  const { error } = await db.from('sk_aftaler').update({ navn: navn || null, telefon: t || null, behandling: beh || null, rettet: true, status }).eq('id', id);
+  if (error) return toast('Kunne ikke gemme');
+  luk(); await hentAlt();
+  toast(status === 'venter' ? (new Date(a.slut_at) <= new Date() ? 'Gemt ✓ Tak-SMS planlægges om lidt' : 'Gemt ✓ Tak-SMS efter aftalen') : 'Gemt ✓');
+}
+async function springAftale(id, spring) {
+  const a = S.aft.find(x => x.id === id);
+  const { error } = await db.from('sk_aftaler').update({ status: spring ? 'sprunget_over' : (a.telefon ? 'venter' : 'mangler_nummer'), rettet: true }).eq('id', id);
+  if (error) return toast('Kunne ikke gemme');
+  luk(); await hentAlt(); toast(spring ? 'OK, ingen SMS for den aftale' : 'Tak-SMS sendes alligevel');
+}
+async function synkNu() {
+  toast('Henter kalender…');
+  const { data, error } = await db.functions.invoke('stamkunde-send', { body: { action: 'kalender_synk', shop_id: S.shop.id } });
+  if (error) { let m = 'Kunne ikke hente kalenderen'; try { m = (await error.context.json()).fejl || m; } catch (_) {} toast(m); return hentAlt(); }
+  await hentAlt(); toast(data.fejl ? data.fejl : `Opdateret ✓ ${data.aftaler} aftaler`);
+}
+
+const KAL = {
+  google: { navn: 'Google Kalender', trin: [
+    'Åbn <b>calendar.google.com</b> i browseren. På mobilen: vælg "Websted til computer" (Safari: tryk <b>Aa</b>, Chrome: tryk <b>⋮</b>).',
+    'Tryk på tandhjulet ⚙️ → <b>Indstillinger</b> → vælg din kalender i venstre side under "Indstillinger for mine kalendere".',
+    'Rul ned til <b>Hemmelig adresse i iCal-format</b> og kopiér linket.'] },
+  icloud: { navn: 'iPhone-kalender', trin: [
+    'Åbn <b>Kalender</b>-appen og tryk på <b>Kalendere</b> nederst.',
+    'Tryk på <b>ⓘ</b> ud for den kalender, du bruger til kunder.',
+    'Slå <b>Offentlig kalender</b> til, tryk <b>Del link…</b> og vælg <b>Kopiér</b>.'] },
+  outlook: { navn: 'Outlook', trin: [
+    'Åbn <b>outlook.com</b> i browseren → tandhjulet ⚙️ → <b>Kalender</b> → <b>Delte kalendere</b>.',
+    'Under "Udgiv en kalender": vælg din kalender og <b>Kan se alle detaljer</b> → <b>Udgiv</b>.',
+    'Kopiér <b>ICS</b>-linket.'] },
+  andet: { navn: 'Bookingsystem', trin: [
+    'Gå til indstillingerne i dit bookingsystem og find <b>iCal</b>, <b>ICS</b>, "Kalender-synkronisering" eller "Abonnér på kalender".',
+    'Kopiér linket (det ender tit på <b>.ics</b>).',
+    'Kan du ikke finde det, så skriv navnet på systemet til Daniel, så hjælper han.'] }
+};
+let K = { type: '', url: '', test: null, tjekker: false };
+function kalenderSide() {
+  const valgt = KAL[K.type];
+  return `<div class="top"><div class="lbl">Sidste trin · 1 minut</div><h1>Kobl din kalender på</h1><div class="sub">Så sender appen selv tak-SMS'en, når en aftale er slut. Du skal ikke skrive kunderne ind.</div></div><div class="pad">
+  <div class="lbl" style="margin-bottom:6px">Hvor ligger dine aftaler?</div>
+  <div class="seg" style="margin-top:0">${Object.entries(KAL).map(([k, v]) => `<button class="chip2 ${K.type === k ? 'on' : ''}" onclick="K.type='${k}';K.test=null;render()">${v.navn}</button>`).join('')}</div>
+  ${valgt ? `<div class="glass" style="margin-top:14px">${valgt.trin.map((t, i) => `<div class="row" style="justify-content:flex-start;align-items:flex-start;gap:12px;margin:6px 0"><div class="av" style="width:28px;height:28px;font-size:13px;flex:none">${i + 1}</div><div class="sub" style="margin:3px 0 0;color:#dfe4ee">${t}</div></div>`).join('')}
+   <div class="lbl" style="margin-top:14px">Indsæt linket her</div>
+   <input class="f" id="kurl" value="${esc(K.url)}" placeholder="https://… eller webcal://…" autocomplete="off" autocapitalize="off" oninput="K.url=this.value.trim();K.test=null">
+   <button class="btn dark" style="margin-top:12px" onclick="tjekKalender()" ${K.tjekker ? 'disabled' : ''}>${K.tjekker ? 'Tjekker…' : 'Tjek kalenderen'}</button>
+   ${kalTestHtml()}</div>` : ''}
+  <div class="glass" style="margin-top:14px"><b>Vigtigt: skriv kundens mobilnummer i aftalen</b><div class="sub">I titlen eller beskrivelsen, fx <i>"Mette Hansen – Coating – 22 33 44 55"</i>. Aftaler uden nummer får ingen SMS, men du kan tilføje nummeret i appen bagefter.</div></div>
+  <button class="btn dark" style="margin-top:6px" onclick="springKalender()">Spring over, jeg skriver kunderne ind selv</button>
+  ${S.ind.kalender_url ? `<button class="btn dark" style="margin-top:10px" onclick="S.kalVis=false;render()">Tilbage</button>` : ''}</div>`;
+}
+function kalTestHtml() {
+  const t = K.test; if (!t) return '';
+  if (t.fejl) return `<div class="err" style="margin-top:10px">${esc(t.fejl)}</div>`;
+  return `<div class="banner ${t.antal ? '' : 'warn'}" style="margin-top:14px"><b>${t.antal ? `Det virker! Vi fandt ${t.antal} aftaler` : 'Linket virker, men vi fandt ingen aftaler'}</b>${t.antal ? `, og ${t.med_nummer} af dem har et mobilnummer.` : ' de sidste 7 dage eller næste 14 dage.'}</div>
+   ${t.eksempler.length ? `<div style="margin-top:8px">${t.eksempler.map(e => `<div class="msg"><div class="w"><b>${esc(e.navn || e.titel || 'Aftale')}</b><span>${esc(naar(e.start))} · ${esc(e.behandling || '')}</span></div>${e.telefon ? `<span class="tag t-green">${visTlf(e.telefon)}</span>` : '<span class="tag t-red">Intet nr.</span>'}</div>`).join('')}</div>` : ''}
+   <button class="btn" style="margin-top:12px" onclick="kobKalender()">Kobl kalenderen på</button>`;
+}
+async function tjekKalender() {
+  if (!K.url) return toast('Indsæt linket først');
+  K.tjekker = true; K.test = null; render();
+  const { data, error } = await db.functions.invoke('stamkunde-send', { body: { action: 'kalender_test', shop_id: S.shop.id, url: K.url } });
+  K.tjekker = false;
+  if (error) { let m = 'Kunne ikke læse kalenderen'; try { m = (await error.context.json()).fejl || m; } catch (_) {} K.test = { fejl: m }; }
+  else K.test = data;
+  render();
+}
+async function kobKalender() {
+  const ny = { ...S.ind, kalender_url: K.url, kalender_type: K.type, kalender_koblet_at: new Date().toISOString(), kalender_fejl: null, kalender_spring: false, opdateret_at: new Date().toISOString() }; delete ny.ny;
+  const { data, error } = await db.from('sk_indstillinger').upsert(ny).select().single();
+  if (error) { console.error(error); return toast('Kunne ikke gemme'); }
+  S.ind = data; S.kalVis = false; K = { type: '', url: '', test: null, tjekker: false };
+  S.tab = 'dag'; toast('Kalender koblet på ✓'); await synkNu();
+}
+async function springKalender() {
+  if (S.ind.kalender_url) { S.kalVis = false; return render(); }
+  if (S.admin && S.shop.owner_id !== S.user.id) { S.kalSpringLokal = true; return render(); }
+  const ny = { ...S.ind, kalender_spring: true, opdateret_at: new Date().toISOString() }; delete ny.ny;
+  const { data, error } = await db.from('sk_indstillinger').upsert(ny).select().single();
+  if (error) return toast('Kunne ikke gemme');
+  S.ind = data; render();
+}
+async function fjernKalender() {
+  if (!confirm('Fjern kalenderen? Så skal du selv skrive kunderne ind.')) return;
+  await gemInd({ kalender_url: null, kalender_type: null, kalender_koblet_at: null, kalender_fejl: null, kalender_spring: true });
+}
+const visKalenderSide = () => S.kalVis || (!S.ind.kalender_url && !S.ind.kalender_spring && !S.kalSpringLokal);
 
 // ---------- Måned ----------
 function ringSvg(p, col) { const r = 15.5, c = 2 * Math.PI * r; return `<svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="${r}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="3"/>${p ? `<circle cx="18" cy="18" r="${r}" fill="none" stroke="${col}" stroke-width="3" stroke-linecap="round" stroke-dasharray="${c * p} ${c}"/>` : ''}</svg>`; }
@@ -239,6 +365,9 @@ function sms() {
   const seneste = S.beskeder.filter(b => b.status !== 'planlagt').sort((a, b) => new Date(b.sendt_at || b.planlagt_til) - new Date(a.sendt_at || a.planlagt_til)).slice(0, 15);
   return `<div class="top"><div class="lbl">Kører automatisk</div><h1>Dine SMS'er</h1></div><div class="pad">
   <div class="glass ${ind.aktiv ? 'green' : ''}"><div class="row"><div><b>SMS er ${ind.aktiv ? 'slået til' : 'slået fra'}</b><div class="sub">${ind.aktiv ? 'Appen sender selv på de rigtige tidspunkter' : 'Intet bliver sendt, før du slår det til'}</div></div><div class="sw ${ind.aktiv ? 'on' : ''}" onclick="gemInd({aktiv:${!ind.aktiv}})"></div></div></div>
+
+  <div class="glass"><div class="row"><div><b>📅 Kalender</b><div class="sub">${ind.kalender_url ? `${esc((KAL[ind.kalender_type] || KAL.andet).navn)} er koblet på${ind.kalender_sidst ? ' · hentet ' + esc(naar(ind.kalender_sidst)) : ''}` : 'Ikke koblet på. Du skriver kunderne ind selv.'}</div>${ind.kalender_fejl ? `<div class="err">${esc(ind.kalender_fejl)}</div>` : ''}</div></div>
+   <div class="row" style="gap:8px;margin-top:10px"><button class="btn dark s" onclick="S.kalVis=true;K.type='${esc(ind.kalender_type || '')}';render()">${ind.kalender_url ? 'Skift kalender' : 'Kobl kalender på'}</button>${ind.kalender_url ? '<button class="btn dark s" onclick="fjernKalender()">Fjern</button>' : ''}</div></div>
 
   <div class="glass gold"><b>⭐ Tak + Google-anmeldelse</b><div class="sub">Til alle kunder efter hvert job. Højst én pr. kunde pr. måned.</div>
    <div class="seg">${[['naeste_dag_10', 'Næste dag kl. 10'], ['samme_aften_1830', 'Samme aften kl. 18:30']].map(x => `<button class="chip2 ${ind.tak_tid === x[0] ? 'on' : ''}" onclick="gemInd({tak_tid:'${x[0]}'})">${x[1]}</button>`).join('')}</div>
@@ -330,6 +459,7 @@ function render() {
   const app = $('app');
   if (!S.user) app.innerHTML = loginSide();
   else if (!S.shop) app.innerHTML = vaelgSide();
+  else if (visKalenderSide()) app.innerHTML = kalenderSide();
   else app.innerHTML = ({ dag, maaned, kunder: kunderSide, sms }[S.tab])() + nav();
 }
 start();
