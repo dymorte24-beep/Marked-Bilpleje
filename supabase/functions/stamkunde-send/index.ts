@@ -6,6 +6,7 @@
 // Fælles kode med pg_cron ligger i Supabase Vault ("stamkunde_cron_secret") og hentes via RPC sk_cron_secret().
 // Uden GATEWAYAPI_TOKEN sendes intet: beskeder markeres "simuleret", så man kan se hvad der VILLE være sendt.
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import { hentIcs, parseIcs, udtraek } from "./kalender.ts";
 
 const URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -116,6 +117,99 @@ async function koer() {
   return resultat;
 }
 
+
+// ---------- Kalender ----------
+// Henter bilplejerens kalender, gemmer aftalerne (14 dage frem, 2 dage tilbage) og laver job af aftaler der er slut.
+const kun8 = (t: string | null) => (t && /^[2-9]\d{7}$/.test(t) ? t : null);
+async function synkShop(ind: any) {
+  const nu = Date.now();
+  const { data: shop } = await admin.from("shops").select("services").eq("id", ind.shop_id).maybeSingle();
+  let aftaler;
+  try {
+    aftaler = parseIcs(await hentIcs(ind.kalender_url));
+  } catch (e) {
+    await admin.from("sk_indstillinger").update({ kalender_sidst: new Date().toISOString(), kalender_fejl: String((e as Error).message ?? e).slice(0, 300) }).eq("shop_id", ind.shop_id);
+    return { fejl: String((e as Error).message ?? e) };
+  }
+  const fra = nu - 2 * 864e5, til = nu + 14 * 864e5;
+  const iVindue = aftaler.filter((a) => a.slut.getTime() >= fra && a.start.getTime() <= til);
+  const { data: gamle } = await admin.from("sk_aftaler").select("*").eq("shop_id", ind.shop_id).gte("slut_at", new Date(fra).toISOString());
+  const kendt = new Map((gamle ?? []).map((g: any) => [g.uid, g]));
+  const set = new Set<string>();
+  for (const a of iVindue) {
+    set.add(a.uid);
+    const g: any = kendt.get(a.uid);
+    if (g && ["job", "sprunget_over"].includes(g.status)) continue;
+    const f = udtraek(a, shop?.services ?? []);
+    const tlf = g?.rettet ? g.telefon : kun8(f.telefon);
+    const raekke: Record<string, unknown> = {
+      shop_id: ind.shop_id, uid: a.uid, start_at: a.start.toISOString(), slut_at: a.slut.toISOString(), titel: a.titel.slice(0, 200),
+      status: a.aflyst ? "aflyst" : tlf ? "venter" : "mangler_nummer", opdateret_at: new Date().toISOString(),
+    };
+    if (!g?.rettet) Object.assign(raekke, { navn: f.navn || null, telefon: tlf, behandling: f.behandling });
+    if (g) await admin.from("sk_aftaler").update(raekke).eq("id", g.id);
+    else await admin.from("sk_aftaler").insert(raekke);
+  }
+  // Aftaler der er slettet i kalenderen, før de startede
+  for (const g of gamle ?? []) {
+    if (!set.has(g.uid) && ["venter", "mangler_nummer"].includes(g.status) && new Date(g.start_at).getTime() > nu)
+      await admin.from("sk_aftaler").update({ status: "aflyst", opdateret_at: new Date().toISOString() }).eq("id", g.id);
+  }
+  const job = await lavJobAfAftaler(ind);
+  await admin.from("sk_indstillinger").update({ kalender_sidst: new Date().toISOString(), kalender_fejl: null }).eq("shop_id", ind.shop_id);
+  return { aftaler: iVindue.length, job };
+}
+
+// Aftaler med nummer, der er slut (og sluttede efter kalenderen blev koblet på), bliver til job => tak-SMS planlægges
+async function lavJobAfAftaler(ind: any) {
+  const nu = new Date().toISOString();
+  const { data: klar } = await admin.from("sk_aftaler").select("*").eq("shop_id", ind.shop_id).eq("status", "venter")
+    .lte("slut_at", nu).gte("slut_at", ind.kalender_koblet_at ?? nu);
+  let n = 0;
+  for (const a of klar ?? []) {
+    if (Date.now() - new Date(a.slut_at).getTime() > 2 * 864e5) { await admin.from("sk_aftaler").update({ status: "sprunget_over" }).eq("id", a.id); continue; }
+    const tlf = kun8(a.telefon);
+    if (!tlf) { await admin.from("sk_aftaler").update({ status: "mangler_nummer" }).eq("id", a.id); continue; }
+    let { data: k } = await admin.from("sk_kunder").select("id").eq("shop_id", ind.shop_id).eq("telefon", tlf).maybeSingle();
+    if (!k) {
+      const r = await admin.from("sk_kunder").insert({ shop_id: ind.shop_id, navn: a.navn || "Kunde", telefon: tlf }).select("id").single();
+      if (r.error) { await admin.from("sk_aftaler").update({ status: "mangler_nummer" }).eq("id", a.id); continue; }
+      k = r.data;
+    }
+    const j = await admin.from("sk_job").insert({ shop_id: ind.shop_id, kunde_id: k!.id, behandling: a.behandling || "Bilpleje", udfoert_at: a.slut_at, kilde: "kalender", aftale_id: a.id }).select("id").single();
+    if (j.error) continue;
+    await admin.from("sk_aftaler").update({ status: "job", job_id: j.data.id, opdateret_at: new Date().toISOString() }).eq("id", a.id);
+    n++;
+  }
+  return n;
+}
+
+async function synkAlle() {
+  const graense = new Date(Date.now() - 9 * 60000).toISOString();
+  const { data } = await admin.from("sk_indstillinger").select("*").not("kalender_url", "is", null)
+    .or(`kalender_sidst.is.null,kalender_sidst.lt.${graense}`).limit(25);
+  let n = 0;
+  for (const ind of data ?? []) { try { const r: any = await synkShop(ind); n += r.job ?? 0; } catch (_) { /* næste gang */ } }
+  return n;
+}
+
+// Fra appen: tjek et kalender-link før det gemmes (viser hvad vi kan læse)
+async function kalenderTest(url: string, services: string[]) {
+  const nu = Date.now();
+  const alle = parseIcs(await hentIcs(url)).filter((a) => !a.aflyst && a.slut.getTime() >= nu - 7 * 864e5 && a.start.getTime() <= nu + 14 * 864e5)
+    .sort((a, b) => a.start.getTime() - b.start.getTime());
+  const ud = alle.map((a) => ({ start: a.start.toISOString(), titel: a.titel.slice(0, 80), ...udtraek(a, services) }));
+  return { antal: ud.length, med_nummer: ud.filter((x) => kun8(x.telefon)).length, eksempler: ud.slice(0, 8) };
+}
+async function ejerAf(req: Request, shopId: string) {
+  const bruger = createClient(URL, ANON, { global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } } });
+  const { data } = await bruger.from("shops").select("id, services").eq("id", shopId).maybeSingle();
+  const { data: { user } } = await bruger.auth.getUser();
+  if (!data || !user) return null;
+  const { data: ok } = await bruger.rpc("sk_ejer", { p_shop: shopId });
+  return ok ? data : null;
+}
+
 // "Send test-SMS" fra appen: sender en eksempel-tak-SMS til bilplejerens testnummer
 async function testSms(req: Request, shopId: string) {
   const bruger = createClient(URL, ANON, { global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } } });
@@ -152,10 +246,21 @@ Deno.serve(async (req) => {
           const ref = await sendSms("Bilpleje", String(body.test_til), "Test fra FindBilplejere: SMS-motoren til Stamkunde-appen virker.", "drifttest");
           return json({ status: "sendt", gateway_ref: ref });
         }
-        return json(await koer());
+        const kalender_job = await synkAlle().catch(() => 0);
+        return json({ ...(await koer()), kalender_job });
       }
     }
     if (body?.action === "test" && body?.shop_id && req.headers.get("Authorization")) return await testSms(req, body.shop_id);
+    if ((body?.action === "kalender_test" || body?.action === "kalender_synk") && body?.shop_id && req.headers.get("Authorization")) {
+      const shop = await ejerAf(req, body.shop_id);
+      if (!shop) return json({ fejl: "Ingen adgang" }, 403);
+      try {
+        if (body.action === "kalender_test") return json(await kalenderTest(String(body.url || ""), shop.services ?? []));
+        const { data: ind } = await admin.from("sk_indstillinger").select("*").eq("shop_id", body.shop_id).maybeSingle();
+        if (!ind?.kalender_url) return json({ fejl: "Ingen kalender koblet på" }, 400);
+        return json(await synkShop(ind));
+      } catch (e) { return json({ fejl: String((e as Error).message ?? e) }, 400); }
+    }
     return json({ fejl: "Ikke tilladt" }, 401);
   } catch (e) {
     return json({ fejl: String((e as Error).message ?? e) }, 500);
