@@ -5,7 +5,22 @@ så siderne ikke ligner hinanden (det straffer Google)."""
 # Byer uden for Fyn, hvor vi allerede har en bilplejer og ligger tæt på side 1 i Google.
 ANDRE_BYER_ORDEN = ["birkerod", "aabybro"]
 
-FYN_BYER_ORDEN = ["odense", "svendborg", "nyborg", "middelfart", "faaborg", "assens", "kerteminde", "bogense", "ringe"]
+# Fyn er delt i bysider (hvor der er bilplejere) og områdesider (hvor der endnu
+# er få eller ingen). Google kalder næsten ens sider for hver lille by uden eget
+# indhold for "doorway pages" (Search Central, Spam policies, "Doorway abuse"),
+# så byer uden bilplejere er lagt sammen i områdesider med 301-omdirigering.
+# Når en by får 2-3 bilplejere, kan den få sin egen side igen.
+FYN_BYER_ORDEN = ["odense", "svendborg", "ringe", "vestfyn", "nordfyn", "ostfyn"]
+
+# Gamle bysider -> ny side (skrives til _redirects af byg_sider.py)
+OMDIRIGERINGER = {
+    "faaborg": "svendborg",
+    "middelfart": "vestfyn",
+    "assens": "vestfyn",
+    "bogense": "nordfyn",
+    "nyborg": "ostfyn",
+    "kerteminde": "ostfyn",
+}
 
 YDELSER = """      <p>En professionel bilplejer gør mere end en vaskehal. Typiske ydelser er:</p>
       <ul>
@@ -68,143 +83,34 @@ BYER = {
     },
     "svendborg": {
         "navn": "Svendborg",
-        "titel": "Bilpleje i Svendborg – find en bilplejer på Sydfyn",
-        "beskrivelse": "Find bilpleje i Svendborg og på Sydfyn. Se lokale bilplejere til vask, polering, coating og indvendig rens, og kontakt dem direkte. Gratis og uden mellemled.",
-        "h1": "Bilpleje i Svendborg",
-        "intro": "Find en bilplejer i Svendborg og på Sydfyn, også hvis du bor på Tåsinge eller i Ollerup, Skårup eller Vester Skerninge. Se ydelser og kontakt bilplejeren direkte. Det er gratis, og der er ingen mellemled.",
+        "titel": "Bilpleje i Svendborg og Faaborg – find en bilplejer på Sydfyn",
+        "beskrivelse": "Find bilpleje i Svendborg, Faaborg og på Sydfyn. Se lokale bilplejere til vask, polering, coating og indvendig rens, og kontakt dem direkte. Gratis og uden mellemled.",
+        "h1": "Bilpleje i Svendborg og Faaborg",
+        "afstand_fra": ["Svendborg", "Faaborg", "Kværndrup", "Gudme"],
+        "intro": "Find en bilplejer i Svendborg og på Sydfyn, også hvis du bor i Faaborg, på Tåsinge eller i Ollerup, Skårup eller Vester Skerninge. Se ydelser og kontakt bilplejeren direkte. Det er gratis, og der er ingen mellemled.",
         "sektioner": [
             ("Havneby, salt luft og bakker", """      <p>Svendborg ligger helt ned til Svendborgsund, og mange bor tæt på vandet. Den salte luft fra havet og vejsaltet om vinteren er en hård kombination for lak, fælge og undervogn. En grundig vask og et beskyttende lag voks eller coating gør stor forskel for, hvor længe bilen holder sig pæn.</p>
       <p>Om sommeren kommer mange turister og sejlere til byen, og mange lokale bruger bilen til at trække båd eller campingvogn. Har du kørt ned ad en slæbested-rampe med saltvand, så skyl bilen og trailerens hjul godt bagefter.</p>"""),
-            ("Hvad kan en bilplejer i Svendborg hjælpe med?", YDELSER),
+            ("Faaborg: landeveje, mudder og kystluft", """      <p>Omkring Faaborg kører de fleste på landeveje mellem marker, skov og Svanninge Bakker. Det betyder mudder, grus og jord i hjulkasser og på dørkarme, især i efteråret og vinteren. Ved kysten kommer den salte havluft oveni.</p>
+      <p>En grundig undervognsvask og en rens af hjulkasserne fjerner det, du ikke selv kan se. Og en god indvendig rens tager det sand og den jord, der bliver båret ind i bilen. Der er endnu ingen bilplejer med adresse i selve Faaborg på FindBilplejere.dk, men der er cirka 20 km til både Svendborg og Årslev, og nogle bilplejere kører ud.</p>"""),
+            ("Hvad kan en bilplejer på Sydfyn hjælpe med?", YDELSER),
             ("Sådan finder du den rigtige bilplejer på Sydfyn", """      <p>På Sydfyn er der længere mellem bilplejerne end i Odense. Derfor viser vi dig altid de nærmeste, sorteret efter afstand. Nogle bilplejere kører ud, så du ikke selv skal aflevere bilen. Se efter mærket "Kommer ud til dig".</p>
       <p>Beskriv din bil og hvad du vil have lavet, når du kontakter bilplejeren. Så får du hurtigst en præcis pris.</p>"""),
         ],
         "faq": [
             ("Hvad koster bilpleje i Svendborg?", "Det afhænger af bilen, dens stand og hvad du vil have lavet. En håndvask koster langt mindre end en polering eller en keramisk coating. Kontakt bilplejeren direkte og beskriv din bil for at få en præcis pris."),
             ("Skader den salte havluft i Svendborg min bil?", "Saltet i luften tæt ved vandet kan sætte sig på lak og metal, ligesom vejsalt. En regelmæssig vask og en beskyttelse som voks eller coating gør det sværere for saltet at sætte sig fast."),
-            ("Er der bilplejere, der kommer ud til mig på Sydfyn?", "Ja, nogle bilplejere tilbyder mobil bilpleje. De er markeret med \"Kommer ud til dig\" i listen. Spørg dem, om de dækker din adresse."),
-            FAQ_GRATIS,
-        ],
-    },
-    "nyborg": {
-        "navn": "Nyborg",
-        "titel": "Bilpleje i Nyborg – find en bilplejer ved Storebælt",
-        "beskrivelse": "Find bilpleje i Nyborg og omegn. Lokale bilplejere til vask, polering, coating og indvendig rens. Se profiler og kontakt dem direkte, gratis.",
-        "h1": "Bilpleje i Nyborg",
-        "intro": "Find en bilplejer i Nyborg og omegn, fx Ullerslev, Ørbæk og Hjulby. Se ydelser og kontakt bilplejeren direkte på telefon, mail eller hjemmeside. Det er gratis, og der er ingen mellemled.",
-        "sektioner": [
-            ("Mange kilometer på motorvejen", """      <p>Nyborg ligger ved Storebæltsbroen, og mange herfra pendler over broen eller ad E20 mod Odense og Jylland. Mange kilometer på motorvejen betyder stenslag og fine ridser i fronten, insekter om sommeren og et tykt lag salt om vinteren.</p>
-      <p>En bilplejer kan rense fronten for insekter og tjære, polere fine ridser væk og lægge en coating eller voks på, så snavset ikke sidder så hårdt fast. Det gør også bilen meget nemmere at vaske selv mellem besøgene.</p>"""),
-            ("Hvad kan en bilplejer i Nyborg hjælpe med?", YDELSER),
-            ("Kort vej til flere bilplejere", """      <p>Fra Nyborg er der kort vej til bilplejere i Odense og på resten af Østfyn. Vi viser altid de nærmeste bilplejere sorteret efter afstand, så du hurtigt kan se, hvem der ligger tættest på dig.</p>"""),
-        ],
-        "faq": [
-            ("Hvad koster bilpleje i Nyborg?", "Det afhænger af bilens størrelse, stand og hvad du vil have lavet. Kontakt et par bilplejere direkte og beskriv din bil, så får du den mest præcise pris."),
-            ("Kan en bilplejer fjerne stenslag?", "Små stenslag kan ofte gøres mindre synlige, og fine ridser omkring dem kan poleres væk. Dybe stenslag, der går gennem lakken, skal typisk pletlakeres. Spørg bilplejeren, hvad der kan lade sig gøre på din bil."),
-            ("Hvor ofte skal en pendlerbil vaskes om vinteren?", "Kører du dagligt på saltede veje, er en vask hver anden til tredje uge en god tommelfingerregel, gerne med skyl af undervogn og hjulkasser."),
-            FAQ_GRATIS,
-        ],
-    },
-    "middelfart": {
-        "navn": "Middelfart",
-        "titel": "Bilpleje i Middelfart – find en bilplejer ved Lillebælt",
-        "beskrivelse": "Find bilpleje i Middelfart og Vestfyn. Lokale bilplejere til vask, polering, coating og indvendig rens. Kontakt dem direkte, gratis og uden mellemled.",
-        "h1": "Bilpleje i Middelfart",
-        "intro": "Find en bilplejer i Middelfart og omegn, fx Strib, Nørre Aaby og Ejby. Se ydelser og kontakt bilplejeren direkte. Det er gratis, og der er ingen mellemled.",
-        "sektioner": [
-            ("Pendlerby mellem Fyn og Jylland", """      <p>Middelfart ligger ved Lillebælt, og mange herfra kører dagligt over broen til arbejde i Fredericia, Kolding og Vejle. Det giver mange kilometer på motorvejen, og det kan ses på lakken: stenslag, insekter, tjære og vejsalt.</p>
-      <p>En professionel vask og en beskyttelse af lakken holder bilen pæn, også når den bliver brugt meget. Overvej en keramisk coating, hvis du vil have en bil, der er nem at holde ren hele året. <a href="/guide/polering-eller-coating/">Læs om forskellen på voks og coating</a>.</p>"""),
-            ("Hvad kan en bilplejer i Middelfart hjælpe med?", YDELSER),
-            ("Find den nærmeste bilplejer", """      <p>Vi viser bilplejere i og omkring Middelfart, sorteret efter afstand. Bor du i den vestlige del af Fyn, kan der også være bilplejere i Trekantområdet, som ligger tæt på. Kontakt dem direkte og spørg, hvornår de har tid.</p>"""),
-        ],
-        "faq": [
-            ("Hvad koster bilpleje i Middelfart?", "Prisen afhænger af bilen, dens stand og hvilken behandling du ønsker. Beskriv bilen, når du kontakter bilplejeren, så får du den mest præcise pris."),
-            ("Kan jeg få bilen plejet, mens jeg er på arbejde?", "Mange bilplejere tilbyder, at du afleverer bilen om morgenen og henter den efter arbejde. Nogle kommer også ud til dig. Spørg bilplejeren, hvad der passer bedst."),
-            ("Hvornår skal jeg have lagt coating på?", "Det bedste tidspunkt er før vinteren, så lakken er beskyttet mod vejsalt. Coating kan dog lægges på hele året, så længe bilen kan stå tørt og varmt, mens den hærder."),
-            FAQ_GRATIS,
-        ],
-    },
-    "faaborg": {
-        "navn": "Faaborg",
-        "titel": "Bilpleje i Faaborg – find en bilplejer på Sydfyn",
-        "beskrivelse": "Find bilpleje i Faaborg og omegn. Se bilplejere til vask, polering, coating og indvendig rens tæt på dig, og kontakt dem direkte. Gratis.",
-        "h1": "Bilpleje i Faaborg",
-        "intro": "Find en bilplejer i Faaborg og omegn, fx Horne, Millinge og Korinth. Se ydelser og kontakt bilplejeren direkte på telefon, mail eller hjemmeside. Gratis og uden mellemled.",
-        "sektioner": [
-            ("Landeveje, mudder og kystluft", """      <p>Omkring Faaborg kører de fleste på landeveje mellem marker, skov og Svanninge Bakker. Det betyder mudder, grus og jord i hjulkasser og på dørkarme, især i efteråret og vinteren. Ved kysten kommer den salte havluft oveni.</p>
-      <p>En grundig undervognsvask og en rens af hjulkasserne fjerner det, du ikke selv kan se. Og en god indvendig rens tager det sand og den jord, der bliver båret ind i bilen.</p>"""),
-            ("Hvad kan en bilplejer i Faaborg hjælpe med?", YDELSER),
-            ("Find den nærmeste bilplejer", """      <p>Vi viser altid bilplejere i og omkring Faaborg, sorteret efter afstand. Er der ikke en bilplejer i selve byen, finder du de nærmeste i Svendborg, Ringe og Odense. Nogle bilplejere kører ud, så du slipper for turen.</p>"""),
-        ],
-        "faq": [
-            ("Hvad koster bilpleje i Faaborg?", "Det afhænger af bilen og hvad du vil have lavet. Kontakt bilplejeren direkte og beskriv bilen, så får du den mest præcise pris."),
             ("Hvordan får jeg mudder og jord ud af bilen?", "Støvsug grundigt og lad mudder tørre, før du børster det væk. Sidder det fast i tæpper og måtter, kan en bilplejer dybderense dem med en tæpperenser."),
-            ("Er der bilplejere, der kommer ud til mig?", "Ja, nogle tilbyder mobil bilpleje og er markeret med \"Kommer ud til dig\". Spørg om de dækker din adresse."),
-            FAQ_GRATIS,
-        ],
-    },
-    "assens": {
-        "navn": "Assens",
-        "titel": "Bilpleje i Assens – find en bilplejer på Vestfyn",
-        "beskrivelse": "Find bilpleje i Assens og på Vestfyn. Bilplejere til vask, polering, coating og indvendig rens. Kontakt dem direkte, gratis og uden mellemled.",
-        "h1": "Bilpleje i Assens",
-        "intro": "Find en bilplejer i Assens og omegn, fx Aarup, Glamsbjerg, Haarby og Vissenbjerg. Se ydelser og kontakt bilplejeren direkte. Det er gratis, og der er ingen mellemled.",
-        "sektioner": [
-            ("Bilpleje ved Lillebælts kyst", """      <p>Assens ligger ud til Lillebælt med havn og lystbådehavn, og oplandet er præget af landbrug og landeveje. Mange biler i Assens Kommune kører derfor både i salt kystluft og på veje med jord og grus fra markerne.</p>
-      <p>Det kan betale sig at få bilen vasket grundigt et par gange om året og få lakken beskyttet med voks eller coating. Så sidder snavset ikke så hårdt fast, og bilen holder værdien bedre.</p>"""),
-            ("Hvad kan en bilplejer i Assens hjælpe med?", YDELSER),
-            ("Find den nærmeste bilplejer", """      <p>Vi viser bilplejere i og omkring Assens, sorteret efter afstand. Fra Assens er der ikke langt til bilplejere i Odense og på Vestfyn.</p>"""),
-        ],
-        "faq": [
-            ("Hvad koster bilpleje i Assens?", "Prisen afhænger af bilens størrelse, stand og den behandling du ønsker. Kontakt bilplejeren direkte og beskriv bilen."),
-            ("Hvad er forskellen på voks og coating?", "Voks er nem at lægge på og holder typisk et par måneder. En keramisk coating holder meget længere og beskytter bedre, men kræver at lakken poleres grundigt først. Læs mere i vores guide om polering og coating."),
-            ("Kan en bilplejer rense hundehår ud af bilen?", "Ja, de fleste bilplejere tilbyder indvendig rens, og mange har særligt udstyr til at få hundehår ud af tæpper og sæder."),
-            FAQ_GRATIS,
-        ],
-    },
-    "kerteminde": {
-        "navn": "Kerteminde",
-        "titel": "Bilpleje i Kerteminde – find en bilplejer på Nordøstfyn",
-        "beskrivelse": "Find bilpleje i Kerteminde og omegn. Bilplejere til vask, polering, coating og indvendig rens. Se profiler og kontakt dem direkte, gratis.",
-        "h1": "Bilpleje i Kerteminde",
-        "intro": "Find en bilplejer i Kerteminde og omegn, fx Munkebo, Langeskov og Martofte. Se ydelser og kontakt bilplejeren direkte. Gratis og uden mellemled.",
-        "sektioner": [
-            ("Fiskerby ved Storebælt", """      <p>Kerteminde ligger ved Kerteminde Fjord og Storebælt, og mange bor tæt på vandet. Havluften indeholder salt, som kan sætte sig på lakken og på blanke metaldele. Om vinteren kommer vejsaltet oveni.</p>
-      <p>En regelmæssig vask fjerner saltet, før det gør skade, og en beskyttelse som voks eller keramisk coating gør lakken glat, så snavset ikke hænger fast. <a href="/guide/vask-bilen-om-vinteren/">Se vores guide til vinter-vask</a>.</p>"""),
-            ("Hvad kan en bilplejer i Kerteminde hjælpe med?", YDELSER),
-            ("Find den nærmeste bilplejer", """      <p>Vi viser bilplejere i og omkring Kerteminde, sorteret efter afstand. Der er kort vej til Odense, hvor der er flere bilplejere at vælge mellem.</p>"""),
-        ],
-        "faq": [
-            ("Hvad koster bilpleje i Kerteminde?", "Det afhænger af bilen og hvad du ønsker. Kontakt bilplejeren direkte og beskriv bilen for at få en præcis pris."),
-            ("Hvor ofte skal jeg vaske bilen, når jeg bor ved vandet?", "Bor du tæt ved kysten, er det en god idé at vaske bilen lidt oftere end ellers, især om vinteren. Hver anden til tredje uge er en god tommelfingerregel, når der saltes."),
-            ("Kan en bilplejer komme ud til mig?", "Nogle bilplejere tilbyder mobil bilpleje og er markeret med \"Kommer ud til dig\" i listen."),
-            FAQ_GRATIS,
-        ],
-    },
-    "bogense": {
-        "navn": "Bogense",
-        "titel": "Bilpleje i Bogense – find en bilplejer på Nordfyn",
-        "beskrivelse": "Find bilpleje i Bogense og på Nordfyn. Bilplejere til vask, polering, coating og indvendig rens. Kontakt dem direkte, gratis og uden mellemled.",
-        "h1": "Bilpleje i Bogense",
-        "intro": "Find en bilplejer i Bogense og på Nordfyn, fx Otterup, Søndersø og Morud. Se ydelser og kontakt bilplejeren direkte. Det er gratis, og der er ingen mellemled.",
-        "sektioner": [
-            ("Bilpleje på Nordfyn", """      <p>Bogense er en hyggelig havneby på Nordfyn, og oplandet består af landsbyer og landbrug. Mange kører langt på landeveje, ofte til arbejde i Odense. Det giver snavs, grus og vejsalt på bilen og mange kilometer på sæderne.</p>
-      <p>En bilplejer kan give bilen en grundig vask udvendigt og en dybderens indvendigt, så den føles som ny igen. Det er også en god idé, hvis bilen snart skal sælges. <a href="/guide/klargoering-foer-salg/">Se vores tjekliste før salg</a>.</p>"""),
-            ("Hvad kan en bilplejer i Bogense hjælpe med?", YDELSER),
-            ("Find den nærmeste bilplejer", """      <p>Vi viser bilplejere i og omkring Bogense, sorteret efter afstand. Er der ikke en i selve byen, ser du de nærmeste på Nordfyn og i Odense.</p>"""),
-        ],
-        "faq": [
-            ("Hvad koster bilpleje i Bogense?", "Prisen afhænger af bilen, dens stand og hvad du ønsker. Kontakt bilplejeren direkte og beskriv bilen."),
-            ("Kan en bilplejer fjerne lugt fra bilen?", "Ja. En grundig indvendig rens af sæder, tæpper og loft fjerner det meste lugt. Nogle bilplejere tilbyder også ozonbehandling mod fx røg- eller dyrelugt."),
-            ("Hvor lang tid tager en indvendig rens?", "Typisk nogle timer, afhængigt af bilens størrelse og stand. Er sæderne meget snavsede, skal de også tørre, før du kan få bilen igen."),
+            ("Er der bilplejere, der kommer ud til mig på Sydfyn?", "Ja, nogle bilplejere tilbyder mobil bilpleje. De er markeret med \"Kommer ud til dig\" i listen. Spørg dem, om de dækker din adresse."),
             FAQ_GRATIS,
         ],
     },
     "ringe": {
         "navn": "Ringe",
-        "titel": "Bilpleje i Ringe – find en bilplejer på Midtfyn",
+        "titel": "Bilpleje i Ringe og på Midtfyn – find en bilplejer tæt på",
         "beskrivelse": "Find bilpleje i Ringe og på Midtfyn. Bilplejere til vask, polering, coating og indvendig rens tæt på dig. Kontakt dem direkte, gratis.",
-        "h1": "Bilpleje i Ringe",
+        "h1": "Bilpleje i Ringe og på Midtfyn",
+        "afstand_fra": ["Ringe", "Årslev", "Kværndrup", "Ryslinge"],
         "intro": "Find en bilplejer i Ringe og på Midtfyn, fx Kværndrup, Ryslinge, Årslev og Nr. Lyndelse. Se ydelser og kontakt bilplejeren direkte. Gratis og uden mellemled.",
         "sektioner": [
             ("Midt på Fyn, midt mellem det hele", """      <p>Ringe ligger midt på Fyn ved motorvejen mellem Odense og Svendborg, og mange herfra pendler i begge retninger. Det betyder mange kilometer, og både motorvej og landeveje sætter deres spor på lakken.</p>
@@ -273,4 +179,82 @@ BYER["aabybro"] = {
     ],
     "guides": ["polering-eller-coating", "vask-bilen-om-vinteren", "klargoering-foer-salg", "aflevering-af-leasingbil"],
     "naboer": [("aalborg", "Aalborg"), ("norresundby", "Nørresundby"), ("brovst", "Brovst"), ("fjerritslev", "Fjerritslev")],
+}
+
+
+# ---------- Områdesider (erstatter bysider uden egne bilplejere) ----------
+# "praep" = "på" giver "Bilpleje på Vestfyn". "origin" er den by, listen
+# sorteres efter afstand fra. "afstand_fra" giver tabellen med nærmeste
+# bilplejer fra hver by, beregnet ved byg (byg_sider.py henter bilplejerne).
+
+BYER["vestfyn"] = {
+    "navn": "Vestfyn",
+    "praep": "på",
+    "origin": "aarup",
+    "titel": "Bilpleje på Vestfyn – Middelfart, Assens, Aarup og Glamsbjerg",
+    "beskrivelse": "Find bilpleje på Vestfyn: Middelfart, Assens, Aarup, Glamsbjerg og Vissenbjerg. Se afstand til nærmeste bilplejer og kontakt dem direkte. Gratis.",
+    "h1": "Bilpleje på Vestfyn",
+    "afstand_fra": ["Middelfart", "Assens", "Aarup", "Glamsbjerg", "Vissenbjerg", "Haarby"],
+    "intro": "Bor du i Middelfart, Assens, Aarup, Glamsbjerg, Vissenbjerg eller Haarby, finder du her de nærmeste bilplejere og hvor langt der er til dem. Kontakt bilplejeren direkte på telefon, mail eller hjemmeside. Det er gratis, og der er ingen mellemled.",
+    "sektioner": [
+        ("Ærligt svar: få bilplejere på Vestfyn endnu", """      <p>Der er endnu ingen bilplejer med adresse på Vestfyn på FindBilplejere.dk. Derfor har vi samlet Middelfart, Assens og oplandet på én side i stedet for at lave en tom side for hver by. Tabellen ovenfor viser, hvor langt der er fra din by til de nærmeste bilplejere, så du kan se, om turen er værd at tage, eller om du skal vælge en, der kommer ud til dig.</p>
+      <p>Fra det meste af Vestfyn er der 20 til 40 km til bilplejerne i Odense og Årslev. Mange afleverer bilen om morgenen på vej til arbejde og henter den igen om eftermiddagen.</p>"""),
+        ("Middelfart: pendlerbil over Lillebælt", """      <p>Mange i Middelfart kører dagligt over Lillebæltsbroen til Fredericia, Kolding og Vejle. Det giver mange kilometer på motorvejen, og det kan ses på lakken: stenslag, insekter, tjære og vejsalt. En professionel vask og en beskyttelse af lakken holder bilen pæn, også når den bliver brugt meget. <a href="/guide/polering-eller-coating/">Læs om forskellen på voks og coating</a>.</p>
+      <p>Arbejder du i Trekantområdet, kan en bilplejer i Jylland også ligge tæt på din arbejdsplads. Søg på din arbejdsby på forsiden.</p>"""),
+        ("Assens og oplandet: kystluft og markveje", """      <p>Assens ligger ud til Lillebælt med havn og lystbådehavn, og oplandet omkring Glamsbjerg, Haarby og Aarup er præget af landbrug. Bilerne kører både i salt kystluft og på veje med jord og grus fra markerne. Det kan betale sig at få bilen vasket grundigt et par gange om året og få lakken beskyttet med voks eller coating, så snavset ikke sidder så hårdt fast.</p>"""),
+        ("Hvad kan en bilplejer hjælpe med?", YDELSER),
+    ],
+    "faq": [
+        ("Er der en bilplejer i Middelfart eller Assens?", "Der er endnu ingen bilplejer med adresse i Middelfart eller Assens på FindBilplejere.dk. Se tabellen på siden for afstanden til de nærmeste. Er du selv bilplejer på Vestfyn, kan du blive listet gratis."),
+        ("Kan jeg få bilen plejet, mens jeg er på arbejde?", "Mange bilplejere tilbyder, at du afleverer bilen om morgenen og henter den efter arbejde. Nogle kommer også ud til dig. Spørg bilplejeren, hvad der passer bedst."),
+        ("Kan en bilplejer rense hundehår ud af bilen?", "Ja, de fleste bilplejere tilbyder indvendig rens, og mange har særligt udstyr til at få hundehår ud af tæpper og sæder."),
+        ("Hvornår skal jeg have lagt coating på?", "Det bedste tidspunkt er før vinteren, så lakken er beskyttet mod vejsalt. Coating kan dog lægges på hele året, så længe bilen kan stå tørt og varmt, mens den hærder."),
+        FAQ_GRATIS,
+    ],
+}
+
+BYER["nordfyn"] = {
+    "navn": "Nordfyn",
+    "praep": "på",
+    "origin": "otterup",
+    "titel": "Bilpleje på Nordfyn – Bogense, Otterup og Søndersø",
+    "beskrivelse": "Find bilpleje på Nordfyn: Bogense, Otterup og Søndersø. Se afstand til nærmeste bilplejer, og kontakt dem direkte. Gratis og uden mellemled.",
+    "h1": "Bilpleje på Nordfyn",
+    "afstand_fra": ["Bogense", "Otterup", "Søndersø", "Morud"],
+    "intro": "Bor du i Bogense, Otterup, Søndersø eller Morud, finder du her de nærmeste bilplejere og hvor langt der er til dem. Kontakt bilplejeren direkte. Det er gratis, og der er ingen mellemled.",
+    "sektioner": [
+        ("Ærligt svar: ingen bilplejer på Nordfyn endnu", """      <p>Der er endnu ingen bilplejer med adresse på Nordfyn på FindBilplejere.dk. Derfor har vi én side for hele Nordfyn i stedet for en tom side pr. by. Fra Otterup og Søndersø er der kun omkring 20 km til bilplejerne i Odense N og Odense NV, og fra Bogense knap 30 km.</p>
+      <p>Mange på Nordfyn arbejder i Odense. Så er det nemt at aflevere bilen hos en bilplejer i den nordlige del af byen om morgenen og hente den efter arbejde.</p>"""),
+        ("Landeveje, landbrug og havneby", """      <p>Bogense er en havneby, og oplandet består af landsbyer og landbrug. Mange kører langt på landeveje, og det giver snavs, grus og vejsalt på bilen og mange kilometer på sæderne. En grundig udvendig vask og en dybderens indvendigt får bilen til at føles som ny igen. Det er også en god idé, hvis bilen snart skal sælges. <a href="/guide/klargoering-foer-salg/">Se vores tjekliste før salg</a>.</p>"""),
+        ("Hvad kan en bilplejer hjælpe med?", YDELSER),
+    ],
+    "faq": [
+        ("Er der en bilplejer i Bogense?", "Der er endnu ingen bilplejer med adresse i Bogense på FindBilplejere.dk. De nærmeste ligger i Odense, knap 30 km væk. Se tabellen på siden. Er du selv bilplejer på Nordfyn, kan du blive listet gratis."),
+        ("Kan en bilplejer fjerne lugt fra bilen?", "Ja. En grundig indvendig rens af sæder, tæpper og loft fjerner det meste lugt. Nogle bilplejere tilbyder også ozonbehandling mod fx røg- eller dyrelugt."),
+        ("Hvor lang tid tager en indvendig rens?", "Typisk nogle timer, afhængigt af bilens størrelse og stand. Er sæderne meget snavsede, skal de også tørre, før du kan få bilen igen."),
+        FAQ_GRATIS,
+    ],
+}
+
+BYER["ostfyn"] = {
+    "navn": "Østfyn",
+    "praep": "på",
+    "origin": "langeskov",
+    "titel": "Bilpleje på Østfyn – Nyborg, Kerteminde, Munkebo og Langeskov",
+    "beskrivelse": "Find bilpleje på Østfyn: Nyborg, Kerteminde, Munkebo, Langeskov og Ullerslev. Se afstand til nærmeste bilplejer og kontakt dem direkte. Gratis.",
+    "h1": "Bilpleje på Østfyn",
+    "afstand_fra": ["Nyborg", "Kerteminde", "Munkebo", "Langeskov", "Ullerslev"],
+    "intro": "Bor du i Nyborg, Kerteminde, Munkebo, Langeskov eller Ullerslev, finder du her de nærmeste bilplejere og hvor langt der er til dem. Kontakt bilplejeren direkte. Det er gratis, og der er ingen mellemled.",
+    "sektioner": [
+        ("Ærligt svar: ingen bilplejer på Østfyn endnu", """      <p>Der er endnu ingen bilplejer med adresse i Nyborg eller Kerteminde på FindBilplejere.dk. Derfor har vi én side for Østfyn i stedet for en tom side pr. by. Fra Munkebo og Langeskov er der under 15 km til bilplejerne i Odense, og fra Nyborg og Kerteminde 25 til 30 km.</p>"""),
+        ("Nyborg: mange kilometer ved Storebælt", """      <p>Mange i Nyborg pendler over Storebæltsbroen eller ad E20 mod Odense og Jylland. Mange kilometer på motorvejen betyder stenslag og fine ridser i fronten, insekter om sommeren og et tykt lag salt om vinteren. En bilplejer kan rense fronten for insekter og tjære, polere fine ridser væk og lægge en coating eller voks på, så bilen er nemmere at vaske selv mellem besøgene.</p>"""),
+        ("Kerteminde: salt havluft", """      <p>Kerteminde ligger ved fjorden og Storebælt, og mange bor tæt på vandet. Havluften indeholder salt, som sætter sig på lak og blanke metaldele, og om vinteren kommer vejsaltet oveni. En regelmæssig vask fjerner saltet, før det gør skade. <a href="/guide/vask-bilen-om-vinteren/">Se vores guide til vinter-vask</a>.</p>"""),
+        ("Hvad kan en bilplejer hjælpe med?", YDELSER),
+    ],
+    "faq": [
+        ("Er der en bilplejer i Nyborg eller Kerteminde?", "Der er endnu ingen bilplejer med adresse i Nyborg eller Kerteminde på FindBilplejere.dk. Se tabellen på siden for afstanden til de nærmeste. Er du selv bilplejer på Østfyn, kan du blive listet gratis."),
+        ("Kan en bilplejer fjerne stenslag?", "Små stenslag kan ofte gøres mindre synlige, og fine ridser omkring dem kan poleres væk. Dybe stenslag, der går gennem lakken, skal typisk pletlakeres. Spørg bilplejeren, hvad der kan lade sig gøre på din bil."),
+        ("Hvor ofte skal jeg vaske bilen, når jeg bor ved vandet?", "Bor du tæt ved kysten, eller kører du dagligt på saltede veje, er en vask hver anden til tredje uge en god tommelfingerregel om vinteren, gerne med skyl af undervogn og hjulkasser."),
+        FAQ_GRATIS,
+    ],
 }
