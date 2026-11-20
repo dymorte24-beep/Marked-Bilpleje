@@ -123,3 +123,38 @@ Analyseret med vidIQ. Hvad der virker, og hvad vi tager med:
 6. **Kommentar-ord som CTA**: "Skriv VINTER i kommentarerne, så laver vi del 2" (vi har 0 kommentarer). Lov ikke at sende DM'er automatisk, det kan vi ikke.
 7. **Lyd**: swoosh + klik på første ord, voiceover starter i frame 0, UI-klik på hvert stempel.
 8. Til REKRUTTERING af bilplejere virker krogen næsten ordret: "Du er en dygtig bilplejer. Men ingen ved, du findes."
+
+## EKSPERIMENT-MOTOR (Daniel 2026-11-20: "prøv forskellige ting af, lær algoritmen at kende, bliv klogere ved at fejle")
+Baseline: næsten alt ligger på 230-330 visninger, 0 kommentarer (bedste 947 = første video 31/10). Små justeringer har ikke flyttet noget, så vi tester STORE forskelle, ét eksperiment pr. opslag.
+
+Regler for hver uge:
+1. Hvert opslag (video og karrusel) er ét eksperiment med ID (E01, E02 ...). Skriv FØR udgivelse: hypotese + hvad der ændres + hvad der holdes fast.
+2. Skift kun ÉN ting i forhold til baseline (format, krog, længde, tid, emne, stil, lyd, CTA, hashtags), så vi ved hvad der virkede.
+3. Succes = mindst 2x baseline (550+ visninger) ELLER 3+ kommentarer ELLER 5+ delinger. Fiasko er også et resultat: skriv det.
+4. Søndag: udfyld resultat efter mindst 48 timer. Vinder: lav 2 nye varianter af den i næste uge (byg videre). Taber: læg i "virker ikke"-listen.
+5. Mindst 1 af ugens opslag er et "vildt" eksperiment, der er helt anderledes end alt vi har lavet.
+6. Altid fuldt automatisk, isAigc true, ingen falske påstande, ingen konkrete salgsgevinster.
+
+Eksperiment-bank (tag næste ikke-testede fra toppen, eller find nye):
+- E-kontrovers: skarp påstand som krog ("Vaskehallen ødelægger din lak"), forklar bagefter hvornår det er sandt.
+- E-POV: "POV: du afleverer leasingbilen, og han tager lommelygten frem" (tekst-skærm + stemme).
+- E-kort: ultra-kort 6-9 s loop med ét tip og ingen outro (loop = genafspilninger).
+- E-serie: "Del 1 af 3" med cliffhanger, del 2 næste dag.
+- E-lys-stil: lys gitter-baggrund, flade ikoner, stempler (reel-inspirationen 16/11) i stedet for fotos.
+- E-quiz: "Kun 1 ud af 10 ved det her" + svar i kommentarerne.
+- E-kommentar-ord: "Skriv VINTER, så laver vi del 2".
+- E-lokal: tal direkte til Fyn ("Odense-bilister, det her skal I vide").
+- E-tid: kl. 07:30 og kl. 21:00 mod vores 18:00.
+- E-hashtags: 3 smalle danske (#bilpleje #bilvask #fyn) mod 6 brede.
+- E-tekst-kun: ingen stemme, kun stor tekst + trend-musik (karrusel med autoAddMusic).
+- E-før-efter: én beskidt detalje -> ren, tal ikke, bare reveal.
+- E-frekvens: 2 opslag samme dag (kl. 12 og 18).
+- E-svar-video: lav en video der svarer på et spørgsmål som "kommentar" (skærmbillede-stil).
+
+### Eksperiment-log
+| ID | Dato/tid | Opslag | Hypotese | Ændret | Visn. | Likes | Komm. | Delinger | Resultat |
+|----|----------|--------|----------|--------|-------|-------|-------|----------|----------|
+| E00 | uge 47 | 3 videoer m. stemme + karruseller | ny stil (lyst foto, påstand, stemme) slår baseline | stil | | | | | udfyldes 22/11 |
+
+### Virker ikke (lad være)
+- (udfyldes)
