@@ -6,13 +6,13 @@ Teksterne ligger i byer.py og guides.py. Siderne er almindelig HTML, så Google
 kan læse al teksten med det samme. Listen over bilplejere hentes stadig live fra
 databasen af js/by-side.js, så den altid er opdateret.
 """
-import json, os, html
-from byer import BYER, FYN_BYER_ORDEN, ANDRE_BYER_ORDEN
+import json, os, html, math, re, shutil, urllib.request
+from byer import BYER, FYN_BYER_ORDEN, ANDRE_BYER_ORDEN, OMDIRIGERINGER
 from guides import GUIDES
 
 ROD = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOMÆNE = "https://findbilplejere.dk"
-OPDATERET = "2026-11-15"
+OPDATERET = "2026-11-20"
 
 HEAD_START = """<!DOCTYPE html>
 <html lang="da">
@@ -137,9 +137,96 @@ def guide_links(slugs):
     return '<div class="related-links">\n      ' + "\n      ".join(out) + "\n    </div>"
 
 
+def i_navn(b):
+    """'i Odense' eller 'på Vestfyn'."""
+    return f'{b.get("praep", "i")} {b["navn"]}'
+
+
+# ---------- Afstand til nærmeste bilplejer (ægte, lokalt indhold pr. by) ----------
+SUPABASE_URL = "https://xeosltdpvkcaudiijtge.supabase.co"
+SUPABASE_KEY = "sb_publishable_iG0iWu8szH_7-uwErdxN9g_pE9YGFWd"  # offentlig nøgle, samme som js/by-side.js
+_POST = None
+_BUTIKKER = None
+
+
+def _slug(t):
+    t = (t or "").strip().split(" ")[0].lower().replace("æ", "e").replace("ø", "o").replace("å", "a")
+    return re.sub(r"[^a-z0-9]+", "-", t).strip("-")
+
+
+def geo(by):
+    """Samme regel som js/geo.js: første ord, laveste postnummer."""
+    global _POST
+    if _POST is None:
+        _POST = {}
+        for p in json.load(open(os.path.join(ROD, "data", "postnumre.json"), encoding="utf-8")):
+            k = _slug(p["navn"])
+            if k and (k not in _POST or int(p["nr"]) < int(_POST[k]["nr"])):
+                _POST[k] = p
+    return _POST.get(_slug(by))
+
+
+def km(a, b):
+    la1, la2 = math.radians(a["lat"]), math.radians(b["lat"])
+    h = math.sin((la2 - la1) / 2) ** 2 + math.cos(la1) * math.cos(la2) * math.sin(math.radians(b["lng"] - a["lng"]) / 2) ** 2
+    return round(6371 * 2 * math.atan2(math.sqrt(h), math.sqrt(1 - h)))
+
+
+def butikker_paa_fyn():
+    """Godkendte bilplejere med postnummer på Fyn (5000-5999), hentet ved byg."""
+    global _BUTIKKER
+    if _BUTIKKER is None:
+        req = urllib.request.Request(
+            SUPABASE_URL + "/rest/v1/shops?select=name,city,services,profile_url&godkendt=eq.true",
+            headers={"apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY})
+        try:
+            alle = json.load(urllib.request.urlopen(req, timeout=20))
+        except Exception as e:
+            print("ADVARSEL: kunne ikke hente bilplejere, springer afstandstabeller over:", e)
+            alle = []
+        _BUTIKKER = []
+        for s in alle:
+            g = geo(s["city"])
+            if g and 5000 <= int(g["nr"]) <= 5999:
+                _BUTIKKER.append({**s, "_geo": g})
+    return _BUTIKKER
+
+
+def afstand_tabel(b):
+    byer = b.get("afstand_fra")
+    butikker = butikker_paa_fyn()
+    if not byer or not butikker:
+        return ""
+    rækker = []
+    for by in byer:
+        g = geo(by)
+        if not g:
+            print("ADVARSEL: ukendt by i afstand_fra:", by)
+            continue
+        nærmeste = sorted(butikker, key=lambda s: km(g, s["_geo"]))[:2]
+        celler = []
+        for s in nærmeste:
+            navn = esc(s["name"])
+            if s.get("profile_url"):
+                navn = f'<a href="/{esc(s["profile_url"])}">{navn}</a>'
+            mobil = " · kommer ud" if any("mobil" in str(x).lower() for x in (s.get("services") or [])) else ""
+            afst = km(g, s["_geo"])
+            afst_txt = "i byen" if afst < 3 else f"{afst} km"
+            celler.append(f'{navn} ({esc(s["city"])}, {afst_txt}{mobil})')
+        rækker.append(f"        <tr><th>{esc(by)}</th><td>{'<br>'.join(celler)}</td></tr>")
+    return (
+        f"    <h2>Så langt er der til nærmeste bilplejer {esc(i_navn(b))}</h2>\n"
+        '    <div class="seo-text">\n'
+        '      <table class="afstand-tabel">\n        <thead><tr><th>Fra</th><th>Nærmeste bilplejere (luftlinje)</th></tr></thead>\n'
+        + "\n".join(rækker)
+        + f"\n      </table>\n      <p class=\"seo-note\">Opdateret {OPDATERET[8:10]}.{OPDATERET[5:7]}.{OPDATERET[:4]} ud fra bilplejerne på FindBilplejere.dk. Køreafstanden er typisk lidt længere end luftlinjen.</p>\n"
+        "    </div>\n\n"
+    )
+
+
 def by_links(udelad):
     out = [
-        f'<a href="/bilpleje/{k}/">Bilpleje i {esc(BYER[k]["navn"])}</a>'
+        f'<a href="/bilpleje/{k}/">Bilpleje {esc(i_navn(BYER[k]))}</a>'
         for k in FYN_BYER_ORDEN if k != udelad
     ]
     return '<div class="related-links">\n      ' + "\n      ".join(out) + "\n    </div>"
@@ -154,7 +241,7 @@ def nabo_links(naboer):
 def byg_by(key):
     b = BYER[key]
     url = f"/bilpleje/{key}/"
-    krumme_schema, krumme = brødkrummer([("Forside", "/"), (f"Bilpleje i {b['navn']}", url)])
+    krumme_schema, krumme = brødkrummer([("Forside", "/"), (f"Bilpleje {i_navn(b)}", url)])
     faq_schema, faq = faq_html(b["faq"])
     sektioner = ""
     for overskrift, afsnit in b["sektioner"]:
@@ -166,15 +253,16 @@ def byg_by(key):
         + '<section class="seo-page">\n  <div class="wrap">\n    ' + krumme + "\n\n"
         + f"    <h1>{esc(b['h1'])}</h1>\n"
         + f"    <p class=\"intro\">{b['intro']}</p>\n\n"
-        + f'    <div id="cityContent" data-static data-city="{key}">\n      <p class="intro">Henter bilplejere…</p>\n    </div>\n'
-        + f'    <p class="seo-note">Listen viser bilplejere i og omkring {esc(b["navn"])}, sorteret efter afstand. Klik på en bilplejer for at se ydelser og kontakte dem direkte.</p>\n\n'
+        + f'    <div id="cityContent" data-static data-city="{b.get('origin', key)}">\n      <p class="intro">Henter bilplejere…</p>\n    </div>\n'
+        + f'    <p class="seo-note">Listen viser bilplejere nærmest {esc(b["navn"])}, sorteret efter afstand. Klik på en bilplejer for at se ydelser og kontakte dem direkte.</p>\n\n'
+        + afstand_tabel(b)
         + sektioner
-        + f"    <h2>Ofte stillede spørgsmål om bilpleje i {esc(b['navn'])}</h2>\n    {faq}\n\n"
+        + f"    <h2>Ofte stillede spørgsmål om bilpleje {esc(i_navn(b))}</h2>\n    {faq}\n\n"
         + "    <h2>Gode råd før du bestiller</h2>\n    " + guide_links(b.get("guides", [g["slug"] for g in GUIDES][:3])) + "\n\n"
         + (("    <h2>Bilpleje i andre byer på Fyn</h2>\n    " + by_links(key)) if key in FYN_BYER_ORDEN
            else ("    <h2>Bilpleje i nærheden</h2>\n    " + nabo_links(b.get("naboer", []))))
         + "\n\n"
-        + f'    <p class="seo-cta">Er du bilplejer i {esc(b["navn"])} eller omegn? <a href="/#shops">Bliv listet gratis på FindBilplejere.dk</a>.</p>\n'
+        + f'    <p class="seo-cta">Er du bilplejer {esc(i_navn(b))}? <a href="/#shops">Bliv listet gratis på FindBilplejere.dk</a>.</p>\n'
         + "  </div>\n</section>\n\n" + FOOTER + "\n" + BY_SCRIPTS + "\n</body>\n</html>\n"
     )
     skriv(f"bilpleje/{key}/index.html", side)
@@ -245,7 +333,30 @@ def byg_guide_oversigt():
     skriv("guide/index.html", side)
 
 
+def omdirigeringer():
+    """Gamle bysider -> områdeside (301). Skrives ind i _redirects mellem
+    markørerne, så Google flytter placeringen med over på den nye side."""
+    start, slut = "# SEO-OMDIRIGERINGER START (genereres af seo-kilde/byg_sider.py)", "# SEO-OMDIRIGERINGER SLUT"
+    linjer = [f"/bilpleje/{fra}/  /bilpleje/{til}/  301!" for fra, til in OMDIRIGERINGER.items()]
+    blok = start + "\n" + "\n".join(linjer) + "\n" + slut + "\n"
+    sti = os.path.join(ROD, "_redirects")
+    tekst = open(sti, encoding="utf-8").read()
+    if start in tekst:
+        tekst = tekst[:tekst.index(start)] + blok + tekst[tekst.index(slut) + len(slut) + 1:]
+    else:
+        # Skal stå før /bilpleje/:city/-reglerne, ellers rammer de først.
+        anker = "# Nye butikker oprettet via admin-panelet"
+        tekst = tekst.replace(anker, blok + "\n" + anker, 1)
+    open(sti, "w", encoding="utf-8").write(tekst)
+    for fra in OMDIRIGERINGER:
+        mappe = os.path.join(ROD, "bilpleje", fra)
+        if os.path.isdir(mappe):
+            shutil.rmtree(mappe)
+            print("slettede gammel side bilpleje/" + fra)
+
+
 if __name__ == "__main__":
+    omdirigeringer()
     for k in FYN_BYER_ORDEN + ANDRE_BYER_ORDEN:
         byg_by(k)
     for g in GUIDES:

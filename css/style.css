@@ -596,3 +596,9 @@ section.nb h2{font-size:28px; color:var(--navy); margin-bottom:12px; text-align:
 .guide-kort strong{font-family:'Oswald',sans-serif; font-size:18px; color:var(--navy); font-weight:600;}
 .guide-kort span{font-size:14px; color:var(--text-muted);}
 .guide-kort:hover{border-color:var(--gold);}
+
+/* Afstandstabel på by- og områdesider */
+.afstand-tabel{width:100%; border-collapse:collapse; margin:6px 0 4px; font-size:15px;}
+.afstand-tabel th, .afstand-tabel td{text-align:left; vertical-align:top; padding:10px 12px; border-bottom:1px solid var(--chrome-line);}
+.afstand-tabel thead th{font-size:13px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-muted);}
+.afstand-tabel tbody th{white-space:nowrap; width:1%;}

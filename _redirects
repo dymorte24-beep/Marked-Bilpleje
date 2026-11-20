@@ -3,6 +3,15 @@
 https://bilpleje-dk.netlify.app/*  https://findbilplejere.dk/:splat  301!
 http://bilpleje-dk.netlify.app/*   https://findbilplejere.dk/:splat  301!
 
+# SEO-OMDIRIGERINGER START (genereres af seo-kilde/byg_sider.py)
+/bilpleje/faaborg/  /bilpleje/svendborg/  301!
+/bilpleje/middelfart/  /bilpleje/vestfyn/  301!
+/bilpleje/assens/  /bilpleje/vestfyn/  301!
+/bilpleje/bogense/  /bilpleje/nordfyn/  301!
+/bilpleje/nyborg/  /bilpleje/ostfyn/  301!
+/bilpleje/kerteminde/  /bilpleje/ostfyn/  301!
+# SEO-OMDIRIGERINGER SLUT
+
 # Nye butikker oprettet via admin-panelet får ikke deres egen statiske fil —
 # denne regel viser i stedet den fælles skabelon (bilpleje/profil.html) på samme pæne URL.
 # Rigtige filer har forrang og rammes IKKE af denne regel.
