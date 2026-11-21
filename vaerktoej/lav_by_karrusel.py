@@ -19,8 +19,9 @@ CSS = '''*{margin:0;padding:0;box-sizing:border-box}html,body{width:540px;height
 .ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(19,29,46,0) 0,rgba(19,29,46,.72) 14%,rgba(19,29,46,.6) 55%,rgba(19,29,46,.15) 72%,rgba(19,29,46,0) 80%)}
 .q{position:absolute;top:175px;left:40px;right:90px;text-align:center;color:#fff;font-size:50px;font-weight:900;line-height:1.05;text-shadow:0 3px 14px rgba(0,0,0,.6)}
 .g{color:#E2B566}
-.a{position:absolute;top:400px;left:40px;right:90px;text-align:center;color:#fff;font-size:26px;font-weight:700;line-height:1.3;text-shadow:0 2px 8px rgba(0,0,0,.8)}
-.sw{position:absolute;top:545px;left:245px;transform:translateX(-50%);background:#B68B48;color:#131D2E;font-weight:900;font-size:22px;padding:12px 30px;border-radius:40px;white-space:nowrap}
+.a{position:absolute;top:365px;left:40px;right:90px;text-align:center;color:#fff;font-size:26px;font-weight:700;line-height:1.3;text-shadow:0 2px 8px rgba(0,0,0,.8)}
+.sw{position:absolute;top:565px;left:245px;transform:translateX(-50%);background:#B68B48;color:#131D2E;font-weight:900;font-size:22px;padding:12px 30px;border-radius:40px;white-space:nowrap}
+.logos{position:absolute;top:448px;left:40px;right:90px;display:flex;justify-content:center;gap:10px}.logos div{width:88px;height:88px;border-radius:16px;background:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 4px 14px rgba(0,0,0,.35)}.logos img{max-width:100%;max-height:100%;object-fit:contain}.logos img.rund{width:72px;height:72px;border-radius:50%;object-fit:cover}
 .cr{position:absolute;left:40px;top:628px;font-size:10px;color:rgba(255,255,255,.75);text-shadow:0 1px 3px #000}
 .light{position:absolute;inset:0;background:#F4F5F7;background-image:linear-gradient(#e3e6eb 1px,transparent 1px),linear-gradient(90deg,#e3e6eb 1px,transparent 1px);background-size:36px 36px}
 .top{position:absolute;top:150px;left:40px;right:90px;text-align:center;font-size:15px;letter-spacing:4px;font-weight:900;color:#B68B48}
@@ -38,9 +39,12 @@ CSS = '''*{margin:0;padding:0;box-sizing:border-box}html,body{width:540px;height
 .btn{position:absolute;top:505px;left:245px;transform:translateX(-50%);background:#B68B48;color:#131D2E;font-weight:800;font-size:23px;padding:13px 34px;border-radius:40px;white-space:nowrap}'''
 pages = []
 shutil.copy(os.path.join(ROOT, spec['foto']), f'{work}/hook.jpg')
+for i, b in enumerate(bp):
+    ext = os.path.splitext(b['logo'])[1]; shutil.copy(os.path.join(ROOT, b['logo']), f'{work}/l{i}{ext}')
+logos = ''.join(f'''<div style="background:{b.get('kort_bg','#fff')}"><img{' class="rund"' if b.get('foto_logo') else ''} src="l{i}{os.path.splitext(b['logo'])[1]}"></div>''' for i, b in enumerate(bp))
 pages.append(f'''<div class="bg" style="background-image:url(hook.jpg)"></div><div class="ov"></div>
 <div class="q">Bor du i<br><span class="g">{e(by)}</span><br>eller omegn?</div>
-<div class="a">Så kan de her {len(bp)} bilplejere<br>ordne din bil 👇</div><div class="sw">Swipe ➡️</div>
+<div class="a">Så kan de her {len(bp)} bilplejere<br>ordne din bil 👇</div><div class="logos">{logos}</div><div class="sw">Swipe ➡️</div>
 <div class="cr">Foto: {e(spec.get("kredit",""))} / Unsplash</div>''')
 for i, b in enumerate(bp):
     ext = os.path.splitext(b['logo'])[1]; shutil.copy(os.path.join(ROOT, b['logo']), f'{work}/l{i}{ext}')
