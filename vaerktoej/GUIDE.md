@@ -106,3 +106,7 @@ Ugens specs gemmes i `videoer/specs/`. Tjek derefter kontaktark + tjek-safezone.
 Lakkens lag og polering forklaret, vask med minimale ridser (tospandsmetoden), vinterens bedste vask, coating-myter, vinterpleje, vejsalt, fælgrens, indvendig rens (hundehår, børnebil), lakrens/polering, PPF og solfilm forklaret,
 hvad koster bilpleje, "før/efter" animeret, sådan finder du en bilplejer på findbilplejere.dk, sæsontips (jul, forår, pollen), quiz "rigtigt eller forkert".
 Ingen påstande om konkrete bilplejere eller priser, der ikke er sande. Coating m.m. beskrives ærligt (ikke "skudsikker").
+
+
+## BY-KARRUSEL (Daniels idé 2026-11-21)
+"Bor du i <by> eller omegn? Så kan de her bilplejere ordne din bil" + én slide pr. bilplejer (logo, navn, område) + findbilplejere.dk. Kun bilplejere på sitet (shops.godkendt) inden for ca. 30 km, ikke kun_erhverv. Logoer hentes fra findbilplejere.dk (hero_image_url) til karruseller/logoer/. Hvide logoer: "kort_bg":"#131D2E". Fotos i stedet for logo: "foto_logo":true. Specs i karruseller/specs/by-*.json. Værktøj: vaerktoej/lav_by_karrusel.py. Lav en ny, når en by får nye bilplejere (byer med 3+). Planlæg som karrusel med autoAddMusic.
