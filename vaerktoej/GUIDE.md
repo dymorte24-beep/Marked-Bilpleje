@@ -36,9 +36,11 @@ Brand: navy #131D2E, guld #B68B48, hvid. Wordmark: "find" (normal) + "bilplejere
 - 1080x1920 (HTML 540x960 renderet med deviceScaleFactor 2), 30 fps, 18-25 sek.
 - Animeret illustration (SVG/CSS) og/eller ægte fotos fra Unsplash (se nedenfor). Ingen genkendelige personer, ingen varemærker/logoer/nummerplader.
 - Struktur: krog (0-2 s, lyst konkret billede + påstand på max 8 ord) -> billedskift hvert 1,5-2,5 s -> reveal -> kort outro (max 3 s) oven på sidste billede. Se LAERING.md.
-- SIKKER ZONE (Daniel 2026-11-10: tekst blev skjult af TikToks søgefelt og knapper). I 540x960-koordinater skal al tekst, tal,
-  labels og vigtige ting ligge inden for x 40-450 og y 150-640. Brug left:40px; right:90px i stedet for width:100%, og centrér
-  ting omkring x=245 (ikke 270). Top (y<140) dækkes af søgefeltet, bund (y>650) af navn/tekst, højre (x>450) af like/kommentar.
+- OPSÆTNING (Daniel 2026-11-21: "ikke alt op i venstre hjørne med sort bund, og centrér ikke bare for at undgå knapperne, placér det naturligt").
+  Fordel indholdet over HELE skærmen, venstrestillet (ikke centreret): overskrift/nummer/kicker øverst til venstre (fra y 112, left 34px),
+  forklaring/undertekst/knap/sidetal nederst til venstre (slutter ved y ~740, dvs. bottom:220px, right:100px). Midten er fri, så fotoet ses.
+  Overlay: mørk bag top og bund, gennemsigtig i midten (aldrig en flad sort bund). Fotokredit lodret i højre kant øverst.
+  TikTok dækker: y<110 (søgefelt), y>750 (navn/tekst), og x>460 i y 380-780 (like/kommentar-knapper). Hold tekst ude af de felter.
   Tjek ALTID: bash vaerktoej/tjek-safezone.sh video.mp4 ark.jpg og se på arket: intet vigtigt må krydse de røde linjer.
 - Skabeloner: `eksempel-polering-forklaret.html` (forklarende tværsnit, foretrukket stil), `eksempel-vinterfejl.html` (kun grafik) og `eksempel-med-fotos.html` (Unsplash-fotos, læg fotos som f1.jpg.. ved siden af html-filen). window.render(t) tegner frame ved tid t.
 
