@@ -41,6 +41,9 @@ Brand: navy #131D2E, guld #B68B48, hvid. Wordmark: "find" (normal) + "bilplejere
   forklaring/undertekst/knap/sidetal nederst til venstre (slutter ved y ~740, dvs. bottom:220px, right:100px). Midten er fri, så fotoet ses.
   Overlay: mørk bag top og bund, gennemsigtig i midten (aldrig en flad sort bund). Fotokredit lodret i højre kant øverst.
   TikTok dækker: y<110 (søgefelt), y>750 (navn/tekst), og x>460 i y 380-780 (like/kommentar-knapper). Hold tekst ude af de felter.
+  FOTO-OPSLAG/KARRUSELLER (Daniel 22/11, skærmbillede): når et fotoopslag åbnes fra profil/link, viser TikTok billedet beskåret til
+  ca. 3:4 med teksten UNDER billedet: kun y ~94-843 ses, og tilbage-pil/søg ligger oven på toppen af det synlige. Derfor starter
+  karruselindhold ved y 178 (ikke 112) og slutter ved y ~710 (bottom:250px). Fotokredit lodret fra y 180. Videoer vises i fuld skærm og beholder 112/740.
   Tjek ALTID: bash vaerktoej/tjek-safezone.sh video.mp4 ark.jpg og se på arket: intet vigtigt må krydse de røde linjer.
 - Skabeloner: `eksempel-polering-forklaret.html` (forklarende tværsnit, foretrukket stil), `eksempel-vinterfejl.html` (kun grafik) og `eksempel-med-fotos.html` (Unsplash-fotos, læg fotos som f1.jpg.. ved siden af html-filen). window.render(t) tegner frame ved tid t.
 

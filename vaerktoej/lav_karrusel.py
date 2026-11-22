@@ -27,8 +27,8 @@ CSS = '''*{margin:0;padding:0;box-sizing:border-box}html,body{width:540px;height
 .bg{position:absolute;inset:0;background-size:cover;background-position:center}
 .ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(19,29,46,.55) 0,rgba(19,29,46,.75) 12%,rgba(19,29,46,.45) 30%,rgba(19,29,46,0) 42%,rgba(19,29,46,0) 52%,rgba(19,29,46,.6) 66%,rgba(19,29,46,.85) 100%)}
 .ov2{position:absolute;inset:0;background:rgba(19,29,46,.8)}
-.top{position:absolute;top:112px;left:34px;right:60px;display:flex;flex-direction:column;align-items:flex-start;gap:10px}
-.bot{position:absolute;bottom:220px;left:34px;right:100px;display:flex;flex-direction:column;align-items:flex-start;gap:16px}
+.top{position:absolute;top:178px;left:34px;right:60px;display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+.bot{position:absolute;bottom:250px;left:34px;right:100px;display:flex;flex-direction:column;align-items:flex-start;gap:16px}
 .k{font-size:15px;letter-spacing:5px;color:#E2B566;font-weight:900;text-shadow:0 1px 6px rgba(0,0,0,.8)}
 .h{font-size:46px;font-weight:900;line-height:1.06;text-shadow:0 3px 14px rgba(0,0,0,.7)}
 .g{color:#E2B566}
@@ -37,7 +37,7 @@ CSS = '''*{margin:0;padding:0;box-sizing:border-box}html,body{width:540px;height
 .row{display:flex;align-items:center;gap:14px}
 .sw{background:#B68B48;color:#131D2E;font-weight:900;font-size:22px;padding:12px 30px;border-radius:40px;white-space:nowrap}
 .pg{font-size:14px;font-weight:700;color:rgba(255,255,255,.85);text-shadow:0 1px 4px #000}
-.cr{position:absolute;right:16px;top:100px;font-size:9px;color:rgba(255,255,255,.7);text-shadow:0 1px 3px #000;writing-mode:vertical-rl}
+.cr{position:absolute;right:18px;top:180px;font-size:9px;color:rgba(255,255,255,.7);text-shadow:0 1px 3px #000;writing-mode:vertical-rl}
 .oline{font-size:32px;font-weight:800;line-height:1.2}
 .mid{position:absolute;top:400px;left:34px;right:60px;display:flex;flex-direction:column;align-items:flex-start;gap:10px}
 .ofind{font-size:21px;color:#ddd;font-weight:600}
