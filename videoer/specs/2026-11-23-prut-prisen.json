@@ -1,0 +1,9 @@
+{"seed": 41, "bpm": 100, "scenes": [
+ {"foto":"videoer/fotos/2026-11-23-pris-1.jpg","kredit":"yahdi yasya","kicker":"SÆLGER DU BILEN?","overskrift":"4 ting køberen / bruger til at *prutte*","tale":"Sælger du bilen? Her er fire ting, køberen bruger til at prutte prisen ned."},
+ {"foto":"videoer/fotos/2026-11-23-pris-2.jpg","kredit":"Jairph","nr":1,"overskrift":"Lugt og / *pletter*","tale":"Et. Lugt og pletter i sæderne. Det er det første, de nævner."},
+ {"foto":"videoer/fotos/2026-11-23-pris-3.jpg","kredit":"Frank Albrecht","nr":2,"overskrift":"Slidte / *dæk*","tale":"To. Slidte dæk. Så regner køberen straks med nye."},
+ {"foto":"videoer/fotos/2026-11-23-pris-4.jpg","kredit":"Art Lasovsky","nr":3,"overskrift":"Ridser / i *lakken*","tale":"Tre. Ridser i lakken. Især dem, der ses i sollys."},
+ {"foto":"videoer/fotos/2026-11-20-koeberen-5.jpg","kredit":"Nick Pyl","nr":4,"overskrift":"Matte / *lygter*","tale":"Fire. Matte forlygter. De får bilen til at se ældre ud."},
+ {"foto":"videoer/fotos/2026-11-20-koeberen-6.jpg","kredit":"Art Lasovsky","kicker":"TIP","overskrift":"Ret det, *før* / de kommer","tale":"Ret det, før køberen kommer. Så har de mindre at prutte på. Gem den til salgsdagen."}
+],
+"outro": null}

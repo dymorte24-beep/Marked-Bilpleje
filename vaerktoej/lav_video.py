@@ -49,7 +49,7 @@ def tts(text, path):
     a = a[max(0, idx[0] - 200): idx[-1] + 400] if len(idx) else a
     return a, sr
 
-scenes = spec['scenes'] + [dict(spec['outro'], outro=True)]
+scenes = spec['scenes'] + ([dict(spec['outro'], outro=True)] if spec.get('outro') else [])  # outro=null -> ingen outro (fx loop-eksperiment)
 voice_parts, t = [], 0.0
 for i, s in enumerate(scenes):
     a, sr = tts(s['tale'], f'{work}/v{i}.wav')

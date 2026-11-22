@@ -154,7 +154,18 @@ Eksperiment-bank (tag næste ikke-testede fra toppen, eller find nye):
 ### Eksperiment-log
 | ID | Dato/tid | Opslag | Hypotese | Ændret | Visn. | Likes | Komm. | Delinger | Resultat |
 |----|----------|--------|----------|--------|-------|-------|-------|----------|----------|
-| E00 | uge 47 | 3 videoer m. stemme + karruseller | ny stil (lyst foto, påstand, stemme) slår baseline | stil | | | | | udfyldes 22/11 |
+| E00a | 16/11 18:00 | Video: leasing-aflevering (stemme, fotos) | ny stil slår baseline | stil | 269 | 1 | 0 | 0 | TABER (baseline) |
+| E00b | 18/11 18:00 | Video: vask-myter | ny stil slår baseline | stil | 253 | 0 | 0 | 0 | TABER |
+| E00c | 20/11 18:00 | Video: køberen ser først | ny stil slår baseline | stil | 271 | 0 | 0 | 0 | TABER |
+| E00d | 19/11 18:00 | Karrusel: leasing 5 ting (autoAddMusic) | karrusel slår video | format | 279 | 1 | 0 | 0 | TABER (lige med video) |
+| E00e | 21/11 12:00 | Karrusel: coating-quiz | quiz giver kommentarer | format | 248 | 0 | 0 | 0 | TABER (0 komm.) |
+| E00f | 22/11 12:00 | Karrusel: salgsbilleder | | format | ~228 (Daniels skærmbillede) | 1 | 0 | 0 | for tidligt, ligner taber |
+| E01 | 23/11 18:00 | Video: 4 ting køberen prutter med | Mærket "reklame/eget brand" (commercialContentOwnBrand) bremser rækkevidden. Rent tip uden outro, uden link og uden brand-mærke | KUN: ingen reklame (ingen outro/salg, commercialContentOwnBrand false) | | | | | |
+| E02 | 25/11 18:00 | Video: posetesten, 7 s loop (VILD) | Ultrakort loop uden outro giver genafspilninger og højere fuldført-rate | KUN: længde/loop (7 s, ingen outro) | | | | | |
+| E03 | 27/11 18:00 | Video: POV leasing-aflevering | POV-tekst ("POV: ...") får folk til at blive hængende | KUN: krog-format POV | | | | | |
+| E04 | 29/11 12:00 | Karrusel: vinterquiz + "Skriv VINTER" | kommentar-ord som CTA giver de første kommentarer | KUN: CTA = kommentar-ord | | | | | |
+| E05-07 | 24/11, 26/11, 28/11 | By-karruseller Odense/Aarhus/KBH | lokalt "Bor du i X?" + bilplejer-logoer giver delinger/tags | KUN: lokal vinkel | | | | | |
 
 ### Virker ikke (lad være)
-- (udfyldes)
+- Uge 47: ny stil (lyst foto + påstand + stemme + klip hvert 2 s) flyttede INTET: 253-271 mod baseline ~270. Karruseller (248-279) = videoer. Quiz gav 0 kommentarer.
+- Konklusion: indholdets finish er ikke flaskehalsen. Alt stopper i TikToks første testgruppe (~250). Mistanke: kontoniveau-signaler (reklame-mærke på alt, AI-mærke, ny/lille konto, få følgere). Uge 48 tester derfor reklame-mærket (E01) og formatet (loop, POV, kommentar-ord).
