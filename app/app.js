@@ -39,7 +39,12 @@ function naar(d) {
   return dato(d) + (new Date(d).getFullYear() !== new Date().getFullYear() ? ' ' + new Date(d).getFullYear() : '') + ' kl. ' + kl(d);
 }
 function toast(t) { const e = $('toast'); e.textContent = t; e.classList.add('show'); clearTimeout(e._t); e._t = setTimeout(() => e.classList.remove('show'), 2600); }
-function sheet(h) { $('sheet').innerHTML = '<div class="grab"></div>' + h; $('ov').classList.add('show'); $('sheet').scrollTop = 0; }
+function sheet(h) { $('sheet').innerHTML = '<div class="shead"><div class="grab"></div><button class="luk" onclick="luk()" aria-label="Luk"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>' + h; $('ov').classList.add('show'); $('sheet').scrollTop = 0; $('sheet').style.transform = ''; }
+// Træk arket ned for at lukke det (som på iPhone)
+(() => { let y0 = null, dy = 0; const el = () => $('sheet');
+  document.addEventListener('touchstart', e => { if (!$('ov').classList.contains('show') || !el().contains(e.target) || el().scrollTop > 0) return; y0 = e.touches[0].clientY; dy = 0; }, { passive: true });
+  document.addEventListener('touchmove', e => { if (y0 === null) return; dy = e.touches[0].clientY - y0; if (dy > 0) el().style.transform = `translateY(${dy}px)`; }, { passive: true });
+  document.addEventListener('touchend', () => { if (y0 === null) return; y0 = null; if (dy > 90) luk(); el().style.transform = ''; }); })();
 function luk() { $('ov').classList.remove('show'); }
 $('ov').onclick = e => { if (e.target.id === 'ov') luk(); };
 

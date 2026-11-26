@@ -107,9 +107,12 @@ input.f:focus,textarea.f:focus{box-shadow:0 0 0 2px rgba(19,29,46,.25)}
 
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:flex-end;justify-content:center;z-index:9}
 .ov.show{display:flex}
-.sheet{background:var(--bg);width:100%;max-width:430px;border-radius:14px 14px 0 0;padding:8px 16px 34px;max-height:92vh;overflow:auto;animation:op .25s ease}
+.sheet{background:var(--bg);width:100%;max-width:430px;border-radius:14px 14px 0 0;padding:8px 16px 34px;max-height:92vh;overflow:auto;animation:op .25s ease;transition:transform .15s}
 @keyframes op{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}
-.grab{width:36px;height:5px;border-radius:3px;background:#C7C7CC;margin:0 auto 14px}
+.grab{width:36px;height:5px;border-radius:3px;background:#C7C7CC;margin:0 auto}
+.shead{position:sticky;top:-8px;z-index:3;background:var(--bg);margin:-8px -16px 6px;padding:8px 12px 6px;display:flex;flex-direction:column;align-items:stretch}
+.luk{align-self:flex-end;width:32px;height:32px;border-radius:50%;border:0;background:#E3E3E8;display:flex;align-items:center;justify-content:center;margin-top:-4px}
+.luk svg{width:16px;height:16px;stroke:#6C6C70;stroke-width:2.6;stroke-linecap:round;fill:none}
 .sheet h3{font-size:24px;font-weight:700;letter-spacing:-.02em;padding:0 4px}
 .sheet>.sub{padding:0 4px}
 .sheet .grp{margin:0}
