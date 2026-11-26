@@ -38,8 +38,11 @@ function tidSiden(fra: string): string {
   return `${m} måneder`;
 }
 
-export function takTekst(navn: string, firma: string, link: string) {
-  return `Hej ${fornavn(navn)}, tak fordi du valgte ${firma}. Hvis du er glad for resultatet, vil vi blive rigtig glade for en anmeldelse på Google. Det tager 30 sekunder: ${link} Mvh ${firma}`;
+// Bilplejeren vælger i appen, om anmeldelsen skal på Google eller Trustpilot (kolonnen anmeld_sted)
+export const erTrustpilot = (ind: any) => ind?.anmeld_sted === "trustpilot";
+export const anmeldLink = (ind: any) => String((erTrustpilot(ind) ? ind?.trustpilot_link : ind?.google_link) || "");
+export function takTekst(navn: string, firma: string, link: string, sted = "Google") {
+  return `Hej ${fornavn(navn)}, tak fordi du valgte ${firma}. Hvis du er glad for resultatet, vil vi blive rigtig glade for en anmeldelse på ${sted}. Det tager 30 sekunder: ${link} Mvh ${firma}`;
 }
 export function paamindTekst(navn: string, firma: string, behandling: string, udfoert: string, tlf: string | null, token: string) {
   const kontakt = tlf ? `Ring eller skriv på ${tlf}` : "Skriv til os";
@@ -51,7 +54,7 @@ export function annonceTekst(tekst: string, token: string) {
   const ren = tekst.replace(/\s*Afmeld:\s*\S+\s*$/i, "").trim();
   return `${ren} Afmeld: findbilplejere.dk/stop?k=${token}`;
 }
-// Kort link på vores eget domæne (godkendt hos GatewayAPI). findbilplejere.dk/g/<kode> sender videre til Google (funktionen "anmeld").
+// Kort link på vores eget domæne (godkendt hos GatewayAPI). findbilplejere.dk/g/<kode> sender videre til Google eller Trustpilot (funktionen "anmeld").
 const kortLink = (shopId: string) => `https://findbilplejere.dk/g/${String(shopId).slice(0, 8)}`;
 async function sendSms(afsender: string, nummer8: string, tekst: string, ref: string) {
   const res = await fetch(GATEWAY, {
@@ -112,9 +115,9 @@ async function koer() {
       else if (k.stop) upd = { status: "annulleret", fejl: "Kunden er stoppet" };
       else if (b.type === "tak") {
         if (Date.now() - new Date(b.planlagt_til).getTime() > 2 * 864e5) upd = { status: "sprunget_over", fejl: "For gammel (over 2 døgn)" };
-        else if (!ind.google_link) upd = { status: "fejl", fejl: "Mangler link til Google-anmeldelse" };
+        else if (!anmeldLink(ind)) upd = { status: "fejl", fejl: `Mangler link til ${erTrustpilot(ind) ? "Trustpilot" : "Google"}-anmeldelse` };
         else {
-          const tekst = takTekst(k.navn, firma, kortLink(b.shop_id));
+          const tekst = takTekst(k.navn, firma, kortLink(b.shop_id), erTrustpilot(ind) ? "Trustpilot" : "Google");
           upd = { tekst, ...(await lever(ind, k.navn, k.telefon, tekst, b.id)) };
         }
       } else if (b.type === "paamindelse") {
@@ -247,7 +250,7 @@ async function testSms(req: Request, shopId: string) {
   if (!ind) return json({ fejl: "Ingen adgang eller indstillinger ikke gemt" }, 403);
   if (!ind.testnummer) return json({ fejl: "Skriv dit eget mobilnummer under Testnummer først" }, 400);
   const { data: shop } = await admin.from("shops").select("name").eq("id", shopId).maybeSingle();
-  const tekst = takTekst("Mette", shop?.name ?? "os", ind.google_link ? kortLink(shopId) : "https://g.page/r/eksempel/review");
+  const tekst = takTekst("Mette", shop?.name ?? "os", anmeldLink(ind) ? kortLink(shopId) : "https://g.page/r/eksempel/review", erTrustpilot(ind) ? "Trustpilot" : "Google");
   const { data: rec } = await admin.from("sk_beskeder").insert({
     shop_id: shopId, type: "test", planlagt_til: new Date().toISOString(), status: "sender", tekst,
   }).select("id").single();
