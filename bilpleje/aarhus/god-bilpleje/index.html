@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="da">
+<!-- statisk profil: bygget af seo-kilde/byg_profiler.js --><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google tag (gtag.js) -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=AW-18378049298"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-18378049298');
+  gtag('config', 'G-KTK6266STG');
+</script>
+<script src="/js/kilde.js"></script>
+<title>God Bilpleje – bilpleje i Aarhus | FindBilplejere.dk</title>
+<meta name="description" content="Familieejet og certificeret high-end bilplejecenter i Aarhus" id="metaDescription">
+<meta property="og:image" content="https://findbilplejere.dk/og-image.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../css/style.css">
+<style>
+  body.has-sticky-cta{padding-bottom:0;}
+  .pf-wrap{ --section-gap:32px; }
+  @media (max-width:760px){
+    .pf-wrap{ --section-gap:20px; }
+  }
+  /* Desktop/tablet only: profile pages get a much wider column than the sitewide
+     900px .seo-page default. Scoped to .seo-page .pf-wrap (only exists on this
+     page) so by.html/index.html, which share the global .seo-page rule, are untouched. */
+  @media (min-width:761px){
+    .seo-page .pf-wrap{ width:90%; max-width:1320px; }
+  }
+
+  /* TWO-COLUMN PRIMITIVE (hero + about) */
+  .pf-split{display:grid; grid-template-columns:1fr 1fr; gap:48px;}
+  @media (max-width:760px){
+    .pf-split{grid-template-columns:1fr; gap:24px;}
+  }
+
+  /* HERO */
+  .pf-hero{padding:8px 0 0;}
+  .pf-hero-grid{align-items:center;}
+  .pf-hero-main{display:flex; flex-direction:column;}
+  .pf-eyebrow, h2.pf-eyebrow{
+    color:var(--gold); font-family:'JetBrains Mono',monospace; font-size:12px;
+    letter-spacing:0.12em; text-transform:uppercase; margin:0 0 14px;
+  }
+  h1.pf-name{font-size:52px; line-height:1.05; margin-bottom:14px;}
+  .pf-location{color:var(--text-muted); font-size:16px; margin-bottom:14px;}
+  .pf-badges{display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; margin-bottom:14px;}
+  .pf-stars-row{margin:0; display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 8px;}
+  .pf-rating-num{font-size:18px; color:var(--navy);}
+  .pf-rating-count{color:var(--text-muted); font-size:14px;}
+  .pf-mobil{margin:0; display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:var(--navy); background:var(--gold-light); border:1px solid var(--gold); border-radius:20px; padding:4px 12px;}
+  .pf-erhverv{margin:0; display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:var(--white); background:var(--navy); border:1px solid var(--navy); border-radius:20px; padding:4px 12px;}
+  .pf-erhverv-note{margin:0 0 14px; font-size:15px; line-height:1.5; color:var(--navy); background:var(--gold-light); border-left:4px solid var(--gold); border-radius:6px; padding:10px 14px;}
+  .pf-mobil::before{content:''; width:8px; height:8px; border-radius:50%; background:var(--gold-dark);}
+  .pf-stars{color:var(--gold); font-size:20px; letter-spacing:3px;}
+  .pf-tagline{color:var(--text-muted); font-size:17px; font-style:italic; line-height:1.5;}
+
+  .pf-hero-media{display:flex; flex-direction:column; gap:14px;}
+  .pf-hero-img, .pf-hero-fallback{
+    width:100%; aspect-ratio:4/3; object-fit:contain; border-radius:16px;
+    border:1px solid var(--chrome-line); background:var(--navy); display:block;
+  }
+  .pf-hero-fallback{display:flex; align-items:center; justify-content:center;}
+  .pf-hero-fallback svg{width:56px; height:56px; color:var(--gold); opacity:0.8;}
+  .pf-cta-primary{width:100%; font-size:16px; padding:16px; margin:0; display:block; text-align:center; text-decoration:none; box-sizing:border-box;}
+  .pf-secondary-actions{display:flex; flex-wrap:wrap; gap:10px;}
+  .pf-secondary-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--white); border:1px solid var(--chrome-line); color:var(--navy);
+    padding:9px 16px; border-radius:24px; font-size:13px; font-weight:600;
+    transition:border-color 160ms var(--ease-out), background 160ms var(--ease-out);
+  }
+  .pf-secondary-btn:hover{border-color:var(--gold); background:var(--gold-light);}
+  .pf-secondary-btn svg{width:15px; height:15px;}
+
+  @media (max-width:760px){
+    .pf-hero-main{text-align:center;} .pf-badges, .pf-stars-row{justify-content:center;}
+    h1.pf-name{font-size:32px;}
+    .pf-secondary-actions{justify-content:center;}
+  }
+
+  /* STICKY MOBILE CTA */
+  .pf-upgrade{font-size:14px; color:#4B5563;}
+  .pf-upgrade p{margin:0 0 8px;}
+  .pf-upgrade a{color:var(--navy); font-weight:600;}
+  .pf-sticky-cta{display:none;}
+  @media (max-width:760px){
+    .pf-sticky-cta{
+      display:block; position:fixed; left:0; right:0; bottom:0; z-index:500;
+      background:var(--white); border-top:1px solid var(--chrome-line);
+      padding:12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+      box-shadow:0 -4px 16px rgba(16,24,40,0.10);
+    }
+    .pf-sticky-cta .btn-primary{width:100%; margin:0; display:block; text-align:center; text-decoration:none; box-sizing:border-box;}
+    body.has-sticky-cta{padding-bottom:78px;}
+  }
+
+  /* SECTIONS — each one is a flat white card floating on the page's fog background,
+     mirroring the reference's panel-on-light-background composition. */
+  .profile-section{margin-top:var(--section-gap);}
+  .profile-section h2{font-size:18px; margin:0 0 14px;}
+  .pf-card{background:var(--white); border-radius:20px; padding:48px;}
+  .pf-card-divider{height:1px; background:var(--chrome-line); margin:32px 0;}
+  @media (max-width:760px){
+    .pf-card{padding:28px 24px;}
+    .pf-card-divider{margin:24px 0;}
+  }
+
+  /* ABOUT + STATS (pf-split-top is reused below for the services+price and reviews+info pairs too) */
+  .pf-split-top{align-items:start;}
+  .pf-about-headline{
+    font-family:'Oswald',sans-serif; font-weight:600; text-transform:none; letter-spacing:normal;
+    font-size:36px; line-height:1.18; margin:0; color:var(--navy);
+  }
+  .pf-about-text{color:var(--text-muted); line-height:1.7; font-size:16px; max-width:640px;}
+  .pf-about-text.is-clamped{display:-webkit-box; -webkit-line-clamp:6; -webkit-box-orient:vertical; overflow:hidden;}
+  .pf-readmore{color:var(--gold-dark); font-weight:600; font-size:14px; cursor:pointer; margin-top:8px; display:inline-block; background:none; border:none; padding:0; font-family:inherit;}
+  @media (max-width:760px){
+    .pf-about-headline{font-size:26px;}
+  }
+
+  /* STATS */
+  .pf-stats{display:flex; flex-wrap:wrap; gap:36px 56px;}
+  .pf-stat{display:flex; flex-direction:column; gap:6px;}
+  .pf-stat-value{font-family:'Oswald',sans-serif; font-size:40px; font-weight:600; color:var(--navy); line-height:1;}
+  .pf-stat-label{font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted);}
+  @media (min-width:761px){
+    .pf-stat + .pf-stat{border-left:1px solid var(--chrome-line); padding-left:40px;}
+  }
+
+  /* SERVICES */
+  .pf-services{columns:260px 2; column-gap:40px; list-style:none; margin:0; padding:0;}
+  .pf-service-row{display:flex; align-items:baseline; gap:10px; padding:9px 0; break-inside:avoid; -webkit-column-break-inside:avoid;}
+  .pf-service-row::before{content:"–"; color:var(--gold); font-weight:700; flex-shrink:0;}
+  .pf-service-name{font-size:15px; color:var(--navy);}
+  @media (max-width:760px){ .pf-services{columns:1;} }
+
+  .pf-chips{display:flex; flex-wrap:wrap; gap:8px; list-style:none; margin:0; padding:0;}
+  .pf-chip{background:var(--gold-light); color:var(--navy); border:1px solid rgba(182,139,72,0.35); border-radius:999px; padding:7px 14px; font-size:14px; font-weight:500;}
+
+  /* HVORFOR VÆLGE OS */
+  .pf-why{display:grid; grid-template-columns:1fr 1fr; gap:10px 32px;}
+  .pf-why-item{display:flex; align-items:flex-start; gap:10px; color:var(--text-muted); font-size:14px; line-height:1.5;}
+  .pf-why-item svg{width:18px; height:18px; flex-shrink:0; margin-top:1px; color:var(--gold);}
+  @media (max-width:600px){ .pf-why{grid-template-columns:1fr;} }
+
+  /* FÅ EN PRIS */
+  .pf-quote{background:var(--navy); color:var(--white); border-radius:20px; padding:40px 48px; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap;}
+  .pf-quote h2{color:var(--gold); margin:0 0 8px;}
+  .pf-quote p{color:rgba(255,255,255,0.8); margin:0; max-width:560px; line-height:1.6; font-size:15px;}
+  .pf-quote .pf-quote-level{color:var(--white); font-size:16px; margin:0 0 10px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .pf-quote .price-level{font-size:20px;}
+  .pf-quote .price-level-off{color:rgba(255,255,255,0.25);}
+  .pf-quote-level-name{background:rgba(182,139,72,0.18); color:var(--gold); border-radius:999px; padding:3px 12px; font-size:13px; font-weight:600;}
+  .pf-quote-actions{display:flex; gap:10px; flex-wrap:wrap;}
+  .pf-quote-btn{display:inline-flex; align-items:center; gap:8px; background:var(--gold); color:var(--navy); padding:12px 20px; border-radius:10px; font-weight:600; font-size:14px; text-decoration:none;}
+  .pf-quote-btn:hover{filter:brightness(1.07);}
+  .pf-quote-btn svg{width:16px; height:16px;}
+  @media (max-width:760px){ .pf-quote{padding:28px 24px;} .pf-quote-actions{width:100%;} .pf-quote-btn{flex:1; justify-content:center;} }
+
+  /* REVIEWS */
+  .pf-review{display:flex; align-items:center; gap:20px;}
+  .pf-review-score{font-size:40px; font-weight:700; color:var(--navy); font-family:'Oswald',sans-serif; flex-shrink:0;}
+  .pf-review-meta p{margin:0 0 4px;}
+  .pf-review-meta .pf-stars{font-size:16px;}
+  .pf-review-meta a{color:var(--gold-dark); font-weight:600; text-decoration:underline; font-size:13px;}
+
+  /* PRAKTISK INFORMATION */
+  .pf-info-list{max-width:460px;}
+  .pf-info-row{display:flex; justify-content:space-between; gap:16px; padding:10px 0; border-bottom:1px solid var(--chrome-line); font-size:14px;}
+  .pf-info-row:last-child{border-bottom:none;}
+  .pf-info-row.is-today{font-weight:700; color:var(--navy);}
+  .pf-info-label{color:var(--text-muted); flex-shrink:0;}
+  .pf-info-value{color:var(--navy); text-align:right; overflow-wrap:anywhere;}
+
+  /* ENTRANCE ANIMATION */
+  .pf-hero, .profile-section{
+    opacity:0; transform:translateY(10px);
+    animation:profile-enter 420ms var(--ease-out) forwards;
+  }
+  @keyframes profile-enter{to{opacity:1; transform:translateY(0);}}
+  @media (prefers-reduced-motion: reduce){
+    .pf-hero, .profile-section{animation:none; opacity:1; transform:none;}
+  }
+</style>
+<link rel="canonical" href="https://findbilplejere.dk/bilpleje/aarhus/god-bilpleje/">
+<meta property="og:title" content="God Bilpleje">
+<meta property="og:description" content="Familieejet og certificeret high-end bilplejecenter i Aarhus">
+<meta property="og:url" content="https://findbilplejere.dk/bilpleje/aarhus/god-bilpleje/">
+<meta property="og:type" content="website">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "AutomotiveBusiness",
+ "name": "God Bilpleje",
+ "url": "https://findbilplejere.dk/bilpleje/aarhus/god-bilpleje/",
+ "address": {
+  "@type": "PostalAddress",
+  "streetAddress": "Vesterløkken 2, 8230 Åbyhøj",
+  "addressLocality": "Aarhus",
+  "addressCountry": "DK"
+ },
+ "telephone": "91 93 10 63",
+ "image": "/god-bilpleje-logo.webp",
+ "description": "Familieejet og certificeret high-end bilplejecenter i Aarhus",
+ "areaServed": "Aarhus, Viby, Risskov",
+ "knowsAbout": [
+  "Keramisk coating",
+  "Polering",
+  "Folie",
+  "Indvendig rens",
+  "Udvendig rens",
+  "Lakforsegling/voks",
+  "Sæderens",
+  "Detailing",
+  "Ozonbehandling",
+  "Damprens",
+  "Læderpleje",
+  "Solfilm"
+ ]
+}
+</script>
+</head>
+<body class="has-sticky-cta">
+
+<nav>
+  <div class="wrap">
+    <a href="../../../index.html" class="logo"><span class="logo-prefix">find</span>bilplejere<span class="logo-suffix">.dk</span></a>
+    <div class="nav-links">
+      <a href="../../../index.html#search">Find en butik</a>
+      <a href="../../../index.html#shops">For butikker</a>
+    </div>
+    <a href="../../../index.html#shops" class="nav-cta">Bliv listet</a>
+  </div>
+</nav>
+
+<section class="seo-page">
+  <div class="wrap pf-wrap">
+    <div class="breadcrumb" id="breadcrumb">
+    <a href="/index.html">Forside</a><span class="sep">/</span>
+    <a href="/bilpleje/aarhus/">Aarhus</a><span class="sep">/</span>God Bilpleje
+  </div>
+
+    <div id="shopContent">
+    <div class="pf-hero">
+      <div class="pf-split pf-hero-grid">
+        <div class="pf-hero-main">
+          <p class="pf-eyebrow">Bilpleje i Aarhus</p>
+          <h1 class="pf-name">God Bilpleje</h1>
+          <p class="pf-location">Vesterløkken 2, 8230 Åbyhøj</p>
+          <div class="pf-badges">
+            <p class="pf-stars-row"><span class="pf-stars" role="img" aria-label="4.9 ud af 5 stjerner">★★★★★</span> <strong class="pf-rating-num">4.9</strong> <span class="pf-rating-count">292 anmeldelser på Trustpilot</span></p>
+            
+            
+          </div>
+          
+          <p class="pf-tagline">Familieejet og certificeret high-end bilplejecenter i Aarhus</p>
+        </div>
+        <div class="pf-hero-media">
+          <img src="/god-bilpleje-logo.webp" alt="God Bilpleje" class="pf-hero-img">
+          <a class="btn-primary pf-cta-primary" href="tel:91931063" onclick="trackContact(&quot;God Bilpleje&quot;, 'phone')">Ring til God Bilpleje</a>
+          <div class="pf-secondary-actions">
+            <a class="pf-secondary-btn" href="mailto:mail@godbilpleje.dk" onclick="trackContact(&quot;God Bilpleje&quot;, 'email')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M22 6l-10 7L2 6"></path></svg>E-mail</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="profile-section pf-card">
+      <h2>Om God Bilpleje</h2>
+      <p class="pf-about-text is-clamped">God Bilpleje er et familieejet og certificeret bilplejecenter i Aarhus med fokus på professionel og high-end bilpleje. De specialiserer sig blandt andet i premium polering, keramisk coating, grundig indvendig og udvendig rengøring samt lakbeskyttelse. Derudover tilbyder de PPF, folie, chrome delete, solfilm, lugtsanering, kalechebehandling og meget mere. Hos God Bilpleje arbejdes der med fokus på kvalitet, grundighed og det rigtige resultat til den enkelte bil. Virksomheden tilbyder behandlinger til både private og erhverv og har mulighed for gratis lånebil.</p>
+      <button class="pf-readmore" onclick="toggleAbout(this)">Læs mere</button>
+    </div>
+  
+    <div class="profile-section pf-card">
+      <h2>Ydelser</h2>
+      <ul class="pf-chips"><li class="pf-chip">Keramisk coating</li><li class="pf-chip">Polering</li><li class="pf-chip">Folie</li><li class="pf-chip">Indvendig rens</li><li class="pf-chip">Udvendig rens</li><li class="pf-chip">Lakforsegling/voks</li><li class="pf-chip">Sæderens</li><li class="pf-chip">Detailing</li><li class="pf-chip">Ozonbehandling</li><li class="pf-chip">Damprens</li><li class="pf-chip">Læderpleje</li><li class="pf-chip">Solfilm</li></ul>
+    </div>
+  
+    <div class="profile-section pf-quote">
+      <div>
+        <h2>Få en pris</h2>
+        <p class="pf-quote-level">Prisniveau: <span class="price-level" title="Prisniveau: Premium"><span class="price-level-on">kr kr kr</span></span> <span class="pf-quote-level-name">Premium</span></p>
+        <p>Prisen afhænger af bilen og behandlingen. Kontakt God Bilpleje direkte og få en pris på lige netop din bil.</p>
+      </div>
+      <div class="pf-quote-actions">
+        <a class="pf-quote-btn" href="tel:91931063" onclick="trackContact(&quot;God Bilpleje&quot;, 'phone')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>Ring</a><a class="pf-quote-btn" href="mailto:mail@godbilpleje.dk" onclick="trackContact(&quot;God Bilpleje&quot;, 'email')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M22 6l-10 7L2 6"></path></svg>E-mail</a>
+      </div>
+    </div>
+  
+    <div class="profile-section pf-card">
+      <h2>Hvorfor vælge os?</h2>
+      <div class="pf-why">
+        <div class="pf-why-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-6"></path></svg><span>Certificeret og familieejet bilplejecenter</span></div><div class="pf-why-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-6"></path></svg><span>Premium 3-trins dybdegående polering og keramisk coating</span></div><div class="pf-why-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-6"></path></svg><span>PPF på udsatte områder samt chrome delete/wrapping</span></div><div class="pf-why-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-6"></path></svg><span>Mulighed for gratis lånebil</span></div>
+      </div>
+    </div>
+  <div class="profile-section pf-card pf-split pf-split-top"><div>
+    <h2>Anmeldelser</h2>
+    <div class="pf-review">
+      <div class="pf-review-score">4.9</div>
+      <div class="pf-review-meta">
+        <p class="pf-stars">★★★★★</p>
+        <p>292 anmeldelser på Trustpilot</p>
+        <a href="https://dk.trustpilot.com/review/godbilpleje.dk" target="_blank" rel="noopener">Se anmeldelser</a>
+      </div>
+    </div>
+  </div><div>
+    <h2>Åbningstider og kontakt</h2>
+    <div class="pf-info-list"><div class="pf-info-row"><span class="pf-info-label">Adresse</span><span class="pf-info-value">Vesterløkken 2, 8230 Åbyhøj</span></div><div class="pf-info-row"><span class="pf-info-label">Dækningsområde</span><span class="pf-info-value">Aarhus, Viby, Risskov</span></div><div class="pf-info-row is-today"><span class="pf-info-label">Man–fre</span><span class="pf-info-value">08:00–16:00</span></div><div class="pf-info-row"><span class="pf-info-label">Lør–søn</span><span class="pf-info-value">Lukket / efter aftale</span></div><div class="pf-info-row"><span class="pf-info-label">Telefon</span><span class="pf-info-value">91 93 10 63</span></div><div class="pf-info-row"><span class="pf-info-label">E-mail</span><span class="pf-info-value">mail@godbilpleje.dk</span></div></div>
+  </div></div></div>
+    <div id="naerhed"><div class="profile-section"><h2>Andre bilplejere i nærheden</h2><div class="related-links"><a href="/bilpleje/aarhus/final-shine/">Final Shine (Aarhus)</a><a href="/bilpleje/aarhus/hojbjerg-bilpleje/">Højbjerg Bilpleje (Højbjerg, 6 km)</a><a href="/bilpleje/aarhus/aarhus-detailing/">Aarhus Detailing (Brabrand, 13 km)</a><a href="/bilpleje/aarhus/">Alle bilplejere i Aarhus</a></div></div></div>
+  </div>
+</section>
+
+<div class="pf-sticky-cta" id="stickyCta" style="">
+  <a class="btn-primary" id="stickyCtaBtn" href="tel:91931063">Ring til God Bilpleje</a>
+</div>
+
+<footer>
+  <a href="../../../privatlivspolitik.html">Privatlivspolitik</a> · findbilplejere.dk
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/js/profil-niveau.js"></script>
+<script src="../../../js/main.js"></script>
+<script>
+const DAYS_ORDER = [['mandag','Mandag'],['tirsdag','Tirsdag'],['onsdag','Onsdag'],['torsdag','Torsdag'],['fredag','Fredag'],['lørdag','Lørdag'],['søndag','Søndag']];
+const JS_DAY_TO_KEY = ['søndag','mandag','tirsdag','onsdag','torsdag','fredag','lørdag'];
+
+function toggleAbout(btn){
+  const p = btn.previousElementSibling;
+  const collapsed = p.classList.toggle('is-clamped') === false;
+  btn.textContent = collapsed ? 'Vis mindre' : 'Læs mere';
+}
+
+function extractLeadSentence(description, limit = 160){
+  const match = description.match(/[.!?](?=\s|$)/);
+  if (!match || match.index > limit) return null;
+  return description.slice(0, match.index + 1).trim();
+}
+
+// Samler ens dage: "Man–tors 10:00–16:00", "Lør–søn Lukket". Er alle dage ens, vises én linje.
+function normHours(v){
+  return String(v).trim()
+    .replace(/\b(\d{1,2})(?::(\d{2}))?\s*[-–]\s*(\d{1,2})(?::(\d{2}))?\b/g,
+      (m, a, am, b, bm) => `${a.padStart(2,'0')}:${am || '00'}–${b.padStart(2,'0')}:${bm || '00'}`)
+    .replace(/^./, c => c.toUpperCase());
+}
+function groupedHours(hours){
+  const SHORT = {mandag:'Man',tirsdag:'Tirs',onsdag:'Ons',torsdag:'Tors',fredag:'Fre',lørdag:'Lør',søndag:'Søn'};
+  const days = DAYS_ORDER.filter(([k]) => hours[k]).map(([k]) => ({ key: k, value: normHours(hours[k]) }));
+  if (!days.length) return [];
+  if (days.length === 7 && days.every(d => d.value === days[0].value)) {
+    return [{ label: 'Alle dage', value: days[0].value, keys: days.map(d => d.key) }];
+  }
+  const groups = [];
+  for (const d of days) {
+    const last = groups[groups.length - 1];
+    const prevIdx = last ? DAYS_ORDER.findIndex(([k]) => k === last.keys[last.keys.length - 1]) : -2;
+    const idx = DAYS_ORDER.findIndex(([k]) => k === d.key);
+    if (last && last.value === d.value && idx === prevIdx + 1) last.keys.push(d.key);
+    else groups.push({ value: d.value, keys: [d.key] });
+  }
+  return groups.map(g => {
+    const a = SHORT[g.keys[0]], b = SHORT[g.keys[g.keys.length - 1]];
+    const label = g.keys.length === 1 ? a : `${a}–${b.toLowerCase()}`;
+    return { label, value: g.value, keys: g.keys };
+  });
+}
+
+function socialUrl(kind, v){
+  if (/^https?:\/\//.test(v)) return v;
+  const handle = v.replace(/^@/, '').replace(/^(www\.)?(instagram|facebook)\.com\//, '');
+  return `https://www.${kind}.com/${handle}`;
+}
+
+function infoRow(label, value, extraClass){
+  if (!value) return '';
+  return `<div class="pf-info-row${extraClass ? ' ' + extraClass : ''}"><span class="pf-info-label">${label}</span><span class="pf-info-value">${value}</span></div>`;
+}
+
+async function loadShop(){
+  const path = window.location.pathname.replace(/^\//, '');
+  const { data: rawShop, error } = await db.from('shops').select('*').eq('profile_url', path).eq('godkendt', true).maybeSingle();
+
+  const content = document.getElementById('shopContent');
+  const breadcrumb = document.getElementById('breadcrumb');
+
+  if (error || !rawShop) {
+    content.innerHTML = '<p class="intro">Denne butiksprofil findes ikke (længere).</p>';
+    return;
+  }
+  const komplet = isKomplet(rawShop);
+  const shop = toBasisView(rawShop);
+
+  db.from('profil_visninger').insert({ butik: shop.name, kilde: window.fbKilde ? window.fbKilde() : null }).then(({ error }) => {
+    if (error) console.error('Kunne ikke logge profilvisning', error);
+  });
+
+  document.title = shop.name + ' – bilpleje i ' + shop.city + ' | FindBilplejere.dk';
+  const metaDesc = shop.tagline || `${shop.name} tilbyder ${(shop.services || []).slice(0, 3).join(', ')} i ${shop.city}. Kontakt dem direkte.`;
+  document.getElementById('metaDescription').setAttribute('content', metaDesc);
+  breadcrumb.innerHTML = `
+    <a href="/index.html">Forside</a><span class="sep">/</span>
+    <a href="/bilpleje/${shop.city_key}/">${shop.city}</a><span class="sep">/</span>${shop.name}
+  `;
+
+  const hasReview = shop.review_rating && shop.review_count && shop.review_visible !== false;
+  const isMobile = (shop.services || []).some(s => String(s).toLowerCase().includes('mobil'));
+  const starsGlyphs = hasReview ? '★★★★★'.slice(0, Math.round(shop.review_rating)) + '☆☆☆☆☆'.slice(0, 5 - Math.round(shop.review_rating)) : '';
+
+  // ---- KONTAKT: direkte til butikken (ingen "Få tilbud"-mellemled) ----
+  const ICON_PHONE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
+  const ICON_MAIL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>';
+  const ICON_WEB = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
+  const websiteUrl = shop.website ? (/^https?:\/\//.test(shop.website) ? shop.website : 'https://' + shop.website) : '';
+  const contacts = [
+    shop.phone && { method: 'phone', href: 'tel:' + shop.phone.replace(/\s/g, ''), label: 'Ring til ' + shop.name, short: 'Ring', icon: ICON_PHONE },
+    shop.email && { method: 'email', href: 'mailto:' + shop.email, label: 'Skriv til ' + shop.name, short: 'E-mail', icon: ICON_MAIL },
+    websiteUrl && { method: 'website', href: websiteUrl, label: 'Besøg hjemmeside', short: 'Hjemmeside', icon: ICON_WEB, external: true },
+  ].filter(Boolean);
+  const primaryContact = contacts[0] || null;
+  const secondaryContacts = contacts.slice(1);
+  const safeNameJs = JSON.stringify(shop.name).replace(/"/g, '&quot;');
+
+  // ---- 1. HERO ----
+  const heroImgHtml = shop.hero_image_url
+    ? `<img src="${shop.hero_image_url}" alt="${shop.name}" class="pf-hero-img">`
+    : `<div class="pf-hero-fallback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6"/><path d="M20 20l-5.5-5.5"/></svg></div>`;
+  const heroHtml = `
+    <div class="pf-hero">
+      <div class="pf-split pf-hero-grid">
+        <div class="pf-hero-main">
+          <p class="pf-eyebrow">Bilpleje i ${shop.city}</p>
+          <h1 class="pf-name">${shop.name}</h1>
+          ${shop.address ? `<p class="pf-location">${shop.address}</p>` : ''}
+          ${(hasReview || isMobile || shop.kun_erhverv) ? `<div class="pf-badges">
+            ${hasReview ? `<p class="pf-stars-row"><span class="pf-stars" role="img" aria-label="${shop.review_rating} ud af 5 stjerner">${starsGlyphs}</span> <strong class="pf-rating-num">${shop.review_rating}</strong> <span class="pf-rating-count">${shop.review_count} anmeldelser${shop.review_source ? ' på ' + shop.review_source : ''}</span></p>` : ''}
+            ${shop.kun_erhverv ? `<p class="pf-erhverv">Kun erhverv</p>` : ''}
+            ${isMobile ? `<p class="pf-mobil">Kommer ud til dig</p>` : ''}
+          </div>` : ''}
+          ${shop.kun_erhverv ? `<p class="pf-erhverv-note"><strong>Bemærk:</strong> ${shop.name} tager kun imod erhvervskunder, fx bilforhandlere, leasingselskaber og firmabiler. Privatpersoner kan desværre ikke bestille her.</p>` : ''}
+          ${shop.tagline ? `<p class="pf-tagline">${shop.tagline}</p>` : ''}
+        </div>
+        <div class="pf-hero-media">
+          ${heroImgHtml}
+          ${primaryContact ? `<a class="btn-primary pf-cta-primary" href="${primaryContact.href}"${primaryContact.external ? ' target="_blank" rel="noopener"' : ''} onclick="trackContact(${safeNameJs}, '${primaryContact.method}')">${primaryContact.label}</a>` : ''}
+          ${secondaryContacts.length ? `<div class="pf-secondary-actions">
+            ${secondaryContacts.map(c => `<a class="pf-secondary-btn" href="${c.href}"${c.external ? ' target="_blank" rel="noopener"' : ''} onclick="trackContact(${safeNameJs}, '${c.method}')">${c.icon}${c.short}</a>`).join('')}
+          </div>` : ''}
+        </div>
+      </div>
+    </div>
+  `;
+
+  // ---- 2. OM OS ----
+  const aboutHtml = (komplet && shop.description) ? `
+    <div class="profile-section pf-card">
+      <h2>Om ${shop.name}</h2>
+      <p class="pf-about-text${shop.description.length > 420 ? ' is-clamped' : ''}">${shop.description}</p>
+      ${shop.description.length > 420 ? '<button class="pf-readmore" onclick="toggleAbout(this)">Læs mere</button>' : ''}
+    </div>
+  ` : '';
+
+  // ---- 3. YDELSER ----
+  const servicesHtml = (shop.services && shop.services.length) ? `
+    <div class="profile-section pf-card">
+      <h2>Ydelser</h2>
+      <ul class="pf-chips">${shop.services.map(s => `<li class="pf-chip">${s}</li>`).join('')}</ul>
+    </div>
+  ` : '';
+
+  // ---- 4. FÅ EN PRIS (vi viser bevidst ingen priser på sitet) ----
+  const quoteHtml = contacts.length ? `
+    <div class="profile-section pf-quote">
+      <div>
+        <h2>Få en pris</h2>
+        ${shop.price_level ? `<p class="pf-quote-level">Prisniveau: ${priceLevelHtml(shop.price_level)} <span class="pf-quote-level-name">${PRICE_LEVEL_NAMES[shop.price_level]}</span></p>` : ''}
+        <p>Prisen afhænger af bilen og behandlingen. Kontakt ${shop.name} direkte og få en pris på lige netop din bil.</p>
+      </div>
+      <div class="pf-quote-actions">
+        ${contacts.map(c => `<a class="pf-quote-btn" href="${c.href}"${c.external ? ' target="_blank" rel="noopener"' : ''} onclick="trackContact(${safeNameJs}, '${c.method}')">${c.icon}${c.short}</a>`).join('')}
+      </div>
+    </div>
+  ` : '';
+
+  // ---- 5. HVORFOR VÆLGE OS ----
+  const why = shop.why_choose_us || [];
+  const checkSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>';
+  const whyHtml = why.length ? `
+    <div class="profile-section pf-card">
+      <h2>Hvorfor vælge os?</h2>
+      <div class="pf-why">
+        ${why.map(item => `<div class="pf-why-item">${checkSvg}<span>${item}</span></div>`).join('')}
+      </div>
+    </div>
+  ` : '';
+
+  // ---- 7 + 9. ANMELDELSER + PRAKTISK INFORMATION (paired side by side when both exist) ----
+  const hours = shop.opening_hours || {};
+  const todayKey = JS_DAY_TO_KEY[new Date().getDay()];
+  const hoursRowsHtml = groupedHours(hours)
+    .map(g => infoRow(g.label, g.value, g.keys.includes(todayKey) ? 'is-today' : ''))
+    .join('');
+  const infoRowsHtml = [
+    infoRow('Adresse', shop.address),
+    infoRow('Dækningsområde', shop.coverage_areas),
+    hoursRowsHtml,
+    infoRow('Telefon', shop.phone),
+    infoRow('E-mail', shop.email),
+    infoRow('Hjemmeside', websiteUrl ? `<a href="${websiteUrl}" target="_blank" rel="noopener" onclick="trackContact(${safeNameJs}, 'website')">${shop.website.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>` : ''),
+    infoRow('Instagram', shop.instagram ? `<a href="${socialUrl('instagram', shop.instagram)}" target="_blank" rel="noopener" onclick="trackContact(${safeNameJs}, 'instagram')">Se profil</a>` : ''),
+    infoRow('Facebook', shop.facebook ? `<a href="${socialUrl('facebook', shop.facebook)}" target="_blank" rel="noopener" onclick="trackContact(${safeNameJs}, 'facebook')">Se profil</a>` : ''),
+  ].filter(Boolean).join('');
+
+  const reviewsInner = hasReview ? `
+    <h2>Anmeldelser</h2>
+    <div class="pf-review">
+      <div class="pf-review-score">${shop.review_rating}</div>
+      <div class="pf-review-meta">
+        <p class="pf-stars">${starsGlyphs}</p>
+        <p>${shop.review_count} anmeldelser${shop.review_source ? ' på ' + shop.review_source : ''}</p>
+        ${shop.review_url ? `<a href="${shop.review_url}" target="_blank" rel="noopener">Se anmeldelser</a>` : ''}
+      </div>
+    </div>
+  ` : '';
+  const infoInner = infoRowsHtml ? `
+    <h2>Åbningstider og kontakt</h2>
+    <div class="pf-info-list">${infoRowsHtml}</div>
+  ` : '';
+
+  let reviewsInfoHtml = '';
+  if (hasReview && infoRowsHtml) {
+    reviewsInfoHtml = `<div class="profile-section pf-card pf-split pf-split-top"><div>${reviewsInner}</div><div>${infoInner}</div></div>`;
+  } else if (hasReview || infoRowsHtml) {
+    reviewsInfoHtml = `<div class="profile-section pf-card">${reviewsInner}${infoInner}</div>`;
+  }
+
+  // Basisprofil: lille, diskret boks til butiksejeren om at opgradere.
+  const upgradeHtml = komplet ? '' : `
+    <div class="profile-section pf-card pf-upgrade">
+      <p><strong>Er det din virksomhed?</strong> Med en komplet profil kan I vise billeder, priser, åbningstider og en beskrivelse, og I bliver vist højere i søgningen.</p>
+      <a href="/butik-panel/">Log ind og se mulighederne</a>
+    </div>
+  `;
+
+  content.innerHTML = heroHtml + aboutHtml + servicesHtml + quoteHtml + whyHtml + reviewsInfoHtml + upgradeHtml;
+
+  // Sticky mobile CTA
+  const stickyCta = document.getElementById('stickyCta');
+  const stickyCtaBtn = document.getElementById('stickyCtaBtn');
+  if (!primaryContact) return;
+  stickyCtaBtn.textContent = primaryContact.label;
+  stickyCtaBtn.href = primaryContact.href;
+  if (primaryContact.external) { stickyCtaBtn.target = '_blank'; stickyCtaBtn.rel = 'noopener'; }
+  stickyCtaBtn.onclick = () => trackContact(shop.name, primaryContact.method);
+  stickyCta.style.display = '';
+  document.body.classList.add('has-sticky-cta');
+}
+loadShop();
+</script>
+
+
+
+</body></html>

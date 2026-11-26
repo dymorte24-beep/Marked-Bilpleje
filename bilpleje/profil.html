@@ -214,6 +214,7 @@
     <div id="shopContent">
       <p class="intro">Henter…</p>
     </div>
+    <div id="naerhed"></div>
   </div>
 </section>
 
@@ -302,7 +303,7 @@ async function loadShop(){
     if (error) console.error('Kunne ikke logge profilvisning', error);
   });
 
-  document.title = shop.name + ' | FindBilplejere.dk';
+  document.title = shop.name + ' – bilpleje i ' + shop.city + ' | FindBilplejere.dk';
   const metaDesc = shop.tagline || `${shop.name} tilbyder ${(shop.services || []).slice(0, 3).join(', ')} i ${shop.city}. Kontakt dem direkte.`;
   document.getElementById('metaDescription').setAttribute('content', metaDesc);
   breadcrumb.innerHTML = `

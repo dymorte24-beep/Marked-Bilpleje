@@ -12,7 +12,7 @@ from guides import GUIDES
 
 ROD = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOMÆNE = "https://findbilplejere.dk"
-OPDATERET = "2026-11-20"
+OPDATERET = "2026-11-26"
 
 HEAD_START = """<!DOCTYPE html>
 <html lang="da">
@@ -172,8 +172,16 @@ def km(a, b):
     return round(6371 * 2 * math.atan2(math.sqrt(h), math.sqrt(1 - h)))
 
 
-def butikker_paa_fyn():
-    """Godkendte bilplejere med postnummer på Fyn (5000-5999), hentet ved byg."""
+def landsdel(nr):
+    n = int(nr)
+    if 3700 <= n <= 3799: return "bornholm"
+    if n < 5000: return "sjaelland"
+    if n < 6000: return "fyn"
+    return "jylland"
+
+
+def butikker():
+    """Alle godkendte bilplejere med kendt by, hentet ved byg."""
     global _BUTIKKER
     if _BUTIKKER is None:
         req = urllib.request.Request(
@@ -187,15 +195,15 @@ def butikker_paa_fyn():
         _BUTIKKER = []
         for s in alle:
             g = geo(s["city"])
-            if g and 5000 <= int(g["nr"]) <= 5999:
+            if g:
                 _BUTIKKER.append({**s, "_geo": g})
     return _BUTIKKER
 
 
 def afstand_tabel(b):
     byer = b.get("afstand_fra")
-    butikker = butikker_paa_fyn()
-    if not byer or not butikker:
+    alle = butikker()
+    if not byer or not alle:
         return ""
     rækker = []
     for by in byer:
@@ -203,7 +211,9 @@ def afstand_tabel(b):
         if not g:
             print("ADVARSEL: ukendt by i afstand_fra:", by)
             continue
-        nærmeste = sorted(butikker, key=lambda s: km(g, s["_geo"]))[:2]
+        # Kun bilplejere på samme landsdel (luftlinje over vandet giver forkerte afstande).
+        samme = [s for s in alle if landsdel(s["_geo"]["nr"]) == landsdel(g["nr"])]
+        nærmeste = sorted(samme, key=lambda s: km(g, s["_geo"]))[:2]
         celler = []
         for s in nærmeste:
             navn = esc(s["name"])
@@ -219,7 +229,7 @@ def afstand_tabel(b):
         '    <div class="seo-text">\n'
         '      <table class="afstand-tabel">\n        <thead><tr><th>Fra</th><th>Nærmeste bilplejere (luftlinje)</th></tr></thead>\n'
         + "\n".join(rækker)
-        + f"\n      </table>\n      <p class=\"seo-note\">Opdateret {OPDATERET[8:10]}.{OPDATERET[5:7]}.{OPDATERET[:4]} ud fra bilplejerne på FindBilplejere.dk. Køreafstanden er typisk lidt længere end luftlinjen.</p>\n"
+        + f"\n      </table>\n      <p class=\"seo-note\">Ud fra bilplejerne på FindBilplejere.dk. Køreafstanden er typisk lidt længere end luftlinjen.</p>\n"
         "    </div>\n\n"
     )
 
@@ -295,7 +305,7 @@ def byg_guide(g):
         head(g["titel"], g["beskrivelse"], url, og_type="article", ekstra=ekstra)
         + "</head>\n<body>\n\n" + NAV + "\n"
         + '<section class="seo-page guide-artikel">\n  <div class="wrap">\n    ' + krumme + "\n\n"
-        + '    <p class="nb-eyebrow">Guide · opdateret november 2026</p>\n'
+        + '    <p class="nb-eyebrow">Guide</p>\n'
         + f"    <h1>{esc(g['h1'])}</h1>\n"
         + f"    <p class=\"intro\">{g['intro']}</p>\n\n"
         + '    <div class="seo-text">\n' + g["brødtekst"] + "\n    </div>\n\n"
@@ -355,6 +365,24 @@ def omdirigeringer():
             print("slettede gammel side bilpleje/" + fra)
 
 
+def byg_sitemap():
+    """Sitemap med alle sider Google skal finde: forside, guides, faste bysider og
+    statiske profiler (listen skrives af byg_profiler.js til profiler.json).
+    Dynamiske bysider (bilpleje/by.html) er noindex og kommer ikke med."""
+    urls = [("/", None), ("/tips", None), ("/guide/", OPDATERET)]
+    urls += [(f"/guide/{g['slug']}/", OPDATERET) for g in GUIDES]
+    urls += [(f"/bilpleje/{k}/", OPDATERET) for k in FYN_BYER_ORDEN + ANDRE_BYER_ORDEN]
+    pf = os.path.join(ROD, "seo-kilde", "profiler.json")
+    if os.path.exists(pf):
+        urls += [(u, None) for u in json.load(open(pf, encoding="utf-8"))]
+    linjer = [f"  <url><loc>{DOMÆNE}{u}</loc>" + (f"<lastmod>{d}</lastmod>" if d else "") + "</url>" for u, d in urls]
+    xml = ('<?xml version="1.0" encoding="UTF-8"?>\n<!-- Genereres af seo-kilde/byg_sider.py. Ret ikke i hånden. -->\n'
+           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "\n".join(linjer) + "\n</urlset>\n")
+    with open(os.path.join(ROD, "sitemap.xml"), "w", encoding="utf-8") as f:
+        f.write(xml)
+    print("skrev sitemap.xml med", len(urls), "adresser")
+
+
 if __name__ == "__main__":
     omdirigeringer()
     for k in FYN_BYER_ORDEN + ANDRE_BYER_ORDEN:
@@ -362,3 +390,4 @@ if __name__ == "__main__":
     for g in GUIDES:
         byg_guide(g)
     byg_guide_oversigt()
+    byg_sitemap()
