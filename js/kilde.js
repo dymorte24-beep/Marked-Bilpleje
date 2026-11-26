@@ -10,6 +10,7 @@
     try { ref = document.referrer ? new URL(document.referrer).hostname.toLowerCase() : ''; } catch (e) {}
     var s = u || ref;
     if (!s || ref === location.hostname) return u ? u : 'Direkte';
+    if (/deling/.test(u)) return 'Bilplejer delte';
     if (/google\./.test(s) || s === 'google') return 'Google';
     if (/tiktok/.test(s)) return 'TikTok';
     if (/instagram/.test(s)) return 'Instagram';
