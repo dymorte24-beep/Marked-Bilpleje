@@ -64,6 +64,18 @@ async function sendSms(afsender: string, nummer8: string, tekst: string, ref: st
   try { return String(JSON.parse(body).msg_id ?? ""); } catch { return ""; }
 }
 
+// SMS-loft pr. kalendermåned (Daniel 2026-11-26), så budgettet ikke løber løbsk:
+// højst 100 SMS pr. bilplejer og 300 i alt. Over loftet bliver beskeden sprunget over (ikke sendt).
+const LOFT_SHOP = 100, LOFT_ALT = 300;
+async function overLoft(shopId: string): Promise<string | null> {
+  const nu = new Date(), start = new Date(Date.UTC(nu.getUTCFullYear(), nu.getUTCMonth(), 1)).toISOString();
+  const taeller = () => admin.from("sk_beskeder").select("id", { count: "exact", head: true }).in("status", ["sendt", "test_sendt"]).gte("sendt_at", start);
+  const [{ count: alle }, { count: shop }] = await Promise.all([taeller(), taeller().eq("shop_id", shopId)]);
+  if ((alle ?? 0) >= LOFT_ALT) return "Månedens SMS-loft er nået. Kontakt FindBilplejere";
+  if ((shop ?? 0) >= LOFT_SHOP) return `Månedens loft på ${LOFT_SHOP} SMS er nået`;
+  return null;
+}
+
 // Sender én besked (eller simulerer den) og returnerer ny status
 async function lever(ind: any, kundeNavn: string, tilNummer: string, tekst: string, ref: string) {
   let modtager = tilNummer;
@@ -74,6 +86,8 @@ async function lever(ind: any, kundeNavn: string, tilNummer: string, tekst: stri
     besked = `TEST (til ${fornavn(kundeNavn) || "kunde"}): ${tekst}`;
   }
   if (!TOKEN) return { status: "simuleret", sendt_til: modtager, fejl: "SMS-nøgle ikke sat op endnu" };
+  const loft = await overLoft(ind.shop_id);
+  if (loft) return { status: "sprunget_over", sendt_til: modtager, fejl: loft };
   const ref_id = await sendSms(ind.afsender || "Bilpleje", modtager, besked, ref);
   return { status: ind.testtilstand ? "test_sendt" : "sendt", sendt_til: modtager, gateway_ref: ref_id, fejl: null };
 }
