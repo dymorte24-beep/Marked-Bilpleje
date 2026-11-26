@@ -637,7 +637,7 @@ function automatik() {
   </div>
   <div class="grp" style="margin-top:22px">
    ${R({ on: 'afsSheet()', pre: ic('tag', 'var(--blue)'), t: 'Afsendernavn', r: `<span class="v">${esc(ind.afsender || 'Mangler')}</span>` })}
-   ${R({ on: 'googleSheet()', pre: ic('link', 'var(--teal)'), t: 'Anmeldelser', r: `<span class="v">${aktivtLink().startsWith('http') ? stedNavn() : 'Mangler'}</span>` })}
+   ${R({ on: 'googleSheet()', pre: ic('link', 'var(--teal)'), t: 'Anmeldelseslink', r: `<span class="v">${aktivtLink().startsWith('http') ? stedNavn() : 'Mangler'}</span>` })}
    ${R({ pre: ic('flask', 'var(--gray)'), t: 'Testtilstand', s: 'Alle SMS går til dit eget nummer', r: sw(ind.testtilstand, `gemInd({testtilstand:${!ind.testtilstand}})`) })}
    ${R({ on: 'testSheet()', pre: ic('msg', 'var(--green)'), t: 'Send test-SMS til mig' })}
   </div>
@@ -664,24 +664,38 @@ function afsSheet() {
   <div class="hint">Kun bogstaver (a-z), tal og mellemrum.</div>
   <button class="btn" style="margin-top:16px" onclick="gemInd({afsender:$('afs').value.trim()||null}).then(ok=>ok&&luk())">Gem</button>`);
 }
-function googleSheet(valg) {
-  const tp = (valg || S.ind.anmeld_sted || 'google') === 'trustpilot';
+// Anmeldelseslink: én fane til Google og én til Trustpilot (hvert sit link),
+// og nedenunder vælger bilplejeren, hvilken tak-SMS'en bruger.
+function googleSheet(fane) {
+  const ind = S.ind;
+  const tp = (fane || ind.anmeld_sted || 'google') === 'trustpilot';
   const forslag = tpForslag();
-  sheet(`<h3>Anmeldelser</h3><div class="sub">Hvor skal tak-SMS'en sende kunden hen?</div>
+  const har = { google: String(ind.google_link || '').startsWith('http'), trustpilot: String(ind.trustpilot_link || '').startsWith('http') };
+  const flueben = ikon('check', 'style="width:20px;height:20px;stroke:#131D2E;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round"');
+  sheet(`<h3>Anmeldelseslink</h3><div class="sub">Gem dit link til Google og/eller Trustpilot, og vælg hvilket tak-SMS'en bruger.</div>
   <div class="seg" style="margin:14px 0 0"><button class="${tp ? '' : 'on'}" onclick="googleSheet('google')">Google</button><button class="${tp ? 'on' : ''}" onclick="googleSheet('trustpilot')">Trustpilot</button></div>
-  ${tp ? `<div class="lbl">Trustpilot-link</div><input class="f" id="glink" value="${esc(S.ind.trustpilot_link || forslag)}" placeholder="https://dk.trustpilot.com/evaluate/ditdomæne.dk" autocapitalize="off">
-  <div class="hint">${forslag && !S.ind.trustpilot_link ? 'Vi har udfyldt det fra din profil. Tjek det og tryk Gem.' : 'Skriv din hjemmeside ind i linket, fx https://dk.trustpilot.com/evaluate/ditdomæne.dk'}</div>`
-  : `<div class="lbl">Google-link</div><input class="f" id="glink" value="${esc(S.ind.google_link || '')}" placeholder="https://g.page/r/…/review" autocapitalize="off">
+  ${tp ? `<div class="lbl">Trustpilot-link</div><input class="f" id="glink" value="${esc(ind.trustpilot_link || forslag)}" placeholder="https://dk.trustpilot.com/evaluate/ditdomæne.dk" autocapitalize="off">
+  <div class="hint">${forslag && !ind.trustpilot_link ? 'Vi har udfyldt det fra din profil. Tjek det og tryk Gem.' : 'Skriv din hjemmeside ind i linket, fx https://dk.trustpilot.com/evaluate/ditdomæne.dk'}</div>`
+  : `<div class="lbl">Google-link</div><input class="f" id="glink" value="${esc(ind.google_link || '')}" placeholder="https://g.page/r/…/review" autocapitalize="off">
   <div class="hint">Find det i Google Maps: din virksomhed → "Få flere anmeldelser" → Del. Eller spørg Daniel.</div>`}
-  <div class="hint">SMS'en viser altid et kort link (findbilplejere.dk/g/…), som sender kunden videre hertil.</div>
-  <button class="btn" style="margin-top:16px" onclick="gemAnmeld('${tp ? 'trustpilot' : 'google'}')">Gem</button>`);
+  <button class="btn" style="margin-top:16px" onclick="gemAnmeld('${tp ? 'trustpilot' : 'google'}')">Gem ${tp ? 'Trustpilot' : 'Google'}-link</button>
+  <div class="sec">Tak-SMS'en bruger</div>
+  <div class="grp">${[['google', 'Google'], ['trustpilot', 'Trustpilot']].map(([k, n]) => R({ on: `vaelgSted('${k}')`, t: n, s: har[k] ? 'Link gemt' : 'Mangler link', chev: false, r: (ind.anmeld_sted || 'google') === k ? flueben : '' })).join('')}</div>
+  <div class="hint">SMS'en viser altid et kort link (findbilplejere.dk/g/…), som sender kunden videre til det valgte sted.</div>
+  <div class="sec">Sådan ser tak-SMS'en ud</div>
+  <div class="box"><div class="bubble">${esc(takEksempel())}</div></div>`);
 }
-async function gemAnmeld(sted) {
+async function gemAnmeld(fane) {
   const v = $('glink').value.trim();
   if (v && !/^https:\/\/\S+$/.test(v)) { toast('Linket skal starte med https://'); return; }
-  if (!v && S.ind.aktiv) { toast('Indsæt et link, eller slå SMS fra først'); return; }
-  const felter = sted === 'trustpilot' ? { anmeld_sted: 'trustpilot', trustpilot_link: v ? tpLink(v) : null } : { anmeld_sted: 'google', google_link: v || null };
-  if (await gemInd(felter)) luk();
+  if (!v && S.ind.aktiv && (S.ind.anmeld_sted || 'google') === fane) { toast('Det link bruges lige nu. Vælg det andet først, eller slå SMS fra'); return; }
+  const felter = fane === 'trustpilot' ? { trustpilot_link: v ? tpLink(v) : null } : { google_link: v || null };
+  if (await gemInd(felter)) googleSheet(fane);
+}
+async function vaelgSted(sted) {
+  const link = sted === 'trustpilot' ? S.ind.trustpilot_link : S.ind.google_link;
+  if (!String(link || '').startsWith('http')) { toast(`Gem dit ${sted === 'trustpilot' ? 'Trustpilot' : 'Google'}-link først`); googleSheet(sted); return; }
+  if (await gemInd({ anmeld_sted: sted })) googleSheet(sted);
 }
 function testSheet() {
   sheet(`<h3>Test-SMS</h3><div class="sub">Se præcis hvad kunderne får, på din egen telefon.</div>
