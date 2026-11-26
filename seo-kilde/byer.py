@@ -32,7 +32,7 @@ YDELSER = """      <p>En professionel bilplejer gør mere end en vaskehal. Typis
       </ul>"""
 
 FAQ_GRATIS = ("Koster det noget at bruge FindBilplejere.dk?",
-              "Nej. Det er gratis at søge, og du kontakter bilplejeren direkte på telefon, mail eller hjemmeside. Der er ingen mellemled og intet gebyr.")
+              "Nej. Det er gratis at søge, og du kontakter bilplejeren direkte på telefon, mail eller hjemmeside. Der er ingen mellemled.")
 
 BYER = {
     "odense": {
@@ -257,4 +257,61 @@ BYER["ostfyn"] = {
         ("Hvor ofte skal jeg vaske bilen, når jeg bor ved vandet?", "Bor du tæt ved kysten, eller kører du dagligt på saltede veje, er en vask hver anden til tredje uge en god tommelfingerregel om vinteren, gerne med skyl af undervogn og hjulkasser."),
         FAQ_GRATIS,
     ],
+}
+
+# ---------- Byer uden for Fyn med flere bilplejere ----------
+ANDRE_BYER_ORDEN += ["aarhus", "herning"]
+
+BYER["aarhus"] = {
+    "navn": "Aarhus",
+    "titel": "Bilpleje i Aarhus – bilplejere i Aarhus, Brabrand og Højbjerg",
+    "beskrivelse": "Find bilpleje i Aarhus, Brabrand og Højbjerg. Se lokale bilplejere til polering, keramisk coating og indvendig rens, og kontakt dem direkte. Gratis og uden mellemled.",
+    "h1": "Bilpleje i Aarhus",
+    "afstand_fra": ["Aarhus", "Brabrand", "Højbjerg", "Åbyhøj", "Risskov", "Tilst"],
+    "intro": "Her finder du bilplejere i Aarhus og omegn, fra Brabrand og Tilst i vest til Højbjerg i syd og Risskov i nord. Se hvad de tilbyder, og kontakt bilplejeren direkte på telefon, mail eller hjemmeside. Det er gratis, og der er ingen mellemled.",
+    "sektioner": [
+        ("Bilpleje i hele Aarhus", """      <p>Aarhus er Danmarks næststørste by, og bilplejerne ligger spredt fra centrum til forstæderne. Nogle har værksted i erhvervsområderne i Brabrand og Højbjerg, andre er mobile og kommer ud til dig hjemme eller på arbejdspladsen. Vi viser altid de bilplejere, der ligger tættest på, så du ikke skal krydse byen.</p>
+      <p>Bor du i midtbyen uden egen garage, kan en mobil bilplejer være en god løsning. De er markeret med "Kommer ud til dig" i listen.</p>"""),
+        ("Ringvej, motorvej og bymiljø", """      <p>Mange aarhusianere kører dagligt på Ringvejen, Søftenvej og E45. Det giver stenslag og fine ridser i fronten, tjære og insekter. Biler, der holder på gaden i byen, får også mere støv, sod og fugleklatter end biler i en carport.</p>
+      <p>En bilplejer kan rense lakken skånsomt, polere fine ridser væk og lægge en keramisk coating eller voks på, så snavs og fugleklatter ikke ætser sig fast. <a href="/guide/polering-eller-coating/">Læs forskellen på polering og coating</a>.</p>"""),
+        ("Hvad kan en bilplejer i Aarhus hjælpe med?", YDELSER),
+        ("Sådan vælger du den rigtige bilplejer", """      <ul>
+        <li>Se hvilke ydelser bilplejeren tilbyder, og om de dækker din bydel.</li>
+        <li>Kig efter anmeldelser og billeder af tidligere arbejde.</li>
+        <li>Beskriv din bil og hvad du ønsker, så du kan få en præcis pris.</li>
+        <li>Spørg om du kan aflevere bilen om morgenen og hente den efter arbejde.</li>
+      </ul>"""),
+    ],
+    "faq": [
+        ("Hvad koster bilpleje i Aarhus?", "Det afhænger af bilens størrelse, stand og hvad du vil have lavet. En håndvask er en mindre opgave end en polering eller en keramisk coating. Kontakt et par bilplejere direkte og beskriv din bil, så får du den mest præcise pris."),
+        ("Er der bilplejere i Aarhus, der kommer ud til mig?", "Ja, nogle bilplejere i Aarhus tilbyder mobil bilpleje og kommer hjem til dig eller på arbejdspladsen. De er markeret med \"Kommer ud til dig\" i listen."),
+        ("Kan man få keramisk coating i Aarhus?", "Ja. Flere bilplejere i Aarhus og omegn tilbyder polering og keramisk coating. Se ydelserne på den enkelte bilplejers profil."),
+        ("Hvordan får jeg fugleklatter og harpiks af lakken?", "Fjern det hurtigt, da det kan ætse sig ned i lakken, og brug ikke en hård svamp. En bilplejer kan fjerne det skånsomt og polere eventuelle mærker væk bagefter."),
+        FAQ_GRATIS,
+    ],
+    "guides": ["polering-eller-coating", "klargoering-foer-salg", "aflevering-af-leasingbil", "vask-bilen-om-vinteren"],
+    "naboer": [("odder", "Odder"), ("hovedgard", "Hovedgård")],
+}
+
+BYER["herning"] = {
+    "navn": "Herning",
+    "titel": "Bilpleje i Herning – find en bilplejer i Midt- og Vestjylland",
+    "beskrivelse": "Find bilpleje i Herning og omegn. Se lokale bilplejere til polering, keramisk coating og indvendig rens, og kontakt dem direkte. Gratis og uden mellemled.",
+    "h1": "Bilpleje i Herning",
+    "afstand_fra": ["Herning", "Ikast", "Sunds", "Vinderup", "Holstebro"],
+    "intro": "Find en bilplejer i Herning og omegn, fx Ikast, Sunds og Gjellerup. Se hvad de tilbyder, og kontakt bilplejeren direkte på telefon, mail eller hjemmeside. Det er gratis, og der er ingen mellemled.",
+    "sektioner": [
+        ("Bilpleje i Herning og Midtjylland", """      <p>I og omkring Herning kører mange langt, både på motorvejene mod Aarhus og Vejle og på landeveje gennem hede og landbrugsland. Det giver snavs, grus og jord på bilen og mange kilometer på sæderne. En grundig udvendig vask, en rens af hjulkasserne og en dybderens indvendigt gør bilen pæn igen.</p>
+      <p>Skal bilen sælges, eller er den en leasingbil, der snart skal afleveres, kan en polering og en grundig indvendig rens gøre en stor forskel. <a href="/guide/klargoering-foer-salg/">Se vores tjekliste før salg</a>.</p>"""),
+        ("Hvad kan en bilplejer i Herning hjælpe med?", YDELSER),
+        ("Find den nærmeste bilplejer", """      <p>Listen viser bilplejerne sorteret efter afstand fra Herning. Bor du i Holstebro- eller Skive-området, kan du også se bilplejere længere mod nord og vest, og nogle kører ud til dig.</p>"""),
+    ],
+    "faq": [
+        ("Hvad koster bilpleje i Herning?", "Det afhænger af bilens størrelse, stand og hvad du vil have lavet. Kontakt bilplejeren direkte og beskriv bilen, så får du den mest præcise pris."),
+        ("Kan en bilplejer fjerne lugt fra bilen?", "Ja. En grundig indvendig rens af sæder, tæpper og loft fjerner det meste lugt. Nogle bilplejere tilbyder også ozonbehandling mod fx røg- eller dyrelugt."),
+        ("Hvor længe holder keramisk coating?", "Typisk fra et til flere år, afhængigt af produktet, og hvordan bilen bliver vasket bagefter. Spørg bilplejeren, hvor længe deres coating holder."),
+        FAQ_GRATIS,
+    ],
+    "guides": ["polering-eller-coating", "klargoering-foer-salg", "aflevering-af-leasingbil", "vask-bilen-om-vinteren"],
+    "naboer": [("vinderup", "Vinderup"), ("aarhus", "Aarhus")],
 }

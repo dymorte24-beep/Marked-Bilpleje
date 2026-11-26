@@ -1,52 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Opdateret 15. nov 2026 (bysider på Fyn + guides). 12. nov 2026: Fyn-profiler tilføjet. Tidligere 19. sep 2026: Domæne skiftet til findbilplejere.dk, og
-  listen udvidet med alle butikker/byer tilføjet siden 25. aug 2026.
--->
+<!-- Genereres af seo-kilde/byg_sider.py. Ret ikke i hånden. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://findbilplejere.dk/</loc></url>
   <url><loc>https://findbilplejere.dk/tips</loc></url>
-
-  <url><loc>https://findbilplejere.dk/bilpleje/aabybro/</loc></url>
+  <url><loc>https://findbilplejere.dk/guide/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://findbilplejere.dk/guide/vask-bilen-om-vinteren/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://findbilplejere.dk/guide/polering-eller-coating/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://findbilplejere.dk/guide/klargoering-foer-salg/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://findbilplejere.dk/guide/aflevering-af-leasingbil/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/odense/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/svendborg/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/ringe/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/vestfyn/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/nordfyn/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/ostfyn/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/birkerod/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/aabybro/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/aarhus/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/herning/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/aabenraa/mb-bilpleje-aabenraa/</loc></url>
   <url><loc>https://findbilplejere.dk/bilpleje/aabybro/aabybro-bilpleje/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/aarhus/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/aarhus/aarhus-detailing/</loc></url>
   <url><loc>https://findbilplejere.dk/bilpleje/aarhus/final-shine/</loc></url>
   <url><loc>https://findbilplejere.dk/bilpleje/aarhus/god-bilpleje/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/arslev/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/aarhus/hojbjerg-bilpleje/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/aarhus/pro-detailing/</loc></url>
   <url><loc>https://findbilplejere.dk/bilpleje/arslev/arslev-bilpleje/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/birkerod/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/birkerod/carclean-aps/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/brondby/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/brondby/shine-wash/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/farum/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/farum/nsj-bilpleje/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/helsingor/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/helsingor/ch-carcare/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/herning/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/herning/mk-bilpleje/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/holbek/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/holbek/gg-autocare/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/kobenhavn/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/koge/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/koge/koge-bilpleje-aps/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/hovedgard/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/hovedgard/j-o-bilpleje/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/odense/</loc><lastmod>2026-11-15</lastmod></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/odense/bilplejen-dk/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/odense/ac-detailing/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/odense/mn-auto-care/</loc></url>
   <url><loc>https://findbilplejere.dk/bilpleje/bellinge/cleantech-bilpleje/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/svendborg/</loc><lastmod>2026-11-20</lastmod></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/birkerod/carclean-aps/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/brondby/shine-wash/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/farum/nsj-bilpleje/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/helsingor/ch-carcare/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/herning/mk-bilpleje/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/herning/philips-bilpleje/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/holbek/gg-autocare/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/hovedgard/j-o-bilpleje/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/kobenhavn/carbon-dry-wash/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/koge/koge-bilpleje-aps/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/kolding/vonsild-bilpleje/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/odder/pn-autorens/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/odense/ac-detailing/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/odense/bilplejen-dk/</loc></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/odense/mn-auto-care/</loc></url>
   <url><loc>https://findbilplejere.dk/bilpleje/svendborg/direkte-detailing/</loc></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/ringe/</loc><lastmod>2026-11-20</lastmod></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/vestfyn/</loc><lastmod>2026-11-20</lastmod></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/nordfyn/</loc><lastmod>2026-11-20</lastmod></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/ostfyn/</loc><lastmod>2026-11-20</lastmod></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/birkerod/</loc><lastmod>2026-11-15</lastmod></url>
-  <url><loc>https://findbilplejere.dk/bilpleje/aabybro/</loc><lastmod>2026-11-15</lastmod></url>
-  <url><loc>https://findbilplejere.dk/guide/</loc><lastmod>2026-11-15</lastmod></url>
-  <url><loc>https://findbilplejere.dk/guide/vask-bilen-om-vinteren/</loc><lastmod>2026-11-15</lastmod></url>
-  <url><loc>https://findbilplejere.dk/guide/polering-eller-coating/</loc><lastmod>2026-11-15</lastmod></url>
-  <url><loc>https://findbilplejere.dk/guide/klargoering-foer-salg/</loc><lastmod>2026-11-15</lastmod></url>
-  <url><loc>https://findbilplejere.dk/guide/aflevering-af-leasingbil/</loc><lastmod>2026-11-15</lastmod></url>
+  <url><loc>https://findbilplejere.dk/bilpleje/vinderup/vinderup-autoklargoering/</loc></url>
 </urlset>

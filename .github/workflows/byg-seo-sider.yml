@@ -1,0 +1,49 @@
+# Bygger de statiske SEO-sider (bilplejer-profiler, bysider, guides og sitemap)
+# ud fra databasen én gang i døgnet, så nye, ændrede eller fjernede bilplejere
+# kommer med i det, Google ser. Ændringer committes til main, og Netlify
+# udgiver dem automatisk. Kan også køres i hånden under "Actions".
+name: Byg statiske SEO-sider
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: byg-seo-sider
+  cancel-in-progress: false
+
+jobs:
+  byg:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Installer Playwright
+        run: |
+          npm install --no-save --no-package-lock playwright@1
+          npx playwright install --with-deps chromium
+      - name: Byg profiler
+        run: node seo-kilde/byg_profiler.js
+      - name: Byg bysider, guides og sitemap
+        run: python3 seo-kilde/byg_sider.py
+      - name: Gem ændringer
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bilpleje guide sitemap.xml _redirects seo-kilde/profiler.json
+          if git diff --cached --quiet; then
+            echo "Ingen ændringer."
+          else
+            git commit -m "Opdater statiske SEO-sider fra databasen"
+            git push
+          fi
