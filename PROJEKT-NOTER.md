@@ -384,3 +384,8 @@ Inspireret af kardet.com, men med eget brand og egne tekster. Toppen er nu: Dani
 - Ny bilplejer: **MN Auto Care** (Odense N, Magnus Nohr, mnautocare.dk). Komplet profil gratis, prisniveau Mellem (fra 800 kr., komplet klargøring fra 1.480 kr.), ingen Trustpilot-side fundet.
 - Ny kolonne `shops.kun_erhverv` (boolean, SQL: `supabase/2026-11-16-kun-erhverv.sql`). Sæt flueben i admin ("Kun erhvervskunder").
 - Når den er slået til: navy mærke **"Kun erhverv"** på søgekort (forside + by-sider) og øverst på profilen, plus en kort forklaring på profilen om at privatpersoner ikke kan bestille.
+
+## 2026-11-26 — Stamkunde-appen: nyt lyst Apple-look + SMS-loft
+- /app/ har fået et lyst, enkelt look som iPhone-Indstillinger: lysegrå baggrund, hvide grupperede kort, store titler, farvede ikon-firkanter. Lille findbilplejere-logo i hjørnet (`app/logo.png`).
+- Faner: I dag · Kalender (månedsoversigt med prikker + dagens aftaler) · Kunder (A-Z, søg, filtre) · Statistik (uge/måned, job pr. uge) · Automatik (alle indstillinger som rækker; detaljer åbner i ark).
+- SMS-loft i edge-funktionen `stamkunde-send` (`overLoft`): højst 100 SMS pr. bilplejer og 300 i alt pr. kalendermåned. Over loftet bliver SMS'en sprunget over. Deployet som version 8. Appen viser "X af 100 SMS brugt" under Automatik.
