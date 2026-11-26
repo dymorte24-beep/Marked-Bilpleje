@@ -28,5 +28,5 @@ http://bilpleje-dk.netlify.app/*   https://findbilplejere.dk/:splat  301!
 /stop  /stop.html  200
 
 # Kort anmeldelseslink i tak-SMS'en fra Stamkunde-appen: findbilplejere.dk/g/<kode>
-# Edge-funktionen "anmeld" sender kunden videre til bilplejerens Google-anmeldelse (302).
+# Edge-funktionen "anmeld" sender kunden videre til bilplejerens Google- eller Trustpilot-anmeldelse (302).
 /g/*  https://xeosltdpvkcaudiijtge.supabase.co/functions/v1/anmeld/:splat  200

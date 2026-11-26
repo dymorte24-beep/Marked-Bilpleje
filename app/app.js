@@ -106,7 +106,7 @@ async function brugSession(session) {
   if (!session) { S.user = null; return render(); }
   S.user = session.user;
   S.admin = (session.user.email || '').toLowerCase() === 'dymorte24@gmail.com';
-  let q = db.from('shops').select('id,name,city,contact_person,phone,services,owner_id').order('name');
+  let q = db.from('shops').select('id,name,city,contact_person,phone,services,owner_id,review_url').order('name');
   if (!S.admin) q = q.eq('owner_id', session.user.id);
   const { data, error } = await q;
   if (error) { toast('Kunne ikke hente din butik'); console.error(error); }
@@ -147,7 +147,7 @@ async function hentAlt() {
   ]);
   const fejl = [ind, k, j, b, p, a].find(r => r.error);
   if (fejl) { console.error(fejl.error); toast('Kunne ikke hente data'); }
-  S.ind = ind.data || { shop_id: id, aktiv: false, google_link: '', afsender: '', tak_tid: 'naeste_dag_10', testtilstand: true, testnummer: '', ny: true };
+  S.ind = ind.data || { shop_id: id, aktiv: false, google_link: '', anmeld_sted: 'google', trustpilot_link: '', afsender: '', tak_tid: 'naeste_dag_10', testtilstand: true, testnummer: '', ny: true };
   S.sidstHentet = Date.now();
   S.kunder = k.data || []; S.job = j.data || []; S.beskeder = b.data || []; S.paa = p.data || []; S.aft = a.data || [];
   render();
@@ -425,11 +425,19 @@ async function opdKunde(id, felter) {
 }
 
 // ---------- SMS-tekster ----------
-const takEksempel = (navn = 'Mette') => `Hej ${fornavn(navn) || 'Mette'}, tak fordi du valgte ${S.shop.name}. Hvis du er glad for resultatet, vil vi blive rigtig glade for en anmeldelse på Google. Det tager 30 sekunder: ${S.ind.google_link ? 'https://findbilplejere.dk/g/' + S.shop.id.slice(0, 8) : '[dit Google-link]'} Mvh ${S.shop.name}`;
+// Anmeldelser: bilplejeren vælger Google eller Trustpilot. SMS-linket er altid findbilplejere.dk/g/<kode>,
+// og funktionen "anmeld" sender kunden videre til det valgte sted.
+const erTp = () => S.ind.anmeld_sted === 'trustpilot';
+const stedNavn = () => erTp() ? 'Trustpilot' : 'Google';
+const aktivtLink = () => String((erTp() ? S.ind.trustpilot_link : S.ind.google_link) || '');
+// Trustpilot-link fra bilplejerens profil (…/review/domæne) laves om til "skriv anmeldelse"-linket (…/evaluate/domæne)
+const tpLink = u => { const m = String(u || '').trim().match(/^https?:\/\/(?:[a-z]+\.)?trustpilot\.com\/(?:review|evaluate)\/([^\s/?#]+)/i); return m ? 'https://dk.trustpilot.com/evaluate/' + m[1] : String(u || '').trim(); };
+const tpForslag = () => /trustpilot\.com\//i.test(S.shop.review_url || '') ? tpLink(S.shop.review_url) : '';
+const takEksempel = (navn = 'Mette') => `Hej ${fornavn(navn) || 'Mette'}, tak fordi du valgte ${S.shop.name}. Hvis du er glad for resultatet, vil vi blive rigtig glade for en anmeldelse på ${stedNavn()}. Det tager 30 sekunder: ${aktivtLink().startsWith('http') ? 'https://findbilplejere.dk/g/' + S.shop.id.slice(0, 8) : `[dit ${stedNavn()}-link]`} Mvh ${S.shop.name}`;
 async function gemInd(felter) {
   if (felter.afsender && !/^[A-Za-z0-9 ]{1,11}$/.test(felter.afsender)) { toast('Afsender: kun a-z, tal og mellemrum (max 11)'); return false; }
   if (felter.testnummer && !/^[2-9]\d{7}$/.test(felter.testnummer)) { toast('Testnummer skal have 8 cifre'); return false; }
-  if (felter.aktiv === true && !(S.ind.google_link || '').startsWith('http')) { toast('Indsæt dit Google-link først'); return false; }
+  if (felter.aktiv === true && !aktivtLink().startsWith('http')) { toast(`Indsæt dit ${stedNavn()}-link først`); return false; }
   if (felter.aktiv === true && !S.ind.afsender) { toast('Skriv et afsendernavn først'); return false; }
   if (felter.testtilstand === false && !confirm('Slå testtilstand fra? Så får rigtige kunder SMS\'erne.')) { render(); return false; }
   const ny = { ...S.ind, ...felter, opdateret_at: new Date().toISOString() }; delete ny.ny;
@@ -601,7 +609,7 @@ function statistik() {
   <div class="seg"><button class="${uge ? 'on' : ''}" onclick="S.sPer='uge';render()">Denne uge</button><button class="${uge ? '' : 'on'}" onclick="S.sPer='maaned';render()">Denne måned</button></div>
   <div class="tile" style="margin:16px 16px 0;padding:16px"><div class="l">${ic('star', 'var(--yellow)')}Anmeldelses-SMS sendt</div>
    <div style="display:flex;align-items:baseline;gap:12px;margin-top:10px"><div class="big">${a.tak}</div><div style="font-size:15px;font-weight:600;color:var(--mut)">${diff(a.tak, b.tak)}</div></div>
-   <div class="sub" style="margin-top:8px">Hver af dem beder kunden om en Google-anmeldelse. Appen har sendt dem for dig.</div></div>
+   <div class="sub" style="margin-top:8px">Hver af dem beder kunden om en anmeldelse på ${stedNavn()}. Appen har sendt dem for dig.</div></div>
   <div class="tiles">
    ${kort('car', 'var(--navy)', 'Job', a.job, diff(a.job, b.job))}
    ${kort('people', 'var(--blue)', 'Kom igen', a.igen, 'kunder der har været her før')}
@@ -629,7 +637,7 @@ function automatik() {
   </div>
   <div class="grp" style="margin-top:22px">
    ${R({ on: 'afsSheet()', pre: ic('tag', 'var(--blue)'), t: 'Afsendernavn', r: `<span class="v">${esc(ind.afsender || 'Mangler')}</span>` })}
-   ${R({ on: 'googleSheet()', pre: ic('link', 'var(--teal)'), t: 'Google-anmeldelseslink', r: `<span class="v">${(ind.google_link || '').startsWith('http') ? 'Tilføjet' : 'Mangler'}</span>` })}
+   ${R({ on: 'googleSheet()', pre: ic('link', 'var(--teal)'), t: 'Anmeldelser', r: `<span class="v">${aktivtLink().startsWith('http') ? stedNavn() : 'Mangler'}</span>` })}
    ${R({ pre: ic('flask', 'var(--gray)'), t: 'Testtilstand', s: 'Alle SMS går til dit eget nummer', r: sw(ind.testtilstand, `gemInd({testtilstand:${!ind.testtilstand}})`) })}
    ${R({ on: 'testSheet()', pre: ic('msg', 'var(--green)'), t: 'Send test-SMS til mig' })}
   </div>
@@ -656,11 +664,24 @@ function afsSheet() {
   <div class="hint">Kun bogstaver (a-z), tal og mellemrum.</div>
   <button class="btn" style="margin-top:16px" onclick="gemInd({afsender:$('afs').value.trim()||null}).then(ok=>ok&&luk())">Gem</button>`);
 }
-function googleSheet() {
-  sheet(`<h3>Google-anmeldelseslink</h3><div class="sub">Linket i tak-SMS'en fører kunden direkte hertil.</div>
-  <div class="lbl">Link</div><input class="f" id="glink" value="${esc(S.ind.google_link || '')}" placeholder="https://g.page/r/…/review" autocapitalize="off">
-  <div class="hint">Find det i Google Maps: din virksomhed → "Få flere anmeldelser" → Del. Eller spørg Daniel.</div>
-  <button class="btn" style="margin-top:16px" onclick="gemInd({google_link:$('glink').value.trim()||null}).then(ok=>ok&&luk())">Gem</button>`);
+function googleSheet(valg) {
+  const tp = (valg || S.ind.anmeld_sted || 'google') === 'trustpilot';
+  const forslag = tpForslag();
+  sheet(`<h3>Anmeldelser</h3><div class="sub">Hvor skal tak-SMS'en sende kunden hen?</div>
+  <div class="seg" style="margin:14px 0 0"><button class="${tp ? '' : 'on'}" onclick="googleSheet('google')">Google</button><button class="${tp ? 'on' : ''}" onclick="googleSheet('trustpilot')">Trustpilot</button></div>
+  ${tp ? `<div class="lbl">Trustpilot-link</div><input class="f" id="glink" value="${esc(S.ind.trustpilot_link || forslag)}" placeholder="https://dk.trustpilot.com/evaluate/ditdomæne.dk" autocapitalize="off">
+  <div class="hint">${forslag && !S.ind.trustpilot_link ? 'Vi har udfyldt det fra din profil. Tjek det og tryk Gem.' : 'Skriv din hjemmeside ind i linket, fx https://dk.trustpilot.com/evaluate/ditdomæne.dk'}</div>`
+  : `<div class="lbl">Google-link</div><input class="f" id="glink" value="${esc(S.ind.google_link || '')}" placeholder="https://g.page/r/…/review" autocapitalize="off">
+  <div class="hint">Find det i Google Maps: din virksomhed → "Få flere anmeldelser" → Del. Eller spørg Daniel.</div>`}
+  <div class="hint">SMS'en viser altid et kort link (findbilplejere.dk/g/…), som sender kunden videre hertil.</div>
+  <button class="btn" style="margin-top:16px" onclick="gemAnmeld('${tp ? 'trustpilot' : 'google'}')">Gem</button>`);
+}
+async function gemAnmeld(sted) {
+  const v = $('glink').value.trim();
+  if (v && !/^https:\/\/\S+$/.test(v)) { toast('Linket skal starte med https://'); return; }
+  if (!v && S.ind.aktiv) { toast('Indsæt et link, eller slå SMS fra først'); return; }
+  const felter = sted === 'trustpilot' ? { anmeld_sted: 'trustpilot', trustpilot_link: v ? tpLink(v) : null } : { anmeld_sted: 'google', google_link: v || null };
+  if (await gemInd(felter)) luk();
 }
 function testSheet() {
   sheet(`<h3>Test-SMS</h3><div class="sub">Se præcis hvad kunderne får, på din egen telefon.</div>
