@@ -394,3 +394,7 @@ Inspireret af kardet.com, men med eget brand og egne tekster. Toppen er nu: Dani
 - Før: /app/ sendte kun mailen (resetPasswordForEmail), men havde ingen skærm til at vælge ny kode.
 - Nu: kommer man fra linket (type=recovery), viser appen "Vælg ny adgangskode" (mindst 8 tegn, skriv to gange) og gemmer med `db.auth.updateUser({ password })`. Udløbet link giver en klar besked på login-siden.
 - Sikkerhedsnet: hvis Supabase sender linket til Site URL i stedet for /app/ (fx fordi /app/ ikke står under Redirect URLs), sender forsiden, /admin/ og /butik-panel/ folk videre til /app/ med det samme.
+
+## 2026-11-27 — Appen overskriver ikke længere nyere indstillinger
+- Før gemte appen hele sin kopi af `sk_indstillinger`-rækken (upsert). En app, der havde stået åben, kunne derfor skrive gamle værdier oven i ændringer lavet andre steder (sket for NSJ: Trustpilot/testtilstand blev sat tilbage).
+- Nu gemmer `gemIndRaekke()` kun de felter, brugeren ændrer (PATCH på shop_id). Kun allerførste gang (ingen række endnu) indsættes en hel række.
