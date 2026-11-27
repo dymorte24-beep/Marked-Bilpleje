@@ -359,8 +359,7 @@ async function tjekKalender() {
   render();
 }
 async function kobKalender() {
-  const ny = { ...S.ind, kalender_url: K.url, kalender_type: K.type, kalender_koblet_at: new Date().toISOString(), kalender_fejl: null, kalender_spring: false, opdateret_at: new Date().toISOString() }; delete ny.ny;
-  const { data, error } = await db.from('sk_indstillinger').upsert(ny).select().single();
+  const { data, error } = await gemIndRaekke({ kalender_url: K.url, kalender_type: K.type, kalender_koblet_at: new Date().toISOString(), kalender_fejl: null, kalender_spring: false });
   if (error) { console.error(error); return toast('Kunne ikke gemme'); }
   S.ind = data; S.kalVis = false; K = { type: '', url: '', test: null, tjekker: false };
   S.tab = 'dag'; toast('Kalender koblet på ✓'); await synkNu();
@@ -368,8 +367,7 @@ async function kobKalender() {
 async function springKalender() {
   if (S.ind.kalender_url) { S.kalVis = false; return render(); }
   if (S.admin && S.shop.owner_id !== S.user.id) { S.kalSpringLokal = true; return render(); }
-  const ny = { ...S.ind, kalender_spring: true, opdateret_at: new Date().toISOString() }; delete ny.ny;
-  const { data, error } = await db.from('sk_indstillinger').upsert(ny).select().single();
+  const { data, error } = await gemIndRaekke({ kalender_spring: true });
   if (error) return toast('Kunne ikke gemme');
   S.ind = data; render();
 }
@@ -462,14 +460,24 @@ const aktivtLink = () => String((erTp() ? S.ind.trustpilot_link : S.ind.google_l
 const tpLink = u => { const m = String(u || '').trim().match(/^https?:\/\/(?:[a-z]+\.)?trustpilot\.com\/(?:review|evaluate)\/([^\s/?#]+)/i); return m ? 'https://dk.trustpilot.com/evaluate/' + m[1] : String(u || '').trim(); };
 const tpForslag = () => /trustpilot\.com\//i.test(S.shop.review_url || '') ? tpLink(S.shop.review_url) : '';
 const takEksempel = (navn = 'Mette') => `Hej ${fornavn(navn) || 'Mette'}, tak fordi du valgte ${S.shop.name}. Hvis du er glad for resultatet, vil vi blive rigtig glade for en anmeldelse på ${stedNavn()}. Det tager 30 sekunder: ${aktivtLink().startsWith('http') ? 'https://findbilplejere.dk/g/' + S.shop.id.slice(0, 8) : `[dit ${stedNavn()}-link]`} Mvh ${S.shop.name}`;
+// Gem KUN de felter, der faktisk ændres. Før gemte appen hele sin (måske gamle) kopi af rækken,
+// så en app der havde stået åben, kunne skrive gamle værdier oven i nyere ændringer.
+async function gemIndRaekke(felter) {
+  const f = { ...felter, opdateret_at: new Date().toISOString() };
+  if (S.ind.ny) {
+    const ny = { ...S.ind, ...f }; delete ny.ny;
+    const r = await db.from('sk_indstillinger').insert(ny).select().single();
+    if (!r.error || r.error.code !== '23505') return r;
+  }
+  return db.from('sk_indstillinger').update(f).eq('shop_id', S.shop.id).select().single();
+}
 async function gemInd(felter) {
   if (felter.afsender && !/^[A-Za-z0-9 ]{1,11}$/.test(felter.afsender)) { toast('Afsender: kun a-z, tal og mellemrum (max 11)'); return false; }
   if (felter.testnummer && !/^[2-9]\d{7}$/.test(felter.testnummer)) { toast('Testnummer skal have 8 cifre'); return false; }
   if (felter.aktiv === true && !aktivtLink().startsWith('http')) { toast(`Indsæt dit ${stedNavn()}-link først`); return false; }
   if (felter.aktiv === true && !S.ind.afsender) { toast('Skriv et afsendernavn først'); return false; }
   if (felter.testtilstand === false && !confirm('Slå testtilstand fra? Så får rigtige kunder SMS\'erne.')) { render(); return false; }
-  const ny = { ...S.ind, ...felter, opdateret_at: new Date().toISOString() }; delete ny.ny;
-  const { data, error } = await db.from('sk_indstillinger').upsert(ny).select().single();
+  const { data, error } = await gemIndRaekke(felter);
   if (error) { console.error(error); toast('Kunne ikke gemme'); return false; }
   S.ind = data; render(); toast('Gemt ✓');
   return true;
