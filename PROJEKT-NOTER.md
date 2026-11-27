@@ -389,3 +389,8 @@ Inspireret af kardet.com, men med eget brand og egne tekster. Toppen er nu: Dani
 - /app/ har fået et lyst, enkelt look som iPhone-Indstillinger: lysegrå baggrund, hvide grupperede kort, store titler, farvede ikon-firkanter. Lille findbilplejere-logo i hjørnet (`app/logo.png`).
 - Faner: I dag · Kalender (månedsoversigt med prikker + dagens aftaler) · Kunder (A-Z, søg, filtre) · Statistik (uge/måned, job pr. uge) · Automatik (alle indstillinger som rækker; detaljer åbner i ark).
 - SMS-loft i edge-funktionen `stamkunde-send` (`overLoft`): højst 100 SMS pr. bilplejer og 300 i alt pr. kalendermåned. Over loftet bliver SMS'en sprunget over. Deployet som version 8. Appen viser "X af 100 SMS brugt" under Automatik.
+
+## 2026-11-27 — "Glemt adgangskode?" i appen virker nu hele vejen
+- Før: /app/ sendte kun mailen (resetPasswordForEmail), men havde ingen skærm til at vælge ny kode.
+- Nu: kommer man fra linket (type=recovery), viser appen "Vælg ny adgangskode" (mindst 8 tegn, skriv to gange) og gemmer med `db.auth.updateUser({ password })`. Udløbet link giver en klar besked på login-siden.
+- Sikkerhedsnet: hvis Supabase sender linket til Site URL i stedet for /app/ (fx fordi /app/ ikke står under Redirect URLs), sender forsiden, /admin/ og /butik-panel/ folk videre til /app/ med det samme.
