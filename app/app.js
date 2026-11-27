@@ -3,6 +3,11 @@
 // SMS sendes af edge-funktionen "stamkunde-send" (hvert 5. min). Appen planlægger kun beskederne.
 const SUPABASE_URL = 'https://xeosltdpvkcaudiijtge.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_iG0iWu8szH_7-uwErdxN9g_pE9YGFWd';
+// Link fra "Glemt adgangskode?"-mailen: Supabase sender brugeren tilbage med type=recovery i adressen.
+// Det skal læses FØR klienten oprettes, for klienten logger ind og rydder adressen med det samme.
+const LINK_I_ADRESSE = location.hash + '&' + location.search;
+const KOM_FRA_NY_KODE_LINK = /type=recovery/.test(LINK_I_ADRESSE);
+let LINK_UDLOEBET = /error_code=otp_expired|error=access_denied/.test(LINK_I_ADRESSE);
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: true, autoRefreshToken: true } });
 
 const I = {
@@ -15,7 +20,8 @@ const I = {
 const S = {
   user: null, admin: false, shops: [], shop: null, tab: 'dag',
   ind: null, kunder: [], job: [], beskeder: [], paa: [], aft: [], kalSpringLokal: false,
-  nyJob: { navn: '', tlf: '', beh: '', ja: false }
+  nyJob: { navn: '', tlf: '', beh: '', ja: false },
+  nyKode: KOM_FRA_NY_KODE_LINK
 };
 
 // ---------- små hjælpere ----------
@@ -100,7 +106,10 @@ const statusTag = b => { const s = STATUS[b.status] || [b.status, 'p-n']; return
 async function start() {
   const { data } = await db.auth.getSession();
   await brugSession(data.session);
-  db.auth.onAuthStateChange((_e, session) => { if (!session && S.user) { S.user = null; render(); } });
+  db.auth.onAuthStateChange((e, session) => {
+    if (e === 'PASSWORD_RECOVERY') { S.nyKode = true; if (session) S.user = session.user; render(); return; }
+    if (!session && S.user) { S.user = null; render(); }
+  });
 }
 async function brugSession(session) {
   if (!session) { S.user = null; return render(); }
@@ -128,6 +137,25 @@ async function glemt() {
   if (!email) { $('lerr').textContent = 'Skriv din mail først, så sender vi et link'; return; }
   await db.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/app/' });
   $('lerr').textContent = 'Hvis mailen findes, har vi sendt et link til ny adgangskode.';
+}
+// Vælg ny adgangskode (vises når man kommer fra linket i "Glemt adgangskode?"-mailen)
+async function gemNyKode() {
+  const a = $('nk1').value, b = $('nk2').value;
+  $('nkerr').textContent = '';
+  if (a.length < 8) { $('nkerr').textContent = 'Adgangskoden skal være mindst 8 tegn'; return; }
+  if (a !== b) { $('nkerr').textContent = 'De to adgangskoder er ikke ens'; return; }
+  $('nkbtn').disabled = true;
+  const { error } = await db.auth.updateUser({ password: a });
+  $('nkbtn').disabled = false;
+  if (error) {
+    console.error(error);
+    $('nkerr').textContent = /different|same/i.test(error.message || '') ? 'Vælg en anden kode end den gamle' : 'Det virkede ikke. Prøv igen, eller bed om et nyt link.';
+    return;
+  }
+  S.nyKode = false;
+  history.replaceState(null, '', location.pathname);
+  toast('Din nye adgangskode er gemt');
+  render();
 }
 async function logud() { await db.auth.signOut(); localStorage.removeItem('sk_shop'); S.user = null; S.shop = null; render(); }
 function vaelgShop(id) { S.kalSpringLokal = false; S.kalVis = false; S.shop = S.shops.find(s => s.id === id); localStorage.setItem('sk_shop', id); hentAlt(); }
@@ -730,6 +758,11 @@ function loginSide() {
   <button class="btn" onclick="login()">Log ind</button><div class="err" id="lerr"></div>
   <p style="font-size:15px;margin:10px 0 0;text-align:center"><a href="#" onclick="glemt();return false" style="color:var(--navy);text-decoration:none">Glemt adgangskode?</a></p></div>`;
 }
+function nyKodeSide() {
+  return `<div class="login">${LOGO}<h2>Vælg ny adgangskode</h2><p>Du er logget ind som ${esc(S.user.email || '')}. Vælg en adgangskode, du kan huske. Den bruger du næste gang, du logger ind.</p>
+  <div class="grp"><input id="nk1" type="password" placeholder="Ny adgangskode (mindst 8 tegn)" autocomplete="new-password"><input id="nk2" type="password" placeholder="Skriv den igen" autocomplete="new-password" onkeydown="if(event.key==='Enter')gemNyKode()"></div>
+  <button class="btn" id="nkbtn" onclick="gemNyKode()">Gem adgangskode</button><div class="err" id="nkerr"></div></div>`;
+}
 function vaelgSide() {
   return `${bar()}<h1>Vælg butik</h1><div class="sub1">${S.admin ? 'Admin' : 'Din konto'}</div>
   <div class="grp" style="margin-top:16px">${S.shops.length ? S.shops.map(s => R({ on: `vaelgShop('${s.id}')`, pre: `<div class="av">${ini(s.name)}</div>`, t: esc(s.name), s: esc(s.city) })).join('') : '<div class="empty">Din konto er ikke koblet til en butik endnu. Kontakt FindBilplejere.</div>'}</div>
@@ -737,7 +770,8 @@ function vaelgSide() {
 }
 function render() {
   const app = $('app');
-  if (!S.user) app.innerHTML = loginSide();
+  if (!S.user) { app.innerHTML = loginSide(); if (LINK_UDLOEBET) { LINK_UDLOEBET = false; history.replaceState(null, '', location.pathname); $('lerr').textContent = 'Linket er udløbet eller allerede brugt. Skriv din mail og tryk "Glemt adgangskode?" igen.'; } }
+  else if (S.nyKode) app.innerHTML = nyKodeSide();
   else if (!S.shop) app.innerHTML = vaelgSide();
   else if (visKalenderSide()) app.innerHTML = kalenderSide();
   else app.innerHTML = (({ dag, kal: kalTab, kunder: kunderSide, stat: statistik, auto: automatik })[S.tab] || dag)() + nav();
